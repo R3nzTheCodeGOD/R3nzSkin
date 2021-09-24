@@ -1,0 +1,22 @@
+name: Windows
+on: [push, pull_request]
+jobs:
+  msvc-release:
+    runs-on: windows-latest
+    env:
+      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      shell: cmd
+      run: '"%MSBUILD_PATH%\MSBuild.exe" R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=Release'
+      
+  clang:
+    runs-on: windows-latest
+    env:
+      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      shell: cmd
+      run: '"%MSBUILD_PATH%\MSBuild.exe" R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=Release /p:PlatformToolset=ClangCL'
