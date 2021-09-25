@@ -172,7 +172,7 @@ namespace d3d_vtable {
 
 	void render(void* device, bool is_d3d11 = false) noexcept
 	{
-		auto* client{ *reinterpret_cast<GameClient**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::GameClient) };
+		auto* client{ Memory::getClient() };
 		if (client && client->game_state == GGameState_s::Running) {
 			Hooks::init();
 			if (GUI::is_open) {
@@ -291,7 +291,7 @@ void Hooks::init() noexcept
 		}
 	});
 
-	static const auto change_skin_for_object = [](AIBaseCommon* obj, const int32_t skin) -> void {
+	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) -> void {
 		if (skin == -1)
 			return;
 

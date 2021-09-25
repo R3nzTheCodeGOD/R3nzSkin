@@ -63,16 +63,16 @@ void GUI::render() noexcept
 			if (auto& clr{ ImGui::GetStyle().Colors[ImGuiCol_Text] }; clr.x != 0.92f && clr.y != 0.92f && clr.z != 0.92f)
 				clr = ImVec4(0.92f, 0.92f, 0.92f, 0.92f);
 
-		static const auto vector_getter_skin = [](void* vec, int32_t idx, const char** out_text) {
+		static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) {
 			const auto& vector{ *static_cast<std::vector<SkinDatabase::skin_info>*>(vec) };
-			if (idx < 0 || idx > static_cast<int32_t>(vector.size())) { return false; }
+			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) { return false; }
 			*out_text = idx == 0 ? "Default" : vector.at(idx - 1).skin_name.c_str();
 			return true;
 		};
 
-		static const auto vector_getter_ward_skin = [](void* vec, int32_t idx, const char** out_text) {
-			const auto& vector{ *static_cast<std::vector<std::pair<int32_t, std::string>>*>(vec) };
-			if (idx < 0 || idx > static_cast<int32_t>(vector.size())) { return false; }
+		static const auto vector_getter_ward_skin = [](void* vec, std::int32_t idx, const char** out_text) {
+			const auto& vector{ *static_cast<std::vector<std::pair<std::int32_t, std::string>>*>(vec) };
+			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) { return false; }
 			*out_text = idx == 0 ? "Default" : vector.at(idx - 1).second.c_str();
 			return true;
 		};

@@ -11,11 +11,11 @@
 void WINAPI DllAttach(HMODULE hModule) noexcept
 {
 	Memory::Search(true);
-	auto* client{ *reinterpret_cast<GameClient**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::GameClient) };
+	auto* client{ Memory::getClient() };
 
 	while (true) {
 		if (!client)
-			client = *reinterpret_cast<GameClient**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::GameClient);
+			client = Memory::getClient();
 		else if (client->game_state == GGameState_s::Running)
 			break;
 
