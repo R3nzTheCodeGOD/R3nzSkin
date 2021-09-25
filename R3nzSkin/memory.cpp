@@ -105,7 +105,7 @@ std::vector<offset_signature> sigs{
 void Memory::Search(bool gameClient) noexcept
 {
 	try {
-		auto base{ reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) };
+		auto base{ Memory::getLeagueModule() };
 		auto& signatureToSearch{ (gameClient ? gameClientSig : sigs) };
 
 		for (auto& sig : signatureToSearch)
