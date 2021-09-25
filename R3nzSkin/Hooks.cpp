@@ -261,7 +261,7 @@ void Hooks::init() noexcept
 	auto league_module{ Memory::getLeagueModule() };
 	auto* player{ Memory::getLocalPlayer() };
 	auto* heroes{ Memory::getHeroes() };
-	auto* minions{ *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(league_module + offsets::global::ManagerTemplate_AIMinionClient_) };
+	auto* minions{ Memory::getMinions() };
 
 	std::call_once(change_skins, [&]() {
 		if (player) {

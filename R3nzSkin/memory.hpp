@@ -1,10 +1,11 @@
 #pragma once
 
 #include <Windows.h>
-#include <cstdint>
 #include <chrono>
+#include <cstdint>
 
 #include "GameClasses.hpp"
+#include "Offsets.hpp"
 
 using namespace std::chrono_literals;
 
@@ -29,5 +30,10 @@ namespace Memory {
 	ManagerTemplate<AIHero>* getHeroes() noexcept
 	{
 		return *reinterpret_cast<ManagerTemplate<AIHero>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
+	}
+
+	ManagerTemplate<AIMinionClient>* getMinions() noexcept
+	{
+		return *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
 	}
 };
