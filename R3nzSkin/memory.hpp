@@ -11,7 +11,23 @@ using namespace std::chrono_literals;
 namespace Memory {
 	void Search(bool gameClient = true) noexcept;
 
-	std::uintptr_t getLeagueModule() noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)); }
-	GameClient* getClient() noexcept { return *reinterpret_cast<GameClient**>(getLeagueModule() + offsets::global::GameClient); }
-	AIBaseCommon* getLocalPlayer() noexcept { return *reinterpret_cast<AIBaseCommon**>(getLeagueModule() + offsets::global::Player); }
+	std::uintptr_t getLeagueModule() noexcept
+	{
+		return reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr));
+	}
+	
+	GameClient* getClient() noexcept
+	{
+		return *reinterpret_cast<GameClient**>(getLeagueModule() + offsets::global::GameClient);
+	}
+	
+	AIBaseCommon* getLocalPlayer() noexcept
+	{
+		return *reinterpret_cast<AIBaseCommon**>(getLeagueModule() + offsets::global::Player);
+	}
+
+	ManagerTemplate<AIHero>* getHeroes() noexcept
+	{
+		return *reinterpret_cast<ManagerTemplate<AIHero>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
+	}
 };

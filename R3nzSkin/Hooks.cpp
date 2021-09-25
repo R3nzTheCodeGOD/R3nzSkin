@@ -180,7 +180,7 @@ namespace d3d_vtable {
 					::ImGui_ImplDX11_NewFrame();
 				else
 					::ImGui_ImplDX9_NewFrame();
-				ImGui_ImplWin32_NewFrame();
+				::ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
 				GUI::render();
 				ImGui::EndFrame();
@@ -260,7 +260,7 @@ void Hooks::init() noexcept
 {
 	auto league_module{ Memory::getLeagueModule() };
 	auto* player{ Memory::getLocalPlayer() };
-	auto* heroes{ *reinterpret_cast<ManagerTemplate<AIHero>**>(league_module + offsets::global::ManagerTemplate_AIHero_) };
+	auto* heroes{ Memory::getHeroes() };
 	auto* minions{ *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(league_module + offsets::global::ManagerTemplate_AIMinionClient_) };
 
 	std::call_once(change_skins, [&]() {

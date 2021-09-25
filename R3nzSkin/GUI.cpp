@@ -31,7 +31,7 @@ void GUI::render() noexcept
 		static float g{ 0.f };
 		static float b{ 0.f };
 		auto* player{ Memory::getLocalPlayer() };
-		auto* heroes{ *reinterpret_cast<ManagerTemplate<AIHero>**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::ManagerTemplate_AIHero_) };
+		auto* heroes{ Memory::getHeroes() };
 		auto my_team{ player ? player->get_team() : 100 };
 
 		if (Config::config.rainbowText) {
