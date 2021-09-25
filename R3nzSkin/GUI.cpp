@@ -11,6 +11,7 @@
 #include "GUI.hpp"
 #include "GameClasses.hpp"
 #include "Hooks.hpp"
+#include "Memory.hpp"
 #include "Offsets.hpp"
 #include "SkinDatabase.hpp"
 
@@ -29,7 +30,7 @@ void GUI::render() noexcept
 		static float r{ 1.0f };
 		static float g{ 0.f };
 		static float b{ 0.f };
-		auto* player{ *reinterpret_cast<AIBaseCommon**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::Player) };
+		auto* player{ Memory::getLocalPlayer() };
 		auto* heroes{ *reinterpret_cast<ManagerTemplate<AIHero>**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::ManagerTemplate_AIHero_) };
 		auto my_team{ player ? player->get_team() : 100 };
 

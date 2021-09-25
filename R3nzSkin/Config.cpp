@@ -6,11 +6,12 @@
 
 #include "Config.hpp"
 #include "GameClasses.hpp"
+#include "Memory.hpp"
 #include "Offsets.hpp"
 
 void Config::save() noexcept
 {
-	auto* player{ *reinterpret_cast<AIBaseCommon**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::Player) };
+	auto* player{ Memory::getLocalPlayer() };
 	auto out{ std::ofstream(L"R3nzSkin.json") };
 
 	if (player)
@@ -33,7 +34,7 @@ void Config::save() noexcept
 
 void Config::load() noexcept
 {
-	auto* player{ *reinterpret_cast<AIBaseCommon**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::Player) };
+	auto* player{ Memory::getLocalPlayer() };
 	auto out{ std::ifstream(L"R3nzSkin.json") };
 
 	if (!out.good())

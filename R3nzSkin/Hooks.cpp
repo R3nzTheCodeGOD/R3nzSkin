@@ -258,8 +258,8 @@ namespace d3d_vtable {
 
 void Hooks::init() noexcept
 {
-	auto league_module{ std::uintptr_t(::GetModuleHandleA(nullptr)) };
-	auto* player{ *reinterpret_cast<AIBaseCommon**>(league_module + offsets::global::Player) };
+	auto league_module{ Memory::getLeagueModule() };
+	auto* player{ Memory::getLocalPlayer() };
 	auto* heroes{ *reinterpret_cast<ManagerTemplate<AIHero>**>(league_module + offsets::global::ManagerTemplate_AIHero_) };
 	auto* minions{ *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(league_module + offsets::global::ManagerTemplate_AIMinionClient_) };
 
