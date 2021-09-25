@@ -36,4 +36,9 @@ namespace Memory {
 	{
 		return *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
 	}
+
+	HWND getRiotWindow() noexcept
+	{
+		return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window);
+	}
 };

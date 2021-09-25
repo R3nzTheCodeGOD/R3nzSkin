@@ -154,7 +154,7 @@ namespace d3d_vtable {
 			ImGui::GetIO().Fonts->AddFontFromFileTTF((path / "Arial.ttf").string().c_str(), 14.0f, 0, ranges);
 		}
 
-		ImGui_ImplWin32_Init(*reinterpret_cast<HWND*>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::Riot__g_window));
+		ImGui_ImplWin32_Init(Memory::getRiotWindow());
 
 		if (is_d3d11) {
 			p_swap_chain = reinterpret_cast<IDXGISwapChain*>(device);
@@ -167,7 +167,7 @@ namespace d3d_vtable {
 		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(SetWindowLongPtr(*reinterpret_cast<HWND*>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::Riot__g_window), GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
 	void render(void* device, bool is_d3d11 = false) noexcept
@@ -341,7 +341,7 @@ void Hooks::install() noexcept
 
 void Hooks::uninstall() noexcept
 {
-	::SetWindowLongW(*reinterpret_cast<HWND*>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::global::Riot__g_window), GWLP_WNDPROC, LONG_PTR(originalWndProc));
+	::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 
 	if (d3d_device_vmt)
 		d3d_device_vmt->unhook();
