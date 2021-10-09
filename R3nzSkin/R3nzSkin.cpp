@@ -11,7 +11,7 @@
 void WINAPI DllAttach(HMODULE hModule) noexcept
 {
 	Memory::Search(true);
-	auto* client{ Memory::getClient() };
+	auto client{ Memory::getClient() };
 
 	while (true) {
 		if (!client)
@@ -31,7 +31,7 @@ void WINAPI DllAttach(HMODULE hModule) noexcept
 		
 	run = true;
 	while (run)
-		std::this_thread::sleep_for(100ms);
+		std::this_thread::sleep_for(200ms);
 
 	::FreeLibraryAndExitThread(hModule, 0);
 }

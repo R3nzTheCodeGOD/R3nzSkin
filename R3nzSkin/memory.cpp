@@ -15,8 +15,8 @@ std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) n
 		auto module{ ::GetModuleHandleW(szModule) };
 		static auto pattern_to_byte = [](const char* pattern) {
 			auto bytes{ std::vector<std::int32_t>{} };
-			auto* start{ const_cast<char*>(pattern) };
-			auto* end{ const_cast<char*>(pattern) + ::strlen(pattern) };
+			const auto start{ const_cast<char*>(pattern) };
+			const auto end{ const_cast<char*>(pattern) + ::strlen(pattern) };
 
 			for (auto* current{ start }; current < end; ++current) {
 				if (*current == '?') {
@@ -30,24 +30,24 @@ std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) n
 			return bytes;
 		};
 
-		auto dosHeader{ reinterpret_cast<PIMAGE_DOS_HEADER>(module) };
+		const auto dosHeader{ reinterpret_cast<PIMAGE_DOS_HEADER>(module) };
 		if (dosHeader == NULL)
 			return nullptr;
 
-		auto ntHeaders{ reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module + dosHeader->e_lfanew)) };
-		auto textSection{ IMAGE_FIRST_SECTION(ntHeaders) };
-		auto sizeOfImage{ textSection->SizeOfRawData };
-		auto patternBytes{ pattern_to_byte(szSignature) };
-		auto* scanBytes{ reinterpret_cast<std::uint8_t*>(module) + textSection->VirtualAddress };
-		auto s{ patternBytes.size() };
-		auto* d{ patternBytes.data() };
+		const auto ntHeaders{ reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module + dosHeader->e_lfanew)) };
+		const auto textSection{ IMAGE_FIRST_SECTION(ntHeaders) };
+		const auto sizeOfImage{ textSection->SizeOfRawData };
+		const auto patternBytes{ pattern_to_byte(szSignature) };
+		const auto scanBytes{ reinterpret_cast<std::uint8_t*>(module) + textSection->VirtualAddress };
+		const auto s{ patternBytes.size() };
+		const auto d{ patternBytes.data() };
 		auto mbi{ MEMORY_BASIC_INFORMATION{ 0 } };
 		std::uint8_t* next_check_address{ 0 };
 
 		for (auto i{ 0ul }; i < sizeOfImage - s; ++i) {
 			bool found{ true };
 			for (auto j{ 0ul }; j < s; ++j) {
-				auto* current_address{ scanBytes + i + j };
+				const auto current_address{ scanBytes + i + j };
 				if (current_address >= next_check_address) {
 					if (!::VirtualQuery(reinterpret_cast<void*>(current_address), &mbi, sizeof(mbi)))
 						break;
@@ -105,15 +105,15 @@ std::vector<offset_signature> sigs{
 void Memory::Search(bool gameClient) noexcept
 {
 	try {
-		auto base{ Memory::getLeagueModule() };
-		auto& signatureToSearch{ (gameClient ? gameClientSig : sigs) };
+		const auto base{ Memory::getLeagueModule() };
+		const auto& signatureToSearch{ (gameClient ? gameClientSig : sigs) };
 
-		for (auto& sig : signatureToSearch)
+		for (const auto& sig : signatureToSearch)
 			*sig.offset = 0;
 
 		while (true) {
 			bool missing_offset{ false };
-			for (auto& sig : signatureToSearch) {
+			for (const auto& sig : signatureToSearch) {
 				if (*sig.offset != 0)
 					continue;
 

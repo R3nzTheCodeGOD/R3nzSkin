@@ -13,23 +13,23 @@
 void SkinDatabase::load() noexcept
 {
 	static const auto translateString_UNSAFE_DONOTUSE{ reinterpret_cast<const char*(__cdecl*)(const char*)>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::functions::translateString_UNSAFE_DONOTUSE) };
-	auto* g_championg_manager{ *reinterpret_cast<ChampionManager**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::ChampionManager) };
+	const auto g_championg_manager{ *reinterpret_cast<ChampionManager**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::ChampionManager) };
 
-	for (auto*& champion : g_championg_manager->champions) {
+	for (const auto& champion : g_championg_manager->champions) {
 		std::vector<std::int32_t> skins_ids;
-		for (auto& skin : champion->skins)
+		for (const auto& skin : champion->skins)
 			skins_ids.push_back(skin.skin_id);
 		std::ranges::sort(skins_ids);
 
 		std::map<std::string, std::int32_t> temp_skin_list;
-		for (auto& i : skins_ids) {
+		for (const auto& i : skins_ids) {
 			auto skin_display_name{ std::string("game_character_skin_displayname_") };
 			skin_display_name.append(champion->champion_name.str);
 			skin_display_name.append("_");
 			skin_display_name.append(std::to_string(i));
 
 			auto skin_display_name_translated{ i > 0 ? std::string(translateString_UNSAFE_DONOTUSE(skin_display_name.c_str())) : std::string(champion->champion_name.str) };
-			auto it{ temp_skin_list.find(skin_display_name_translated) };
+			const auto it{ temp_skin_list.find(skin_display_name_translated) };
 
 			if (it == temp_skin_list.end())
 				temp_skin_list[skin_display_name_translated] = 1;
@@ -39,7 +39,7 @@ void SkinDatabase::load() noexcept
 				it->second = it->second + 1;
 			}
 
-			auto champ_name{ fnv::hash_runtime(champion->champion_name.str) };
+			const auto champ_name{ fnv::hash_runtime(champion->champion_name.str) };
 			champions_skins[champ_name].push_back(skin_info{ std::string(champion->champion_name.str),skin_display_name_translated,i });
 
 			if (i == 7 && champ_name == FNV("Lux")) {

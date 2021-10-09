@@ -95,7 +95,7 @@ namespace d3d_vtable {
 		style.TabRounding = 0.0f;
 		style.PopupRounding = 0.0f;
 
-		auto* colors{ style.Colors };
+		const auto colors{ style.Colors };
 
 		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
@@ -149,7 +149,7 @@ namespace d3d_vtable {
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
 		if (PWSTR pathToFonts; SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
-			std::filesystem::path path{ pathToFonts };
+			const std::filesystem::path path{ pathToFonts };
 			::CoTaskMemFree(pathToFonts);
 			ImGui::GetIO().Fonts->AddFontFromFileTTF((path / "Arial.ttf").string().c_str(), 14.0f, 0, ranges);
 		}
@@ -172,7 +172,7 @@ namespace d3d_vtable {
 
 	void render(void* device, bool is_d3d11 = false) noexcept
 	{
-		auto* client{ Memory::getClient() };
+		const auto client{ Memory::getClient() };
 		if (client && client->game_state == GGameState_s::Running) {
 			Hooks::init();
 			if (GUI::is_open) {
@@ -191,7 +191,7 @@ namespace d3d_vtable {
 					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 				} else {
 					unsigned long colorwrite, srgbwrite;
-					auto* dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
+					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
 					dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
 					dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
 					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
@@ -258,10 +258,10 @@ namespace d3d_vtable {
 
 void Hooks::init() noexcept
 {
-	auto league_module{ Memory::getLeagueModule() };
-	auto* player{ Memory::getLocalPlayer() };
-	auto* heroes{ Memory::getHeroes() };
-	auto* minions{ Memory::getMinions() };
+	const auto league_module{ Memory::getLeagueModule() };
+	const auto player{ Memory::getLocalPlayer() };
+	const auto heroes{ Memory::getHeroes() };
+	const auto minions{ Memory::getMinions() };
 
 	std::call_once(change_skins, [&]() {
 		if (player) {
@@ -271,21 +271,21 @@ void Hooks::init() noexcept
 			}
 		}
 
-		auto my_team{ player ? player->get_team() : 100 };
-		for (auto i{ 0u }; i < heroes->length; i++) {
-			auto* hero{ heroes->list[i] };
+		const auto my_team{ player ? player->get_team() : 100 };
+		for (auto i{ 0u }; i < heroes->length; ++i) {
+			const auto hero{ heroes->list[i] };
 			if (hero == player)
 				continue;
 
-			auto is_enemy{ my_team != hero->get_team() };
-			auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
-			auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
-			auto config_entry{ config_array.find(champion_name_hash) };
+			const auto is_enemy{ my_team != hero->get_team() };
+			const auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
+			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
 				continue;
 
 			if (config_entry->second > 0) {
-				auto& values = SkinDatabase::champions_skins[champion_name_hash];
+				const auto& values = SkinDatabase::champions_skins[champion_name_hash];
 				hero->change_skin(values[config_entry->second - 1].model_name.c_str(), values[config_entry->second - 1].skin_id);
 			}
 		}
@@ -302,8 +302,8 @@ void Hooks::init() noexcept
 	};
 
 	for (auto i{ 0u }; i < minions->length; ++i) {
-		auto* minion{ minions->list[i] };
-		auto* owner{ minion->get_gold_redirect_target() };
+		const auto minion{ minions->list[i] };
+		const auto owner{ minion->get_gold_redirect_target() };
 
 		if (!owner)
 			continue;
@@ -324,9 +324,9 @@ void Hooks::init() noexcept
 
 void Hooks::install() noexcept
 {
-	auto material_registry{ reinterpret_cast<std::uintptr_t(__stdcall*)()>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)() };
-	auto* d3d_device{ *reinterpret_cast<IDirect3DDevice9**>(material_registry + offsets::MaterialRegistry::D3DDevice) };
-	auto* swap_chain{ *reinterpret_cast<IDXGISwapChain**>(material_registry + offsets::MaterialRegistry::SwapChain) };
+	const auto material_registry{ reinterpret_cast<std::uintptr_t(__stdcall*)()>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)() };
+	const auto d3d_device{ *reinterpret_cast<IDirect3DDevice9**>(material_registry + offsets::MaterialRegistry::D3DDevice) };
+	const auto swap_chain{ *reinterpret_cast<IDXGISwapChain**>(material_registry + offsets::MaterialRegistry::SwapChain) };
 
 	if (d3d_device) {
 		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(d3d_device);

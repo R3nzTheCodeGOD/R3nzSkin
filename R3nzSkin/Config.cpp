@@ -11,7 +11,7 @@
 
 void Config::save() noexcept
 {
-	auto* player{ Memory::getLocalPlayer() };
+	const auto player{ Memory::getLocalPlayer() };
 	auto out{ std::ofstream(L"R3nzSkin.json") };
 
 	if (player)
@@ -22,10 +22,10 @@ void Config::save() noexcept
 	config_json["current_combo_ward_index"] = config.current_combo_ward_index;
 	config_json["current_ward_skin_index"] = config.current_ward_skin_index;
 
-	for (auto& it : config.current_combo_ally_skin_index)
+	for (const auto& it : config.current_combo_ally_skin_index)
 		config_json["current_combo_ally_skin_index"][std::to_string(it.first)] = it.second;
 
-	for (auto& it : config.current_combo_enemy_skin_index)
+	for (const auto& it : config.current_combo_enemy_skin_index)
 		config_json["current_combo_enemy_skin_index"][std::to_string(it.first)] = it.second;
 
 	out << config_json.dump();
@@ -34,7 +34,7 @@ void Config::save() noexcept
 
 void Config::load() noexcept
 {
-	auto* player{ Memory::getLocalPlayer() };
+	const auto player{ Memory::getLocalPlayer() };
 	auto out{ std::ifstream(L"R3nzSkin.json") };
 
 	if (!out.good())
@@ -50,14 +50,14 @@ void Config::load() noexcept
 	config.current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	config.current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
 
-	auto ally_skins{ config_json.find("current_combo_ally_skin_index") };
+	const auto ally_skins{ config_json.find("current_combo_ally_skin_index") };
 	if (ally_skins != config_json.end())
-		for (auto& it : ally_skins.value().items())
+		for (const auto& it : ally_skins.value().items())
 			config.current_combo_ally_skin_index[std::stoul(it.key())] = it.value().get<int32_t>();
 
-	auto enemy_skins{ config_json.find("current_combo_enemy_skin_index") };
+	const auto enemy_skins{ config_json.find("current_combo_enemy_skin_index") };
 	if (enemy_skins != config_json.end())
-		for (auto& it : enemy_skins.value().items())
+		for (const auto& it : enemy_skins.value().items())
 			config.current_combo_enemy_skin_index[std::stoul(it.key())] = it.value().get<int32_t>();
 
 	out.close();

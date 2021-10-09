@@ -27,12 +27,13 @@ void GUI::render() noexcept
 {
 	ImGui::Begin("R3nzSkin", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize);
 	{
+		const auto player{ Memory::getLocalPlayer() };
+		const auto heroes{ Memory::getHeroes() };
+		const auto my_team{ player ? player->get_team() : 100 };
+		
 		static float r{ 1.0f };
 		static float g{ 0.f };
 		static float b{ 0.f };
-		auto* player{ Memory::getLocalPlayer() };
-		auto* heroes{ Memory::getHeroes() };
-		auto my_team{ player ? player->get_team() : 100 };
 
 		if (Config::config.rainbowText) {
 			if (r == 1.f && g >= 0.f && b <= 0.f) {
@@ -95,12 +96,12 @@ void GUI::render() noexcept
 		ImGui::Text("Other Champs Skins Settings:");
 		int32_t last_team{ 0 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
-			auto* hero{ heroes->list[i] };
+			const auto hero{ heroes->list[i] };
 			if (hero == player)
 				continue;
 
-			auto hero_team{ hero->get_team() };
-			auto is_enemy{ hero_team != my_team };
+			const auto hero_team{ hero->get_team() };
+			const auto is_enemy{ hero_team != my_team };
 
 			if (last_team == 0 || hero_team != last_team) {
 				if (last_team != 0)
@@ -113,8 +114,8 @@ void GUI::render() noexcept
 			}
 
 			auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
-			auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
-			auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
+			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+			const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
 			snprintf(str_buffer, 256, Config::config.heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", Config::config.heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
 

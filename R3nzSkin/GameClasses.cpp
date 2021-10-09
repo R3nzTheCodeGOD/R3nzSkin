@@ -19,7 +19,7 @@ void CharacterDataStack::update(bool change) noexcept
 
 bool AIBaseCommon::skin_model_push(const char* model, std::int32_t skin) noexcept
 {
-	auto champ_name{ fnv::hash_runtime(this->get_character_data_stack()->base_skin.model.str) };
+	const auto champ_name{ fnv::hash_runtime(this->get_character_data_stack()->base_skin.model.str) };
 	if (champ_name == FNV("Lux")) {
 		if (skin == 7 && champ_name == FNV("Lux")) {
 			this->get_character_data_stack()->stack.clear();
