@@ -42,18 +42,39 @@ std::once_flag init_device;
 std::unique_ptr<::vmt_smart_hook> d3d_device_vmt{ nullptr };
 std::unique_ptr<::vmt_smart_hook> swap_chain_vmt{ nullptr };
 
-static constexpr ImWchar ranges[]{
-	0x0020, 0x00FF, // Basic Latin + Latin Supplement
-	0x0400, 0x044F, // Cyrillic
-	0x0100, 0x017F, // Latin Extended-A
-	0x0180, 0x024F, // Latin Extended-B
-	0x2000, 0x206F, // General Punctuation
-	0x3000, 0x30FF, // Punctuations, Hiragana, Katakana
-	0x31F0, 0x31FF, // Katakana Phonetic Extensions
-	0xFF00, 0xFFEF, // Half-width characters
-	0x4e00, 0x9FAF, // CJK Ideograms
-	0,
-};
+ImWchar* getFontGlyphRanges() noexcept
+{
+	static ImVector<ImWchar> ranges;
+	if (ranges.empty()) {
+		ImFontGlyphRangesBuilder builder;
+		constexpr ImWchar baseRanges[]{
+			0x0100, 0x024F, // Latin Extended-A + Latin Extended-B
+			0x0300, 0x03FF, // Combining Diacritical Marks + Greek/Coptic
+			0x0600, 0x06FF, // Arabic
+			0x0E00, 0x0E7F, // Thai
+			0
+		};
+		builder.AddRanges(baseRanges);
+		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
+		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon());
+		builder.AddText("\u9F8D\u738B\u2122");
+		builder.BuildRanges(&ranges);
+	}
+	return ranges.Data;
+}
+
+ImWchar* getFontGlyphRangesKr() noexcept
+{
+	static ImVector<ImWchar> ranges;
+	if (ranges.empty()) {
+		ImFontGlyphRangesBuilder builder;
+		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseFull());
+		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesKorean());
+		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
+		builder.BuildRanges(&ranges);
+	}
+	return ranges.Data;
+}
 
 namespace d3d_vtable {
 	ID3D11Device* d3d11_device{ nullptr };
@@ -146,12 +167,21 @@ namespace d3d_vtable {
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+		auto& io{ ImGui::GetIO() };
+		io.IniFilename = nullptr;
+		io.LogFilename = nullptr;
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+
+		ImFontConfig cfg;
+		cfg.SizePixels = 15.0f;
 
 		if (PWSTR pathToFonts; SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
 			const std::filesystem::path path{ pathToFonts };
 			::CoTaskMemFree(pathToFonts);
-			ImGui::GetIO().Fonts->AddFontFromFileTTF((path / "Arial.ttf").string().c_str(), 14.0f, 0, ranges);
+			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, getFontGlyphRanges());
+			cfg.MergeMode = true;
+			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
+			cfg.MergeMode = false;
 		}
 
 		ImGui_ImplWin32_Init(Memory::getRiotWindow());
