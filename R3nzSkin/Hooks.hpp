@@ -9,6 +9,6 @@ inline bool run;
 
 namespace Hooks {
 	void init() noexcept;
-	void install() noexcept;
-	void uninstall() noexcept;
+	void WINAPI install() noexcept;
+	void WINAPI uninstall() noexcept;
 };

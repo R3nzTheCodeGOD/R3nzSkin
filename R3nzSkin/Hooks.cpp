@@ -4,7 +4,6 @@
 #include <d3d11.h>
 #include <d3d9.h>
 #include <filesystem>
-#include <memory>
 #include <string>
 
 #include "fnv_hash.hpp"
@@ -27,7 +26,7 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
+	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
 
 	if (msg == WM_KEYDOWN && wParam == VK_INSERT) {
@@ -42,38 +41,29 @@ std::once_flag init_device;
 std::unique_ptr<::vmt_smart_hook> d3d_device_vmt{ nullptr };
 std::unique_ptr<::vmt_smart_hook> swap_chain_vmt{ nullptr };
 
-ImWchar* getFontGlyphRanges() noexcept
-{
-	static ImVector<ImWchar> ranges;
-	if (ranges.empty()) {
-		ImFontGlyphRangesBuilder builder;
-		constexpr ImWchar baseRanges[]{
-			0x0100, 0x024F, // Latin Extended-A + Latin Extended-B
-			0x0300, 0x03FF, // Combining Diacritical Marks + Greek/Coptic
-			0x0600, 0x06FF, // Arabic
-			0x0E00, 0x0E7F, // Thai
-			0
-		};
-		builder.AddRanges(baseRanges);
-		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
-		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon());
-		builder.AddText("\u9F8D\u738B\u2122");
-		builder.BuildRanges(&ranges);
-	}
-	return ranges.Data;
-}
+static const ImWchar ranges[] = {
+	0x0020, 0x00FF, // Basic Latin + Latin Supplement
+	0x0100, 0x024F, // Latin Extended-A + Latin Extended-B
+	0x0300, 0x03FF, // Combining Diacritical Marks + Greek/Coptic
+	0x0400, 0x044F, // Cyrillic
+	0x0600, 0x06FF, // Arabic
+	0x0E00, 0x0E7F, // Thai
+	0,
+};
 
 ImWchar* getFontGlyphRangesKr() noexcept
 {
-	static ImVector<ImWchar> ranges;
-	if (ranges.empty()) {
+	static ImVector<ImWchar> rangesKR;
+	if (rangesKR.empty()) {
 		ImFontGlyphRangesBuilder builder;
-		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseFull());
-		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesKorean());
-		builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
-		builder.BuildRanges(&ranges);
+		auto& io{ ImGui::GetIO() };
+		builder.AddRanges(io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+		builder.AddRanges(io.Fonts->GetGlyphRangesChineseFull());
+		builder.AddRanges(io.Fonts->GetGlyphRangesKorean());
+		builder.AddRanges(io.Fonts->GetGlyphRangesJapanese());
+		builder.BuildRanges(&rangesKR);
 	}
-	return ranges.Data;
+	return rangesKR.Data;
 }
 
 namespace d3d_vtable {
@@ -116,7 +106,7 @@ namespace d3d_vtable {
 		style.TabRounding = 0.0f;
 		style.PopupRounding = 0.0f;
 
-		const auto colors{ style.Colors };
+		auto colors{ style.Colors };
 
 		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
@@ -172,13 +162,12 @@ namespace d3d_vtable {
 		io.LogFilename = nullptr;
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
-		ImFontConfig cfg;
-		cfg.SizePixels = 15.0f;
-
 		if (PWSTR pathToFonts; SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
 			const std::filesystem::path path{ pathToFonts };
 			::CoTaskMemFree(pathToFonts);
-			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, getFontGlyphRanges());
+			ImFontConfig cfg;
+			cfg.SizePixels = 15.0f;
+			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
 			cfg.MergeMode = true;
 			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
 			cfg.MergeMode = false;
@@ -193,7 +182,6 @@ namespace d3d_vtable {
 			create_render_target();
 			::ImGui_ImplDX11_Init(d3d11_device, d3d11_device_context);
 			::ImGui_ImplDX11_CreateDeviceObjects();
-
 		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
@@ -202,7 +190,7 @@ namespace d3d_vtable {
 
 	void render(void* device, bool is_d3d11 = false) noexcept
 	{
-		const auto client{ Memory::getClient() };
+		static const auto client{ Memory::getClient() };
 		if (client && client->game_state == GGameState_s::Running) {
 			Hooks::init();
 			if (GUI::is_open) {
@@ -226,7 +214,7 @@ namespace d3d_vtable {
 					dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
 					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
 					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
-					ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+					::ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, colorwrite);
 					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbwrite);
 				}
@@ -288,10 +276,10 @@ namespace d3d_vtable {
 
 void Hooks::init() noexcept
 {
-	const auto league_module{ Memory::getLeagueModule() };
-	const auto player{ Memory::getLocalPlayer() };
-	const auto heroes{ Memory::getHeroes() };
-	const auto minions{ Memory::getMinions() };
+	static const auto league_module{ Memory::getLeagueModule() };
+	static const auto player{ Memory::getLocalPlayer() };
+	static const auto heroes{ Memory::getHeroes() };
+	static const auto minions{ Memory::getMinions() };
 
 	std::call_once(change_skins, [&]() {
 		if (player) {
@@ -338,8 +326,7 @@ void Hooks::init() noexcept
 		if (!owner)
 			continue;
 
-		auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
-		if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
+		if (const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) }; hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
 			if (!player || owner == player) {
 				if (hash == FNV("TestCubeRender10Vision"))
 					change_skin_for_object(minion, 0);
@@ -352,7 +339,7 @@ void Hooks::init() noexcept
 	}
 }
 
-void Hooks::install() noexcept
+void WINAPI Hooks::install() noexcept
 {
 	const auto material_registry{ reinterpret_cast<std::uintptr_t(__stdcall*)()>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)() };
 	const auto d3d_device{ *reinterpret_cast<IDirect3DDevice9**>(material_registry + offsets::MaterialRegistry::D3DDevice) };
@@ -369,7 +356,7 @@ void Hooks::install() noexcept
 	}
 }
 
-void Hooks::uninstall() noexcept
+void WINAPI Hooks::uninstall() noexcept
 {
 	::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 

@@ -11,7 +11,7 @@
 
 void Config::save() noexcept
 {
-	const auto player{ Memory::getLocalPlayer() };
+	static const auto player{ Memory::getLocalPlayer() };
 	auto out{ std::ofstream(L"R3nzSkin.json") };
 
 	if (player)
@@ -34,7 +34,7 @@ void Config::save() noexcept
 
 void Config::load() noexcept
 {
-	const auto player{ Memory::getLocalPlayer() };
+	static const auto player{ Memory::getLocalPlayer() };
 	auto out{ std::ifstream(L"R3nzSkin.json") };
 
 	if (!out.good())

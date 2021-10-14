@@ -12,32 +12,32 @@ using namespace std::chrono_literals;
 namespace Memory {
 	void Search(bool gameClient = true) noexcept;
 
-	__forceinline std::uintptr_t getLeagueModule() noexcept
+	__forceinline auto getLeagueModule() noexcept
 	{
 		return reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr));
 	}
 	
-	__forceinline GameClient* getClient() noexcept
+	__forceinline auto getClient() noexcept
 	{
 		return *reinterpret_cast<GameClient**>(getLeagueModule() + offsets::global::GameClient);
 	}
 	
-	__forceinline AIBaseCommon* getLocalPlayer() noexcept
+	__forceinline auto getLocalPlayer() noexcept
 	{
 		return *reinterpret_cast<AIBaseCommon**>(getLeagueModule() + offsets::global::Player);
 	}
 
-	__forceinline ManagerTemplate<AIHero>* getHeroes() noexcept
+	__forceinline auto getHeroes() noexcept
 	{
 		return *reinterpret_cast<ManagerTemplate<AIHero>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
 	}
 
-	__forceinline ManagerTemplate<AIMinionClient>* getMinions() noexcept
+	__forceinline auto getMinions() noexcept
 	{
 		return *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
 	}
 
-	__forceinline HWND getRiotWindow() noexcept
+	__forceinline auto getRiotWindow() noexcept
 	{
 		return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window);
 	}

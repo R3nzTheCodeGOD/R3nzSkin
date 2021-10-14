@@ -15,9 +15,9 @@
 #include "Offsets.hpp"
 #include "SkinDatabase.hpp"
 
-void TextCenter(std::string text) noexcept
+void TextCenter(const std::string text) noexcept
 {
-	auto font_size{ (ImGui::GetFontSize() * (text.size() / 2)) };
+	const auto font_size{ (ImGui::GetFontSize() * (text.size() / 2)) };
 	ImGui::SameLine(ImGui::GetWindowSize().x / 2 - font_size + (font_size / 2));
 	ImGui::Text(text.c_str());
 }
@@ -27,10 +27,9 @@ void GUI::render() noexcept
 {
 	ImGui::Begin("R3nzSkin", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize);
 	{
-		const auto player{ Memory::getLocalPlayer() };
-		const auto heroes{ Memory::getHeroes() };
-		const auto my_team{ player ? player->get_team() : 100 };
-		
+		static const auto player{ Memory::getLocalPlayer() };
+		static const auto heroes{ Memory::getHeroes() };
+		static const auto my_team{ player ? player->get_team() : 100 };
 		static float r{ 1.0f };
 		static float g{ 0.f };
 		static float b{ 0.f };
