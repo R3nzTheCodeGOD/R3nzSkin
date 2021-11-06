@@ -33,24 +33,24 @@ public:
 	std::size_t capacity;
 };
 
-class Champion {
-public:
-	class Skin {
-	public:
-		std::int32_t skin_id;
-		AString skin_name;
-	};
-	PAD(0x4);
-	AString champion_name;
-	PAD(0x48);
-	std::vector<Skin> skins;
-};
-
-class ChampionManager {
-	PAD(0x10);
-public:
-	std::vector<Champion*> champions;
-};
+//class Champion {
+//public:
+//	class Skin {
+//	public:
+//		std::int32_t skin_id;
+//		AString skin_name;
+//	};
+//	PAD(0x4);
+//	AString champion_name;
+//	PAD(0x48);
+//	std::vector<Skin> skins;
+//};
+//
+//class ChampionManager {
+//	PAD(0x10);
+//public:
+//	std::vector<Champion*> champions;
+//};
 
 class CharacterStackData {
 public:

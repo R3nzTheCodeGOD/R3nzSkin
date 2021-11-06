@@ -102,11 +102,11 @@ std::vector<offset_signature> sigs{
 		true, true, 0,
 		&offsets::global::ManagerTemplate_AIHero_
 	},
-	{
-		"89 1D ? ? ? ? 57 8D 4B 08", // mov dword_, ebx
-		true, true, 0,
-		&offsets::global::ChampionManager
-	},
+	//{
+	//	"89 1D ? ? ? ? 57 8D 4B 08", // mov dword_, ebx
+	//	true, true, 0,
+	//	&offsets::global::ChampionManager
+	//},
 	{
 		"A1 ? ? ? ? 53 55 8B 6C 24 1C", // mov eax, dword_
 		true, true, 0,
