@@ -103,7 +103,7 @@ std::vector<offset_signature> sigs{
 		&offsets::global::ManagerTemplate_AIHero_
 	},
 	{
-		"89 1D ? ? ? ? 57 8D 4B 04", // mov dword_, ebx
+		"89 1D ? ? ? ? 57 8D 4B 08", // mov dword_, ebx
 		true, true, 0,
 		&offsets::global::ChampionManager
 	},
@@ -157,7 +157,7 @@ std::vector<offset_signature> sigs{
 		&offsets::functions::translateString_UNSAFE_DONOTUSE
 	},
 	{
-		"E8 ? ? ? ? 85 C0 74 40", // add ecx, 4F8h
+		"E8 ? ? ? ? 39 44 24 1C 5F", // add ecx, 4F8h
 		true, false, 0,
 		&offsets::functions::GetGoldRedirectTarget
 	}
