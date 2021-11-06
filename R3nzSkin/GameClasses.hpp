@@ -40,17 +40,14 @@ public:
 		std::int32_t skin_id;
 		AString skin_name;
 	};
-private:
 	PAD(0x4);
-public:
 	AString champion_name;
 	PAD(0x48);
 	std::vector<Skin> skins;
-	PAD(0x8);
 };
 
 class ChampionManager {
-	PAD(0xC);
+	PAD(0x10);
 public:
 	std::vector<Champion*> champions;
 };
