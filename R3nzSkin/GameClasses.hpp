@@ -21,8 +21,8 @@ enum class GGameState_s : std::int32_t {
 };
 
 class GameClient {
-	PAD(0x8);
 public:
+	PAD(0x8);
 	GGameState_s game_state;
 };
 
@@ -33,24 +33,24 @@ public:
 	std::size_t capacity;
 };
 
-//class Champion {
-//public:
-//	class Skin {
-//	public:
-//		std::int32_t skin_id;
-//		AString skin_name;
-//	};
-//	PAD(0x4);
-//	AString champion_name;
-//	PAD(0x48);
-//	std::vector<Skin> skins;
-//};
-//
-//class ChampionManager {
-//	PAD(0x10);
-//public:
-//	std::vector<Champion*> champions;
-//};
+class Champion {
+public:
+	class Skin {
+	public:
+		std::int32_t skin_id;
+		AString skin_name;
+	};
+	PAD(0x4);
+	AString champion_name;
+	PAD(0x48);
+	std::vector<Skin> skins;
+};
+
+class ChampionManager {
+public:
+	PAD(0x18);
+	std::vector<Champion*> champions;
+};
 
 class CharacterStackData {
 public:
@@ -99,8 +99,8 @@ public:
 
 template <class T>
 class ManagerTemplate {
-	PAD(0x4);
 public:
+	PAD(0x4);
 	T** list;
 	std::size_t length;
 	std::size_t capacity;
