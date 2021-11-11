@@ -6,7 +6,6 @@
 #include "Memory.hpp"
 #include "Offsets.hpp"
 
-#define SEE_ERROR 1
 
 std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) noexcept
 {
@@ -178,11 +177,9 @@ void Memory::Search(bool gameClient) noexcept
 
 			auto address{ find_signature(nullptr, sig.pattern.c_str()) };
 
-			if (address == nullptr) {
-#if SEE_ERROR
+			if (address == nullptr)
 				::MessageBoxA(nullptr, sig.pattern.c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
-#endif
-			} else {
+			else {
 				if (sig.read)
 					address = *reinterpret_cast<std::uint8_t**>(address + (sig.pattern.find_first_of("?") / 3));
 				else if (address[0] == 0xE8)
@@ -197,12 +194,7 @@ void Memory::Search(bool gameClient) noexcept
 				continue;
 			}
 		}
-
-#if SEE_ERROR
 	} catch (const std::exception& e) {
 		::MessageBoxA(nullptr, e.what(), "R3nzSkin", MB_OK | MB_ICONWARNING);
-#else
-	} catch (const std::exception&) {
-#endif
 	}
 }
