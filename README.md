@@ -32,6 +32,8 @@
 2. Press <kbd>Insert</kbd> to bring up the menu.
 3. Select skin for you, your teammates, enemies, wards.
 
+Note: If you are going to use the cheat on the China Server, you need to run the game as Legacy DirexctX9.
+
 # Further optimizations
 If your CPU supports AVX / AVX2 / AVX-512 instruction set, you can enable it in project settings. This should result in more performant code, optimized for your CPU. Currently SSE2 instructions are selected in project settings.
 
