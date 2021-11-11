@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "GameClasses.hpp"
@@ -75,7 +76,7 @@ std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) n
 
 class offset_signature {
 public:
-	std::string pattern;
+	std::vector<std::string> pattern;
 	bool sub_base;
 	bool read;
 	std::int32_t additional;
@@ -84,7 +85,7 @@ public:
 
 std::vector<offset_signature> gameClientSig{
 	{
-		"A1 ? ? ? ? 68 ? ? ? ? 8B 70 08", // mov eax, dword_
+		{ "A1 ? ? ? ? 68 ? ? ? ? 8B 70 08" }, // mov eax, dword_
 		true, true, 0,
 		&offsets::global::GameClient
 	}
@@ -92,73 +93,73 @@ std::vector<offset_signature> gameClientSig{
 
 std::vector<offset_signature> sigs{ 
 	{
-		"A1 ? ? ? ? 8B 54 24 28", // mov eax, dword_
+		{ "A1 ? ? ? ? 8B 54 24 28" }, // mov eax, dword_
 		true, true, 0,
 		&offsets::global::Player
 	},
 	{
-		"8B 0D ? ? ? ? 50 8D 44 24 18 C7 44 24 ? ? ? ? ?", // mov ecx, dword_
+		{ "8B 0D ? ? ? ? 50 8D 44 24 18 C7 44 24 ? ? ? ? ?" }, // mov ecx, dword_
 		true, true, 0,
 		&offsets::global::ManagerTemplate_AIHero_
 	},
 	{
-		"89 1D ? ? ? ? 57 8D 4B 08", // mov dword_, ebx
+		{ "89 1D ? ? ? ? 57 8D 4B 08" }, // mov dword_, ebx
 		true, true, 0,
 		&offsets::global::ChampionManager
 	},
 	{
-		"A1 ? ? ? ? 53 55 8B 6C 24 1C", // mov eax, dword_
+		{ "A1 ? ? ? ? 53 55 8B 6C 24 1C" }, // mov eax, dword_
 		true, true, 0,
 		&offsets::global::ManagerTemplate_AIMinionClient_ 
 	},
 	{
-		"3B 05 ? ? ? ? 75 72", // cmp eax, dword_
+		{ "3B 05 ? ? ? ? 75 72" }, // cmp eax, dword_
 		true, true, 0,
 		&offsets::global::Riot__g_window
 	},
 	{
-		"8D 8E ? ? ? ? FF 74 24 4C", // lea ecx, [esi+2BD0h]
+		{ "8D 8E ? ? ? ? FF 74 24 4C" }, // lea ecx, [esi+2BD0h]
 		false, true, 0,
 		&offsets::AIBaseCommon::CharacterDataStack
 	},
 	{
-		"80 BE ? ? ? ? ? 75 4D 0F 31", // cmp byte ptr [esi+0EFCh], 0
+		{ "80 BE ? ? ? ? ? 75 4D 0F 31" }, // cmp byte ptr [esi+0EFCh], 0
 		false, true, 0,
 		&offsets::AIBaseCommon::SkinId
 	},
 	{
-		"8B 86 ? ? ? ? 89 4C 24 08", // mov eax, [esi+208h]
+		{ "8B 86 ? ? ? ? 89 4C 24 08" }, // mov eax, [esi+208h]
 		false, true, 0,
 		&offsets::MaterialRegistry::D3DDevice
 	},
 #ifdef _RIOT
 	{
-		"8B 8E ? ? ? ? 52 57", // mov ecx, [esi+10Ch]
+		{ "8B 8E ? ? ? ? 52 57" }, // mov ecx, [esi+10Ch]
 		false, true, 0,
 		&offsets::MaterialRegistry::SwapChain
 	},
 #endif
 	{
-		"83 EC 50 53 55 56 57 8B F9 8B 47 04", // sub esp, 50h
+		{ "83 EC 50 53 55 56 57 8B F9 8B 47 04" }, // sub esp, 50h
 		true, false, 0,
 		&offsets::functions::CharacterDataStack__Push },
 	{
-		"E8 ? ? ? ? 8B 4E 7C 5E", // sub esp, 1Ch
+		{ "E8 ? ? ? ? 8B 4E 7C 5E" }, // sub esp, 1Ch
 		true, false, 0,
 		&offsets::functions::CharacterDataStack__Update
 	},
 	{
-		"E8 ? ? ? ? FF 73 58", // mov eax, dword_
+		{ "E8 ? ? ? ? FF 73 58" }, // mov eax, dword_
 		true, false, 0,
 		&offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
 	},
 	{
-		"E8 ? ? ? ? FF 75 FC 50", // mov ecx, [esp+arg_0]
+		{ "E8 ? ? ? ? FF 75 FC 50" }, // mov ecx, [esp+arg_0]
 		true, false, 0,
 		&offsets::functions::translateString_UNSAFE_DONOTUSE
 	},
 	{
-		"E8 ? ? ? ? 39 44 24 1C 5F", // add ecx, 4F8h
+		{ "E8 ? ? ? ? 39 44 24 1C 5F" }, // add ecx, 4F8h
 		true, false, 0,
 		&offsets::functions::GetGoldRedirectTarget
 	}
@@ -173,28 +174,45 @@ void Memory::Search(bool gameClient) noexcept
 		for (const auto& sig : signatureToSearch)
 			*sig.offset = 0;
 
-		for (const auto& sig : signatureToSearch) {
-			if (*sig.offset != 0)
-				continue;
+		while (true) {
+			bool missing_offset{ false };
+			for (auto& sig : signatureToSearch) {
 
-			auto address{ find_signature(nullptr, sig.pattern.c_str()) };
+				if (*sig.offset != 0)
+					continue;
 
-			if (address == nullptr)
-				::MessageBoxA(nullptr, sig.pattern.c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
-			else {
-				if (sig.read)
-					address = *reinterpret_cast<std::uint8_t**>(address + (sig.pattern.find_first_of("?") / 3));
-				else if (address[0] == 0xE8)
-					address = address + *reinterpret_cast<std::uint32_t*>(address + 1) + 5;
+				for (auto& pattern : sig.pattern) {
+					auto address{ find_signature(nullptr, pattern.c_str()) };
 
-				if (sig.sub_base)
-					address -= base;
-					
-				address += sig.additional;
+					if (!address) {
+						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+						continue;
+					}
 
-				*sig.offset = reinterpret_cast<std::uint32_t>(address);
-				continue;
+					if (sig.read)
+						address = *reinterpret_cast<uint8_t**>(address + (pattern.find_first_of("?") / 3));
+					else if (address[0] == 0xE8)
+						address = address + *reinterpret_cast<uint32_t*>(address + 1) + 5;
+
+					if (sig.sub_base)
+						address -= base;
+
+					address += sig.additional;
+
+					*sig.offset = reinterpret_cast<uintptr_t>(address);
+					break;
+				}
+
+				if (!*sig.offset) {
+					missing_offset = true;
+					break;
+				}
 			}
+
+			if (!missing_offset)
+				break;
+
+			std::this_thread::sleep_for(2s);
 		}
 	} catch (const std::exception& e) {
 		::MessageBoxA(nullptr, e.what(), "R3nzSkin", MB_OK | MB_ICONWARNING);
