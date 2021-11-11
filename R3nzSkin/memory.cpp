@@ -51,7 +51,7 @@ std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) n
 					if (!::VirtualQuery(reinterpret_cast<void*>(current_address), &mbi, sizeof(mbi)))
 						break;
 
-					if (mbi.Protect == PAGE_NOACCESS) {
+					if (mbi.Protect == PAGE_NOACCESS || mbi.State != MEM_COMMIT) {
 						i += ((reinterpret_cast<std::uintptr_t>(mbi.BaseAddress) + mbi.RegionSize) - (reinterpret_cast<std::uintptr_t>(scanBytes) + i));
 						i--;
 						found = false;
