@@ -14,12 +14,15 @@ void WINAPI DllAttach(HMODULE hModule) noexcept
 	auto client{ Memory::getClient() };
 
 	while (true) {
-		if (!client)
-			client = Memory::getClient();
-		else if (client->game_state == GGameState_s::Running)
-			break;
-
 		std::this_thread::sleep_for(1s);
+
+		if (!client) {
+			Memory::Search(true);
+			client = Memory::getClient();
+		} else {
+			if (client->game_state == GGameState_s::Running)
+				break;
+		}
 	}
 
 	GUI::is_open = true;

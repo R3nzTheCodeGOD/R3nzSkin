@@ -72,12 +72,15 @@ namespace d3d_vtable {
 	ID3D11RenderTargetView* main_render_target_view{ nullptr };
 	IDXGISwapChain* p_swap_chain{ nullptr };
 
-	void __stdcall create_render_target() noexcept
+	void WINAPI create_render_target() noexcept
 	{
-		ID3D11Texture2D* back_buffer;
+		ID3D11Texture2D* back_buffer{ nullptr };
 		p_swap_chain->GetBuffer(0u, IID_PPV_ARGS(&back_buffer));
-		d3d11_device->CreateRenderTargetView(back_buffer, NULL, &main_render_target_view);
-		back_buffer->Release();
+
+		if (back_buffer) {
+			d3d11_device->CreateRenderTargetView(back_buffer, NULL, &main_render_target_view);
+			back_buffer->Release();
+		}
 	}
 
 	void init_imgui(void* device, bool is_d3d11 = false) noexcept
@@ -223,11 +226,9 @@ namespace d3d_vtable {
 	}
 
 	struct dxgi_present {
-		static long __stdcall hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
+		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
 		{
-			std::call_once(init_device, [&]() {
-				init_imgui(p_swap_chain, true);
-			});
+			std::call_once(init_device, [&]() { init_imgui(p_swap_chain, true); });
 			render(p_swap_chain, true);
 			return m_original(p_swap_chain, sync_interval, flags);
 		}
@@ -236,10 +237,10 @@ namespace d3d_vtable {
 	decltype(dxgi_present::m_original) dxgi_present::m_original;
 
 	struct dxgi_resize_buffers {
-		static long __stdcall hooked(IDXGISwapChain* p_swap_chain, UINT buffer_count, UINT width, UINT height, DXGI_FORMAT new_format, UINT swap_chain_flags) noexcept
+		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT buffer_count, UINT width, UINT height, DXGI_FORMAT new_format, UINT swap_chain_flags) noexcept
 		{
 			if (main_render_target_view) { main_render_target_view->Release(); main_render_target_view = nullptr; }
-			auto hr = m_original(p_swap_chain, buffer_count, width, height, new_format, swap_chain_flags);
+			const auto hr{ m_original(p_swap_chain, buffer_count, width, height, new_format, swap_chain_flags) };
 			create_render_target();
 			return hr;
 		}
@@ -248,11 +249,9 @@ namespace d3d_vtable {
 	decltype(dxgi_resize_buffers::m_original) dxgi_resize_buffers::m_original;
 
 	struct end_scene {
-		static long __stdcall hooked(IDirect3DDevice9* p_device) noexcept
+		static long WINAPI hooked(IDirect3DDevice9* p_device) noexcept
 		{
-			std::call_once(init_device, [&]() {
-				init_imgui(p_device);
-			});
+			std::call_once(init_device, [&]() { init_imgui(p_device); });
 			render(p_device);
 			return m_original(p_device);
 		}
@@ -261,10 +260,10 @@ namespace d3d_vtable {
 	decltype(end_scene::m_original) end_scene::m_original;
 
 	struct reset {
-		static long __stdcall hooked(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* parametrs) noexcept
+		static long WINAPI hooked(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* parametrs) noexcept
 		{
 			::ImGui_ImplDX9_InvalidateDeviceObjects();
-			auto hr = m_original(device, parametrs);
+			const auto hr{ m_original(device, parametrs) };
 			if (hr >= 0)
 				::ImGui_ImplDX9_CreateDeviceObjects();
 			return hr;
