@@ -225,6 +225,7 @@ namespace d3d_vtable {
 		}
 	}
 
+#ifdef _RIOT
 	struct dxgi_present {
 		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
 		{
@@ -247,6 +248,7 @@ namespace d3d_vtable {
 		static decltype(&hooked) m_original;
 	};
 	decltype(dxgi_resize_buffers::m_original) dxgi_resize_buffers::m_original;
+#endif
 
 	struct end_scene {
 		static long WINAPI hooked(IDirect3DDevice9* p_device) noexcept
@@ -342,17 +344,23 @@ void WINAPI Hooks::install() noexcept
 {
 	const auto material_registry{ reinterpret_cast<std::uintptr_t(__stdcall*)()>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)() };
 	const auto d3d_device{ *reinterpret_cast<IDirect3DDevice9**>(material_registry + offsets::MaterialRegistry::D3DDevice) };
+#ifdef _RIOT
 	const auto swap_chain{ *reinterpret_cast<IDXGISwapChain**>(material_registry + offsets::MaterialRegistry::SwapChain) };
+#endif
 
 	if (d3d_device) {
 		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(d3d_device);
 		d3d_device_vmt->apply_hook<d3d_vtable::end_scene>(42);
 		d3d_device_vmt->apply_hook<d3d_vtable::reset>(16);
-	} else if (swap_chain) {
+	}
+
+#ifdef _RIOT
+	else if (swap_chain) {
 		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(swap_chain);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_present>(8);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_resize_buffers>(13);
 	}
+#endif
 }
 
 void WINAPI Hooks::uninstall() noexcept

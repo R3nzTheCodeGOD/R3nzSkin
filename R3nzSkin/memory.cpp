@@ -131,11 +131,13 @@ std::vector<offset_signature> sigs{
 		false, true, 0,
 		&offsets::MaterialRegistry::D3DDevice
 	},
+#ifdef _RIOT
 	{
 		"8B 8E ? ? ? ? 52 57", // mov ecx, [esi+10Ch]
 		false, true, 0,
 		&offsets::MaterialRegistry::SwapChain
 	},
+#endif
 	{
 		"83 EC 50 53 55 56 57 8B F9 8B 47 04", // sub esp, 50h
 		true, false, 0,
