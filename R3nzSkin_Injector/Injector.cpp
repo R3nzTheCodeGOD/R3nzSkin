@@ -1,8 +1,9 @@
 #include <Windows.h>
+#include <fstream>
 #include <psapi.h>
+#include <string>
 #include <thread>
 #include <tlhelp32.h>
-#include <securitybaseapi.h>
 
 #include "Injector.hpp"
 #include "R3nzUI.hpp"
@@ -79,6 +80,13 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 		std::this_thread::sleep_for(std::chrono::seconds(delta));
 
 	auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
+
+	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
+		MessageBox(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
+		::CloseHandle(handle);
+		return false;
+	}
+
 	auto dll_path_remote{ ::VirtualAllocEx(handle, nullptr, (dll_path.size() + 1) * sizeof(wchar_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
 
 	if (!dll_path_remote) {
@@ -87,22 +95,22 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	}
 
 	if (!::WriteProcessMemory(handle, dll_path_remote, dll_path.data(), (dll_path.size() + 1) * sizeof(wchar_t), nullptr)) {
-		::VirtualFreeEx(handle, dll_path_remote, 0, MEM_RELEASE);
+		::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
 		::CloseHandle(handle);
 		return false;
 	}
 
-	const auto thread{ ::CreateRemoteThread(handle, nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::LoadLibrary(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, 0, nullptr) };
+	const auto thread{ ::CreateRemoteThread(handle, nullptr, 0u, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::LoadLibrary(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, 0, nullptr) };
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
-		::VirtualFreeEx(handle, dll_path_remote, 0, MEM_RELEASE);
+		::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
 		::CloseHandle(handle);
 		return false;
 	}
 
 	::WaitForSingleObject(thread, INFINITE);
 	::CloseHandle(thread);
-	::VirtualFreeEx(handle, dll_path_remote, 0, MEM_RELEASE);
+	::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
 	::CloseHandle(handle);
 	return true;
 }
@@ -118,7 +126,7 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 			tp.PrivilegeCount = 1;
 			tp.Privileges[0].Luid = value;
 			tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-			if (::AdjustTokenPrivileges(token, 0, &tp, sizeof(tp), 0, 0))
+			if (::AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), NULL, NULL))
 				::CloseHandle(token);
 		}
 	}
@@ -137,6 +145,7 @@ void Injector::run() noexcept
 
 		for (auto& pid : league_processes) {
 			if (!Injector::isInjected(pid)) {
+				R3nzSkinInjector::cheatState = false;
 				if (R3nzSkinInjector::btnState) {
 					if (Injector::inject(pid))
 						R3nzSkinInjector::cheatState = true;
@@ -144,8 +153,7 @@ void Injector::run() noexcept
 						R3nzSkinInjector::cheatState = false;
 				}
 				std::this_thread::sleep_for(1s);
-			}
-			else {
+			} else {
 				R3nzSkinInjector::cheatState = true;
 			}
 		}
