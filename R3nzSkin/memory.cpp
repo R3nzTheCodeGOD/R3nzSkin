@@ -80,7 +80,7 @@ public:
 	bool sub_base;
 	bool read;
 	std::int32_t additional;
-	std::uintptr_t* offset;
+	std::uint32_t* offset;
 };
 
 std::vector<offset_signature> gameClientSig{
@@ -98,7 +98,8 @@ std::vector<offset_signature> gameClientSig{
 std::vector<offset_signature> sigs{ 
 	{
 		{
-			"A1 ? ? ? ? 8B 54 24 28",
+			"8B 3D ? ? ? ? 3B F7 75 09",
+			"A1 ? ? ? ? 8B 54 24 28 85 C0",
 			"8B 0D ? ? ? ? 85 C9 0F 84 ? ? ? ? 83 7E 10 00"
 		},
 		true, true, 0,
@@ -133,8 +134,7 @@ std::vector<offset_signature> sigs{
 	{
 		{
 			"3B 05 ? ? ? ? 75 72",
-			"FF 35 ? ? ? ? E8 ? ? ? ? 83 C4 0C 80 7E 2C 00",
-			"FF 35 ? ? ? ? 8B CE E8 ? ? ? ? 8D 44 24 04"
+			"FF 35 ? ? ? ? E8 ? ? ? ? 83 C4 0C 80 7E 2C 00"
 		},
 		true, true, 0,
 		&offsets::global::Riot__g_window
@@ -186,7 +186,6 @@ std::vector<offset_signature> sigs{
 		{
 			"E8 ? ? ? ? FF 75 38",
 			"E8 ? ? ? ? FF 73 58",
-			"E8 ? ? ? ? C7 47 ? ? ? ? ? E8 ? ? ? ?"
 		},
 		true, false, 0,
 		&offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
@@ -213,7 +212,7 @@ std::vector<offset_signature> sigs{
 void Memory::Search(bool gameClient) noexcept
 {
 	try {
-		static const auto base{ Memory::getLeagueModule() };
+		const auto base{ Memory::getLeagueModule() };
 		const auto& signatureToSearch{ (gameClient ? gameClientSig : sigs) };
 
 		for (const auto& sig : signatureToSearch)
@@ -244,7 +243,7 @@ void Memory::Search(bool gameClient) noexcept
 
 					address += sig.additional;
 
-					*sig.offset = reinterpret_cast<uintptr_t>(address);
+					*sig.offset = reinterpret_cast<uint32_t>(address);
 					break;
 				}
 
