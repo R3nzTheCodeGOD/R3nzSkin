@@ -296,9 +296,12 @@ void Hooks::init() noexcept
 			if (hero == player)
 				continue;
 
+			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+			if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
+				continue;
+
 			const auto is_enemy{ my_team != hero->get_team() };
 			const auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
-			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
 			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
 				continue;

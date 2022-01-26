@@ -22,6 +22,44 @@ void TextCenter(const std::string text) noexcept
 	ImGui::Text(text.c_str());
 }
 
+void __fastcall rainbowText() noexcept
+{
+	static float r{ 1.0f };
+	static float g{ 0.f };
+	static float b{ 0.f };
+
+	if (Config::config.rainbowText) {
+		if (r == 1.f && g >= 0.f && b <= 0.f) {
+			g += 0.005f;
+			b = 0.f;
+		}
+		if (r <= 1.f && g >= 1.f && b == 0.f) {
+			g = 1.f;
+			r -= 0.005f;
+		}
+		if (r <= 0.f && g == 1.f && b >= 0.f) {
+			r = 0.f;
+			b += 0.005f;
+		}
+		if (r == 0.f && g <= 1.f && b >= 1.f) {
+			b = 1.f;
+			g -= 0.005f;
+		}
+		if (r >= 0.f && g <= 0.f && b == 1.f) {
+			g = 0.f;
+			r += 0.005f;
+		}
+		if (r >= 1.f && g >= 0.f && b <= 1.f) {
+			r = 1.f;
+			b -= 0.005f;
+		}
+		ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(r, g, b, 1.00f);
+	} else {
+		if (auto& clr{ ImGui::GetStyle().Colors[ImGuiCol_Text] }; clr.x != 0.92f && clr.y != 0.92f && clr.z != 0.92f)
+			clr = ImVec4(0.92f, 0.92f, 0.92f, 0.92f);
+	}
+}
+
 char str_buffer[256];
 void GUI::render() noexcept
 {
@@ -30,39 +68,8 @@ void GUI::render() noexcept
 		static const auto player{ Memory::getLocalPlayer() };
 		static const auto heroes{ Memory::getHeroes() };
 		static const auto my_team{ player ? player->get_team() : 100 };
-		static float r{ 1.0f };
-		static float g{ 0.f };
-		static float b{ 0.f };
 
-		if (Config::config.rainbowText) {
-			if (r == 1.f && g >= 0.f && b <= 0.f) {
-				g += 0.005f;
-				b = 0.f;
-			}
-			if (r <= 1.f && g >= 1.f && b == 0.f) {
-				g = 1.f;
-				r -= 0.005f;
-			}
-			if (r <= 0.f && g == 1.f && b >= 0.f) {
-				r = 0.f;
-				b += 0.005f;
-			}
-			if (r == 0.f && g <= 1.f && b >= 1.f) {
-				b = 1.f;
-				g -= 0.005f;
-			}
-			if (r >= 0.f && g <= 0.f && b == 1.f) {
-				g = 0.f;
-				r += 0.005f;
-			}
-			if (r >= 1.f && g >= 0.f && b <= 1.f) {
-				r = 1.f;
-				b -= 0.005f;
-			}
-			ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(r, g, b, 1.00f);
-		} else
-			if (auto& clr{ ImGui::GetStyle().Colors[ImGuiCol_Text] }; clr.x != 0.92f && clr.y != 0.92f && clr.z != 0.92f)
-				clr = ImVec4(0.92f, 0.92f, 0.92f, 0.92f);
+		rainbowText();
 
 		static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) {
 			const auto& vector{ *static_cast<std::vector<SkinDatabase::skin_info>*>(vec) };
@@ -96,7 +103,12 @@ void GUI::render() noexcept
 		int32_t last_team{ 0 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
+			
 			if (hero == player)
+				continue;
+
+			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+			if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
 				continue;
 
 			const auto hero_team{ hero->get_team() };
@@ -113,7 +125,6 @@ void GUI::render() noexcept
 			}
 
 			auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
-			const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
 			const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
 			snprintf(str_buffer, 256, Config::config.heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", Config::config.heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
