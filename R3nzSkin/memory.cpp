@@ -134,6 +134,7 @@ std::vector<offset_signature> sigs{
 	{
 		{
 			"3B 05 ? ? ? ? 75 72",
+			"A3 ? ? ? ? 6A 64 6A 00",
 			"FF 35 ? ? ? ? E8 ? ? ? ? 83 C4 0C 80 7E 2C 00"
 		},
 		true, true, 0,
@@ -155,7 +156,11 @@ std::vector<offset_signature> sigs{
 	},
 	{
 		{
-			"8B 86 ? ? ? ? 89 4C 24 08"
+			"8B B7 ? ? ? ? FF 70 28",
+			"8B 8F ? ? ? ? 88 A7 ? ? ? ?",
+			"8B 8E ? ? ? ? D1 E8",
+			"8B 86 ? ? ? ? 89 4C 24 08",
+			"8B 8E ? ? ? ? C1 E8 02",
 		},
 		false, true, 0,
 		&offsets::MaterialRegistry::D3DDevice
@@ -163,6 +168,8 @@ std::vector<offset_signature> sigs{
 #ifdef _RIOT
 	{
 		{
+			"8B 95 ? ? ? ? 0F 10 44 24 ?",
+			"8D 9F ? ? ? ? 0F 84 ? ? ? ?",
 			"8B 8E ? ? ? ? 52 57"
 		},
 		false, true, 0,
@@ -177,6 +184,7 @@ std::vector<offset_signature> sigs{
 		&offsets::functions::CharacterDataStack__Push },
 	{
 		{
+			"E8 ? ? ? ? 5F 5E 5B 83 C4 44",
 			"E8 ? ? ? ? 8B 4E 7C 5E"
 		},
 		true, false, 0,
