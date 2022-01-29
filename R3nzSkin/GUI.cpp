@@ -101,6 +101,7 @@ void GUI::render() noexcept
 			Hooks::uninstall();
 
 		ImGui::Separator();
+		ImGui::textUnformattedCentered((std::string("Last Build: ") + __DATE__ + " - " + __TIME__).c_str());
 		ImGui::textUnformattedCentered("Copyright (C) 2021 R3nzTheCodeGOD");
 	}
 	ImGui::End();
