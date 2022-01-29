@@ -124,7 +124,7 @@ public:
 
     bool setToPressedKey() noexcept;
 private:
-    KeyCode keyCode = KeyCode::NONE;
+    KeyCode keyCode{ KeyCode::NONE };
 };
 
 class KeyBindToggle : public KeyBind {
@@ -141,4 +141,5 @@ namespace ImGui
 {
 	void textUnformattedCentered(const char* text) noexcept;
 	void rainbowText() noexcept;
+    void hotkey(const char* label, KeyBind& key, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept;
 };

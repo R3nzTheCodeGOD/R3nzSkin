@@ -131,7 +131,7 @@ KeyBind::KeyBind(KeyCode keyCode) noexcept : keyCode{ static_cast<std::size_t>(k
 
 KeyBind::KeyBind(const char* keyName) noexcept
 {
-    if (const auto it = std::ranges::lower_bound(keyMap, keyName, {}, &Key::name); it != keyMap.end() && it->name == keyName)
+    if (const auto it{ std::ranges::lower_bound(keyMap, keyName, {}, &Key::name) }; it != keyMap.end() && it->name == keyName)
         keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
     else
         keyCode = KeyCode::NONE;
@@ -181,28 +181,26 @@ bool KeyBind::setToPressedKey() noexcept
     if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Escape])) {
         keyCode = KeyCode::NONE;
         return true;
-    }
-    else if (ImGui::GetIO().MouseWheel < 0.0f) {
+    } else if (ImGui::GetIO().MouseWheel < 0.0f) {
         keyCode = KeyCode::MOUSEWHEEL_DOWN;
         return true;
-    }
-    else if (ImGui::GetIO().MouseWheel > 0.0f) {
+    } else if (ImGui::GetIO().MouseWheel > 0.0f) {
         keyCode = KeyCode::MOUSEWHEEL_UP;
         return true;
     }
 
-    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
+    for (auto i{ 0u }; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
         if (ImGui::IsMouseClicked(i)) {
             keyCode = KeyCode(KeyCode::MOUSE1 + i);
             return true;
         }
     }
 
-    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
+    for (auto i{ 0u }; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
         if (!ImGui::IsKeyPressed(i))
             continue;
 
-        if (const auto it = std::ranges::find(keyMap, i, &Key::code); it != keyMap.end()) {
+        if (const auto it{ std::ranges::find(keyMap, i, &Key::code) }; it != keyMap.end()) {
             keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
             if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
                 keyCode = KeyCode::RALT;
@@ -260,4 +258,27 @@ void ImGui::rainbowText() noexcept
 		if (auto& clr{ ImGui::GetStyle().Colors[ImGuiCol_Text] }; clr.x != 0.92f && clr.y != 0.92f && clr.z != 0.92f)
 			clr = ImVec4(0.92f, 0.92f, 0.92f, 0.92f);
 	}
+}
+
+void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
+{
+    const auto id{ GetID(label) };
+    PushID(label);
+
+    TextUnformatted(label);
+    SameLine(samelineOffset);
+
+    if (GetActiveID() == id) {
+        PushStyleColor(ImGuiCol_Button, GetColorU32(ImGuiCol_ButtonActive));
+        Button("...", size);
+        PopStyleColor();
+
+        GetCurrentContext()->ActiveIdAllowOverlap = true;
+        if ((!IsItemHovered() && GetIO().MouseClicked[0]) || key.setToPressedKey())
+            ClearActiveID();
+    } else if (Button(key.toString(), size)) {
+        SetActiveID(id, GetCurrentWindow());
+    }
+
+    PopID();
 }
