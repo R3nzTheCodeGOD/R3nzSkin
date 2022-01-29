@@ -124,6 +124,9 @@ static constexpr auto keyMap = std::to_array<Key>({
     { "`", VK_OEM_3 }
 });
 
+static_assert(keyMap.size() == KeyBind::MAX);
+static_assert(std::ranges::is_sorted(keyMap, {}, &Key::name));
+
 void ImGui::textUnformattedCentered(const char* text) noexcept
 {
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(text).x) / 2.0f);
