@@ -127,6 +127,97 @@ static constexpr auto keyMap = std::to_array<Key>({
 static_assert(keyMap.size() == KeyBind::MAX);
 static_assert(std::ranges::is_sorted(keyMap, {}, &Key::name));
 
+KeyBind::KeyBind(KeyCode keyCode) noexcept : keyCode{ static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE } {  }
+
+KeyBind::KeyBind(const char* keyName) noexcept
+{
+    if (const auto it = std::ranges::lower_bound(keyMap, keyName, {}, &Key::name); it != keyMap.end() && it->name == keyName)
+        keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+    else
+        keyCode = KeyCode::NONE;
+}
+
+const char* KeyBind::toString() const noexcept
+{
+    return keyMap[static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE].name.data();
+}
+
+bool KeyBind::isPressed() const noexcept
+{
+    if (keyCode == KeyCode::NONE)
+        return false;
+
+    if (keyCode == KeyCode::MOUSEWHEEL_DOWN)
+        return ImGui::GetIO().MouseWheel < 0.0f;
+
+    if (keyCode == KeyCode::MOUSEWHEEL_UP)
+        return ImGui::GetIO().MouseWheel > 0.0f;
+
+    if (keyCode >= KeyCode::MOUSE1 && keyCode <= KeyCode::MOUSE5)
+        return ImGui::IsMouseClicked(keyMap[keyCode].code);
+
+    return static_cast<std::size_t>(keyCode) < keyMap.size() && ImGui::IsKeyPressed(keyMap[keyCode].code, false);
+}
+
+bool KeyBind::isDown() const noexcept
+{
+    if (keyCode == KeyCode::NONE)
+        return false;
+
+    if (keyCode == KeyCode::MOUSEWHEEL_DOWN)
+        return ImGui::GetIO().MouseWheel < 0.0f;
+
+    if (keyCode == KeyCode::MOUSEWHEEL_UP)
+        return ImGui::GetIO().MouseWheel > 0.0f;
+
+    if (keyCode >= KeyCode::MOUSE1 && keyCode <= KeyCode::MOUSE5)
+        return ImGui::IsMouseDown(keyMap[keyCode].code);
+
+    return static_cast<std::size_t>(keyCode) < keyMap.size() && ImGui::IsKeyDown(keyMap[keyCode].code);
+}
+
+bool KeyBind::setToPressedKey() noexcept
+{
+    if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Escape])) {
+        keyCode = KeyCode::NONE;
+        return true;
+    }
+    else if (ImGui::GetIO().MouseWheel < 0.0f) {
+        keyCode = KeyCode::MOUSEWHEEL_DOWN;
+        return true;
+    }
+    else if (ImGui::GetIO().MouseWheel > 0.0f) {
+        keyCode = KeyCode::MOUSEWHEEL_UP;
+        return true;
+    }
+
+    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
+        if (ImGui::IsMouseClicked(i)) {
+            keyCode = KeyCode(KeyCode::MOUSE1 + i);
+            return true;
+        }
+    }
+
+    for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
+        if (!ImGui::IsKeyPressed(i))
+            continue;
+
+        if (const auto it = std::ranges::find(keyMap, i, &Key::code); it != keyMap.end()) {
+            keyCode = static_cast<KeyCode>(std::distance(keyMap.begin(), it));
+            if (keyCode == KeyCode::LCTRL && ImGui::IsKeyPressed(keyMap[KeyCode::RALT].code))
+                keyCode = KeyCode::RALT;
+            return true;
+        }
+    }
+    return false;
+}
+
+void KeyBindToggle::handleToggle() noexcept
+{
+    if (isPressed())
+        toggledOn = !toggledOn;
+}
+
 void ImGui::textUnformattedCentered(const char* text) noexcept
 {
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(text).x) / 2.0f);
