@@ -14,13 +14,7 @@
 #include "Memory.hpp"
 #include "Offsets.hpp"
 #include "SkinDatabase.hpp"
-
-void TextCenter(const std::string text) noexcept
-{
-	const auto font_size{ (ImGui::GetFontSize() * (text.size() / 2)) };
-	ImGui::SameLine(ImGui::GetWindowSize().x / 2 - font_size + (font_size / 2));
-	ImGui::Text(text.c_str());
-}
+#include "Utils.hpp"
 
 void __fastcall rainbowText() noexcept
 {
@@ -144,8 +138,7 @@ void GUI::render() noexcept
 			Hooks::uninstall();
 
 		ImGui::Separator();
-		TextCenter("Copyright (C) 2021 R3nzTheCodeGOD");
-
+		ImGui::textUnformattedCentered("Copyright (C) 2021 R3nzTheCodeGOD");
 	}
 	ImGui::End();
 }
