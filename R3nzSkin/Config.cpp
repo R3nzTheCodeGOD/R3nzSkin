@@ -17,6 +17,7 @@ void Config::save() noexcept
 	if (player)
 		config_json[std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index"] = config.current_combo_skin_index;
 
+	config_json["menuKey"] = config.menuKey.toString();
 	config_json["heroName"] = config.heroName;
 	config_json["raibowText"] = config.rainbowText;
 	config_json["current_combo_ward_index"] = config.current_combo_ward_index;
@@ -45,6 +46,7 @@ void Config::load() noexcept
 	if (player)
 		config.current_combo_skin_index = config_json.value(std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index", 0);
 	
+	config.menuKey = KeyBind(config_json.value("menuKey", "INSERT").c_str());
 	config.heroName = config_json.value("heroName", true);
 	config.rainbowText = config_json.value("raibowText", false);
 	config.current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
@@ -65,6 +67,7 @@ void Config::load() noexcept
 
 void Config::reset() noexcept
 {
+	config.menuKey = KeyBind(KeyBind::INSERT);
 	config.heroName = true;
 	config.rainbowText = true;
 	config.current_combo_skin_index = 0;

@@ -142,6 +142,11 @@ const char* KeyBind::toString() const noexcept
     return keyMap[static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE].name.data();
 }
 
+int KeyBind::getKey() const noexcept
+{
+    return keyMap[static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE].code;
+}
+
 bool KeyBind::isPressed() const noexcept
 {
     if (keyCode == KeyCode::NONE)

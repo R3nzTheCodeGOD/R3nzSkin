@@ -5,10 +5,13 @@
 
 #include "json/json.hpp"
 
+#include "Utils.hpp"
+
 using json = nlohmann::json;
 
 namespace Config {
 	struct cfg {
+		KeyBind menuKey{ KeyBind(KeyBind::INSERT) };
 		bool rainbowText{ false };
 		bool heroName{ true };
 		std::int32_t current_combo_skin_index{ 0 };

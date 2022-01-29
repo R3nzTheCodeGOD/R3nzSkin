@@ -29,11 +29,12 @@ LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noex
 	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
 
-	if (msg == WM_KEYDOWN && wParam == VK_INSERT) {
+	if (msg == WM_KEYDOWN && wParam == Config::config.menuKey.getKey()) {
 		GUI::is_open = !GUI::is_open;
 		if (!GUI::is_open)
 			Config::save();
 	}
+
 	return ::CallWindowProcW(originalWndProc, window, msg, wParam, lParam);
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui/imgui.h"
+
 class KeyBind {
 public:
     enum KeyCode : unsigned char {
@@ -118,6 +120,7 @@ public:
     friend bool operator==(const KeyBind& a, const KeyBind& b) noexcept { return a.keyCode == b.keyCode; }
 
     const char* toString() const noexcept;
+    int getKey() const noexcept;
     bool isPressed() const noexcept;
     bool isDown() const noexcept;
     bool isSet() const noexcept { return keyCode != KeyCode::NONE; }
