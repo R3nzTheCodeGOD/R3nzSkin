@@ -48,7 +48,7 @@ def forward_data(hero_skin: dict):
 if os.path.exists(lolskin_config_path):
     hero_skin = skin_to_dictionary(lolskin_config_path)
 else:
-    lolskin_config_path = input("lolskin配置文件 举例:Fraps\data\My\Config.ini")
+    lolskin_config_path = input("lolskin配置文件 举例:\t" + lolskin_config_path + "\n")
 to_skin = forward_data(hero_skin=hero_skin)
 # print(to_skin)
 
