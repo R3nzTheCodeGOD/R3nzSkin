@@ -4,7 +4,7 @@ import os
 # from json_merger import Merger
 # from json_merger.config import UnifierOps, DictMergerOps
 
-lolskin_config_path = "C:\Fraps\data\My\Config.ini"
+lolskin_config_path = r"C:\Fraps\data\My\Config.ini"
 
 
 def skin_to_dictionary(path):
@@ -15,10 +15,10 @@ def skin_to_dictionary(path):
     for k, v in config.items():
         ini_dict[k] = dict(config.items(k))
     # print(ini_dict)
-    hero_skin = ini_dict["SKIN_CHAMPION_ACTIVED"]
-    del hero_skin['custom_file']
+    lolskin_hero_skin = ini_dict["SKIN_CHAMPION_ACTIVED"]
+    del lolskin_hero_skin['custom_file']
 
-    return hero_skin
+    return lolskin_hero_skin
 
 
 def forward_data(hero_skin: dict):
@@ -44,17 +44,18 @@ def forward_data(hero_skin: dict):
 #     # print(skin_json)
 #     return skin_json
 
+if __name__ == '__main__':
+    if os.path.exists(lolskin_config_path):
+        hero_skin = skin_to_dictionary(lolskin_config_path)
+    else:
+        lolskin_config_path = input(
+            "lolskin配置文件 举例:\t" + lolskin_config_path + "\n")
+    to_skin = forward_data(hero_skin=hero_skin)
+    # print(to_skin)
 
-if os.path.exists(lolskin_config_path):
-    hero_skin = skin_to_dictionary(lolskin_config_path)
-else:
-    lolskin_config_path = input("lolskin配置文件 举例:\t" + lolskin_config_path + "\n")
-to_skin = forward_data(hero_skin=hero_skin)
-# print(to_skin)
-
-json_str = json.dumps(to_skin)
-print("JSON 对象：", json_str)
-with open('data.json', 'w') as fp:
-    json.dump(to_skin, fp)
+    json_str = json.dumps(to_skin)
+    print("JSON 对象：", json_str)
+    with open('data.json', 'w', encoding="utf-8") as fp:
+        json.dump(to_skin, fp)
 
 # TODO合并json文件
