@@ -9,8 +9,8 @@
 bool AIBaseCommon::skin_model_push(const char* model, std::int32_t skin) noexcept
 {
 	const auto champ_name{ fnv::hash_runtime(this->get_character_data_stack()->base_skin.model.str) };
-	if (champ_name == FNV("Lux")) {
-		if (skin == 7 && champ_name == FNV("Lux")) {
+	if (champ_name == FNV("Lux") || champ_name == FNV("Sona")) {
+		if ((skin == 7 && champ_name == FNV("Lux")) || (skin == 6 && champ_name == FNV("Sona"))) {
 			this->get_character_data_stack()->stack.clear();
 			this->get_character_data_stack()->push(model, skin);
 			return true;
