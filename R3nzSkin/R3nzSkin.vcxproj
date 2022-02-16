@@ -139,6 +139,7 @@
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Offsets.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SDK\GameState.hpp" />
     <ClInclude Include="SkinDatabase.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="vmt_smart_hook.hpp" />
