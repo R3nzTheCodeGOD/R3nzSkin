@@ -1,3 +1,6 @@
+#pragma warning(disable : 6387)
+#pragma warning(disable : 4715)
+
 #include <Windows.h>
 #include <chrono>
 #include <cstdint>
@@ -10,9 +13,26 @@
 
 #include "SDK/GameState.hpp"
 
-static void WINAPI DllAttach(HMODULE hModule) noexcept
+bool NTAPI HideThread(HANDLE hThread) noexcept
+{
+	__try {
+		static const auto NtSetInformationThread{ reinterpret_cast<NTSTATUS(NTAPI*)(HANDLE, UINT, PVOID, ULONG)>(GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtSetInformationThread")) };
+
+		if (NtSetInformationThread == NULL)
+			return false;
+
+		if (const auto status{ NtSetInformationThread(hThread, 0x11u, NULL, 0ul) }; status == 0x00000000)
+			return true;
+	} __except (TRUE) {
+		return false;
+	}
+}
+
+static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 {
 	using namespace std::chrono_literals;
+
+	HideThread(::GetCurrentThread());
 
 	Memory::Search(true);
 	auto client{ Memory::getClient() };
@@ -40,22 +60,16 @@ static void WINAPI DllAttach(HMODULE hModule) noexcept
 	while (run)
 		std::this_thread::sleep_for(250ms);
 
-	::FreeLibraryAndExitThread(hModule, 0);
+	::ExitProcess(0u);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 {
-	if (hModule) {
-		::DisableThreadLibraryCalls(hModule);
-	} else {
-		::MessageBoxA(nullptr, "Not found hModule", "R3nzSkin", MB_OK | MB_ICONWARNING);
-		return FALSE;
-	}
+	HideThread(hModule);
 
 	if (reason == DLL_PROCESS_ATTACH) {
-		if (const auto hThread{ ::CreateThread(nullptr, 0u, reinterpret_cast<LPTHREAD_START_ROUTINE>(DllAttach), hModule, 0ul, nullptr) }; hThread)
-			::CloseHandle(hThread);
-
+		::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
+		::CloseHandle(hModule);
 		return TRUE;
 	}
 

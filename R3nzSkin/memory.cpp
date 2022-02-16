@@ -1,3 +1,5 @@
+#pragma warning(disable: 28182)
+
 #include <Windows.h>
 #include <chrono>
 #include <cstdint>

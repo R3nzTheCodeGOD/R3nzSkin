@@ -96,7 +96,7 @@ void GUI::render() noexcept
 		ImGui::Checkbox(Config::config.heroName ? "HeroName based" : "PlayerName based", &Config::config.heroName);
 		ImGui::Text("FPS: %.0f FPS", ImGui::GetIO().Framerate);
 		
-		if (ImGui::Button("UnHook"))
+		if (ImGui::Button("Force Close"))
 			Hooks::uninstall();
 
 		ImGui::Separator();
