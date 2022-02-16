@@ -115,6 +115,7 @@
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="R3nzSkin.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="SDK\CharacterDataStack.cpp" />
     <ClCompile Include="SkinDatabase.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="SDK\AString.hpp" />
     <ClInclude Include="SDK\Champion.hpp" />
     <ClInclude Include="SDK\ChampionManager.hpp" />
+    <ClInclude Include="SDK\CharacterDataStack.hpp" />
     <ClInclude Include="SDK\CharacterStackData.hpp" />
     <ClInclude Include="SDK\GameClient.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
