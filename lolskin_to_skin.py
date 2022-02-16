@@ -18,7 +18,7 @@ def skin_to_dictionary(path):
 
 
 def forward_data(lolskin_hero_skin: dict):
-    # 处理为skin++数据
+    # Convert lolskin's skin data to R3nzSkin
     dict_from_list = {}
 
     for key, value in lolskin_hero_skin.items():
