@@ -40,7 +40,3 @@ namespace offsets {
 		inline std::uint32_t GetGoldRedirectTarget{ 0 };
 	};
 };
-
-// oIsAlive	 = "56 8B F1 8B 06 8B 80 ? ? ? ? FF D0 84 C0 74 19"
-// oIsHero	 = "E8 ? ? ? ? 83 C4 04 84 C0 74 2B 57"
-// oRenderer = "8B 15 ? ? ? ? 83 EC 08 F3"

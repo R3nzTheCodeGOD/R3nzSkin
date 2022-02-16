@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <intrin.h>
-#include <stdio.h>
 
 #pragma pack(push, 4)
 template <typename T>
