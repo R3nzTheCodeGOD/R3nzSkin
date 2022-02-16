@@ -158,13 +158,16 @@
     <ClInclude Include="SDK\GameState.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Pad.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\GameClient.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\AString.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Pad.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Skin.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
   </ItemGroup>
