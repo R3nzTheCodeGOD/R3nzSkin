@@ -15,7 +15,7 @@
 #include "SkinDatabase.hpp"
 #include "Utils.hpp"
 
-char str_buffer[256];
+char str_buffer[128];
 void GUI::render() noexcept
 {
 	ImGui::Begin("R3nzSkin", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize);
@@ -24,16 +24,16 @@ void GUI::render() noexcept
 		static const auto heroes{ Memory::getHeroes() };
 		static const auto my_team{ player ? player->get_team() : 100 };
 
-		static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) {
+		static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
 			const auto& vector{ *static_cast<std::vector<SkinDatabase::skin_info>*>(vec) };
-			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) { return false; }
+			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
 			*out_text = idx == 0 ? "Default" : vector.at(idx - 1).skin_name.c_str();
 			return true;
 		};
 
-		static const auto vector_getter_ward_skin = [](void* vec, std::int32_t idx, const char** out_text) {
+		static const auto vector_getter_ward_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
 			const auto& vector{ *static_cast<std::vector<std::pair<std::int32_t, std::string>>*>(vec) };
-			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) { return false; }
+			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
 			*out_text = idx == 0 ? "Default" : vector.at(idx - 1).second.c_str();
 			return true;
 		};
@@ -55,7 +55,7 @@ void GUI::render() noexcept
 		}
 
 		ImGui::Text("Other Champs Skins Settings:");
-		int32_t last_team{ 0 };
+		std::int32_t last_team{ 0 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
 			
@@ -82,7 +82,7 @@ void GUI::render() noexcept
 			auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
 			const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-			snprintf(str_buffer, 256, Config::config.heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", Config::config.heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
+			snprintf(str_buffer, sizeof(str_buffer), Config::config.heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", Config::config.heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 			auto& values{ SkinDatabase::champions_skins[champion_name_hash] };
 			if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))

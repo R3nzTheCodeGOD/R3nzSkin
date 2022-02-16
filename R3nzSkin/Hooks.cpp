@@ -26,7 +26,7 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
@@ -54,7 +54,7 @@ static const ImWchar ranges[] = {
 	0,
 };
 
-ImWchar* getFontGlyphRangesKr() noexcept
+static ImWchar* getFontGlyphRangesKr() noexcept
 {
 	static ImVector<ImWchar> rangesKR;
 	if (rangesKR.empty()) {
@@ -75,7 +75,7 @@ namespace d3d_vtable {
 	ID3D11RenderTargetView* main_render_target_view{ nullptr };
 	IDXGISwapChain* p_swap_chain{ nullptr };
 
-	void WINAPI create_render_target() noexcept
+	static void WINAPI create_render_target() noexcept
 	{
 		ID3D11Texture2D* back_buffer{ nullptr };
 		p_swap_chain->GetBuffer(0u, IID_PPV_ARGS(&back_buffer));
@@ -86,7 +86,7 @@ namespace d3d_vtable {
 		}
 	}
 
-	void init_imgui(void* device, bool is_d3d11 = false) noexcept
+	static void init_imgui(void* device, bool is_d3d11 = false) noexcept
 	{
 		SkinDatabase::load();
 		ImGui::CreateContext();
@@ -194,7 +194,7 @@ namespace d3d_vtable {
 		originalWndProc = WNDPROC(::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
-	void render(void* device, bool is_d3d11 = false) noexcept
+	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
 		static const auto client{ Memory::getClient() };
 		if (client && client->game_state == GGameState_s::Running) {
@@ -316,7 +316,7 @@ void Hooks::init() noexcept
 		}
 	});
 
-	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) -> void {
+	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept {
 		if (skin == -1)
 			return;
 

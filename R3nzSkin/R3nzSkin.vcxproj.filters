@@ -149,9 +149,6 @@
     <ClInclude Include="Config.hpp">
       <Filter>Source Files\Config</Filter>
     </ClInclude>
-    <ClInclude Include="encryption.hpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Utils.hpp">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
@@ -195,6 +192,9 @@
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\ManagerTemplate.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Encryption.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,7 @@
 
 class AIBaseCommon : public GameObject {
 public:
-	CharacterDataStack* get_character_data_stack() noexcept { return reinterpret_cast<CharacterDataStack*>(std::uintptr_t(this) + offsets::AIBaseCommon::CharacterDataStack); }
+	[[nodiscard]] CharacterDataStack* get_character_data_stack() noexcept { return reinterpret_cast<CharacterDataStack*>(std::uintptr_t(this) + offsets::AIBaseCommon::CharacterDataStack); }
 
 	void change_skin(const char* model, std::int32_t skin) noexcept;
 private:

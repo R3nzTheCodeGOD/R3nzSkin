@@ -10,7 +10,7 @@
 
 #include "SDK/GameState.hpp"
 
-void WINAPI DllAttach(HMODULE hModule) noexcept
+static void WINAPI DllAttach(HMODULE hModule) noexcept
 {
 	using namespace std::chrono_literals;
 

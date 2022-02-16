@@ -9,11 +9,11 @@
 #include "Offsets.hpp"
 
 
-std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) noexcept
+[[nodiscard]] static std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) noexcept
 {
 	try {
-		const auto module{ ::GetModuleHandleW(szModule) };
-		static auto pattern_to_byte = [](const char* pattern) noexcept {
+		const auto module{ ::GetModuleHandle(szModule) };
+		static const auto pattern_to_byte = [](const char* pattern) noexcept {
 			auto bytes{ std::vector<std::int32_t>{} };
 			const auto start{ const_cast<char*>(pattern) };
 			const auto end{ const_cast<char*>(pattern) + ::strlen(pattern) };
