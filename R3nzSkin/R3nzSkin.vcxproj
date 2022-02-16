@@ -111,10 +111,10 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Memory.cpp" />
-    <ClCompile Include="GameClasses.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="R3nzSkin.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="SDK\AIBaseCommon.cpp" />
     <ClCompile Include="SDK\CharacterDataStack.cpp" />
     <ClCompile Include="SkinDatabase.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -135,7 +135,6 @@
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="encryption.hpp" />
     <ClInclude Include="fnv_hash.hpp" />
-    <ClInclude Include="GameClasses.hpp" />
     <ClInclude Include="Hooks.hpp" />
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Offsets.hpp" />

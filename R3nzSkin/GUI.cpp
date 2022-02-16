@@ -9,7 +9,6 @@
 
 #include "Config.hpp"
 #include "GUI.hpp"
-#include "GameClasses.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
 #include "Offsets.hpp"

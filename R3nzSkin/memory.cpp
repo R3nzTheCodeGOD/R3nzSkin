@@ -1,9 +1,10 @@
 #include <Windows.h>
+#include <chrono>
+#include <cstdint>
 #include <string>
 #include <thread>
 #include <vector>
 
-#include "GameClasses.hpp"
 #include "Memory.hpp"
 #include "Offsets.hpp"
 
@@ -12,7 +13,7 @@ std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) n
 {
 	try {
 		const auto module{ ::GetModuleHandleW(szModule) };
-		static auto pattern_to_byte = [](const char* pattern) {
+		static auto pattern_to_byte = [](const char* pattern) noexcept {
 			auto bytes{ std::vector<std::int32_t>{} };
 			const auto start{ const_cast<char*>(pattern) };
 			const auto end{ const_cast<char*>(pattern) + ::strlen(pattern) };
@@ -219,6 +220,8 @@ std::vector<offset_signature> sigs{
 
 void Memory::Search(bool gameClient) noexcept
 {
+	using namespace std::chrono_literals;
+
 	try {
 		const auto base{ Memory::getLeagueModule() };
 		const auto& signatureToSearch{ (gameClient ? gameClientSig : sigs) };

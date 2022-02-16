@@ -41,9 +41,6 @@
     <ClCompile Include="SkinDatabase.cpp">
       <Filter>Source Files\Skins</Filter>
     </ClCompile>
-    <ClCompile Include="GameClasses.cpp">
-      <Filter>Source Files\SDK</Filter>
-    </ClCompile>
     <ClCompile Include="GUI.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
@@ -89,13 +86,13 @@
     <ClCompile Include="SDK\CharacterDataStack.cpp">
       <Filter>Source Files\SDK</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\AIBaseCommon.cpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SkinDatabase.hpp">
       <Filter>Source Files\Skins</Filter>
-    </ClInclude>
-    <ClInclude Include="GameClasses.hpp">
-      <Filter>Source Files\SDK</Filter>
     </ClInclude>
     <ClInclude Include="fnv_hash.hpp">
       <Filter>Source Files\Utils</Filter>

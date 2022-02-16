@@ -1,15 +1,19 @@
 #include <Windows.h>
+#include <chrono>
 #include <cstdint>
 #include <thread>
 
 #include "Config.hpp"
 #include "GUI.hpp"
-#include "GameClasses.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
 
+#include "SDK/GameState.hpp"
+
 void WINAPI DllAttach(HMODULE hModule) noexcept
 {
+	using namespace std::chrono_literals;
+
 	Memory::Search(true);
 	auto client{ Memory::getClient() };
 

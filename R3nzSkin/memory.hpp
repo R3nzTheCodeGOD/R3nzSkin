@@ -1,13 +1,14 @@
 #pragma once
 
 #include <Windows.h>
-#include <chrono>
 #include <cstdint>
 
-#include "GameClasses.hpp"
 #include "Offsets.hpp"
-
-using namespace std::chrono_literals;
+#include "SDK/AIBaseCommon.hpp"
+#include "SDK/AIHero.hpp"
+#include "SDK/AIMinionClient.hpp"
+#include "SDK/GameClient.hpp"
+#include "SDK/ManagerTemplate.hpp"
 
 namespace Memory {
 	void Search(bool gameClient = true) noexcept;

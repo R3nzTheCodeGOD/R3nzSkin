@@ -16,11 +16,13 @@
 
 #include "Config.hpp"
 #include "GUI.hpp"
-#include "GameClasses.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
 #include "Offsets.hpp"
 #include "SkinDatabase.hpp"
+
+#include "SDK/AIBaseCommon.hpp"
+#include "SDK/GameState.hpp"
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

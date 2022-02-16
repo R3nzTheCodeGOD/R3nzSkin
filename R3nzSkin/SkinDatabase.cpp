@@ -1,19 +1,19 @@
 #include <Windows.h>
 #include <algorithm>
+#include <cstdint>
 #include <map>
 #include <ranges>
 #include <utility>
 
-#include "fnv_hash.hpp"
-
-#include "GameClasses.hpp"
 #include "Offsets.hpp"
+#include "SDK/ChampionManager.hpp"
 #include "SkinDatabase.hpp"
+#include "fnv_hash.hpp"
 
 void SkinDatabase::load() noexcept
 {
-	static const auto translateString_UNSAFE_DONOTUSE{ reinterpret_cast<const char*(__cdecl*)(const char*)>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::functions::translateString_UNSAFE_DONOTUSE) };
-	static const auto g_championg_manager{ *reinterpret_cast<ChampionManager**>(std::uintptr_t(::GetModuleHandleA(nullptr)) + offsets::global::ChampionManager) };
+	static const auto translateString_UNSAFE_DONOTUSE{ reinterpret_cast<const char*(__cdecl*)(const char*)>(std::uintptr_t(::GetModuleHandle(nullptr)) + offsets::functions::translateString_UNSAFE_DONOTUSE) };
+	static const auto g_championg_manager{ *reinterpret_cast<ChampionManager**>(std::uintptr_t(::GetModuleHandle(nullptr)) + offsets::global::ChampionManager) };
 
 	for (const auto& champion : g_championg_manager->champions) {
 		std::vector<std::int32_t> skins_ids;
