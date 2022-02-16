@@ -140,6 +140,7 @@
     <ClInclude Include="Offsets.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SDK\AString.hpp" />
+    <ClInclude Include="SDK\Champion.hpp" />
     <ClInclude Include="SDK\GameClient.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
     <ClInclude Include="SDK\Pad.hpp" />
