@@ -146,6 +146,7 @@
     <ClInclude Include="SDK\CharacterDataStack.hpp" />
     <ClInclude Include="SDK\CharacterStackData.hpp" />
     <ClInclude Include="SDK\GameClient.hpp" />
+    <ClInclude Include="SDK\GameObject.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
     <ClInclude Include="SDK\Pad.hpp" />
     <ClInclude Include="SDK\Skin.hpp" />
