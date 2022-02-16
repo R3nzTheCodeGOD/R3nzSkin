@@ -142,6 +142,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SDK\AIBaseCommon.hpp" />
     <ClInclude Include="SDK\AIHero.hpp" />
+    <ClInclude Include="SDK\AIMinionClient.hpp" />
     <ClInclude Include="SDK\AString.hpp" />
     <ClInclude Include="SDK\Champion.hpp" />
     <ClInclude Include="SDK\ChampionManager.hpp" />
