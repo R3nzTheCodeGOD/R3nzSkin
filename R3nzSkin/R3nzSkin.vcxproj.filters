@@ -173,6 +173,9 @@
     <ClInclude Include="SDK\Champion.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\ChampionManager.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />
