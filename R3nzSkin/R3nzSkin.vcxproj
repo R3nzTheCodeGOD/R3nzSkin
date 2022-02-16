@@ -151,6 +151,7 @@
     <ClInclude Include="SDK\GameClient.hpp" />
     <ClInclude Include="SDK\GameObject.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
+    <ClInclude Include="SDK\ManagerTemplate.hpp" />
     <ClInclude Include="SDK\Pad.hpp" />
     <ClInclude Include="SDK\Skin.hpp" />
     <ClInclude Include="SkinDatabase.hpp" />
