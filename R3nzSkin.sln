@@ -15,6 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PythonScripts", "PythonScripts", "{D80EC08B-EC70-4DA6-8DE2-36EA4AC99769}"
+	ProjectSection(SolutionItems) = preProject
+		PythonScripts\lolskin_to_skin.py = PythonScripts\lolskin_to_skin.py
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ChinaServer|x86 = ChinaServer|x86
