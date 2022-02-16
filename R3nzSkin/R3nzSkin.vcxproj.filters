@@ -161,6 +161,9 @@
     <ClInclude Include="SDK\Pad.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\GameClient.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />
