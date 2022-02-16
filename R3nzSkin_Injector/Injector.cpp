@@ -60,9 +60,25 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 
 bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 {
+	NtCreateThreadExBuffer ntbuffer;
+
+	::memset(&ntbuffer, 0, sizeof(NtCreateThreadExBuffer));
+	DWORD temp1{ 0 };
+	DWORD temp2{ 0 };
+
+	ntbuffer.Size = sizeof(NtCreateThreadExBuffer);
+	ntbuffer.Unknown1 = 0x10003;
+	ntbuffer.Unknown2 = 0x8;
+	ntbuffer.Unknown3 = static_cast<PULONG>(&temp1);
+	ntbuffer.Unknown4 = 0;
+	ntbuffer.Unknown5 = 0x10004;
+	ntbuffer.Unknown6 = 4;
+	ntbuffer.Unknown7 = static_cast<PULONG>(&temp2);
+	ntbuffer.Unknown8 = 0;
+
 	TCHAR current_dir[MAX_PATH];
 	::GetCurrentDirectoryW(MAX_PATH, current_dir);
-	auto handle{ ::OpenProcess(PROCESS_ALL_ACCESS, false, pid) };
+	const auto handle{ ::OpenProcess(PROCESS_ALL_ACCESS, false, pid) };
 
 	if (!handle || handle == INVALID_HANDLE_VALUE)
 		return false;
@@ -74,12 +90,12 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	FILETIME create, exit, kernel, user;
 	::GetProcessTimes(handle, &create, &exit, &kernel, &user);
 
-	auto delta{ 10 - static_cast<std::int32_t>((*reinterpret_cast<std::uint64_t*>(&ft) - *reinterpret_cast<std::uint64_t*>(&create.dwLowDateTime)) / 10000000U) };
+	const auto delta{ 10 - static_cast<std::int32_t>((*reinterpret_cast<std::uint64_t*>(&ft) - *reinterpret_cast<std::uint64_t*>(&create.dwLowDateTime)) / 10000000U) };
 
 	if (delta > 0)
 		std::this_thread::sleep_for(std::chrono::seconds(delta));
 
-	auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
+	const auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
 
 	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
 		MessageBox(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
@@ -87,7 +103,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 		return false;
 	}
 
-	auto dll_path_remote{ ::VirtualAllocEx(handle, nullptr, (dll_path.size() + 1) * sizeof(wchar_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
+	const auto dll_path_remote{ ::VirtualAllocEx(handle, nullptr, (dll_path.size() + 1) * sizeof(wchar_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
 
 	if (!dll_path_remote) {
 		::CloseHandle(handle);
@@ -100,7 +116,8 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 		return false;
 	}
 
-	const auto thread{ ::CreateRemoteThread(handle, nullptr, 0u, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::LoadLibrary(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, 0, nullptr) };
+	HANDLE thread;
+	NtCreateThreadEx(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, &ntbuffer);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
