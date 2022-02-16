@@ -140,6 +140,7 @@
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Offsets.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SDK\AIBaseCommon.hpp" />
     <ClInclude Include="SDK\AString.hpp" />
     <ClInclude Include="SDK\Champion.hpp" />
     <ClInclude Include="SDK\ChampionManager.hpp" />
