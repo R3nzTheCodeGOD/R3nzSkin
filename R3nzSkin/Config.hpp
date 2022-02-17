@@ -12,11 +12,11 @@ using json = nlohmann::json;
 namespace Config {
 	struct cfg {
 		KeyBind menuKey{ KeyBind(KeyBind::INSERT) };
-		KeyBind nextSkinKey{ KeyBind(KeyBind::PAGE_DOWN) };
-		KeyBind previousSkinKey{ KeyBind(KeyBind::PAGE_UP) };
+		KeyBind nextSkinKey{ KeyBind(KeyBind::PAGE_UP) };
+		KeyBind previousSkinKey{ KeyBind(KeyBind::PAGE_DOWN) };
 		bool rainbowText{ false };
 		bool heroName{ true };
-		bool easySwitchSkin{ false };
+		bool quickSkinChange{ false };
 		std::int32_t current_combo_skin_index{ 0 };
 		std::int32_t current_combo_ward_index{ 0 };
 		std::int32_t current_ward_skin_index{ -1 };

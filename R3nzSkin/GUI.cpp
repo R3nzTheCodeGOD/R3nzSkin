@@ -92,11 +92,17 @@ void GUI::render() noexcept
 
 		ImGui::Separator();
 		ImGui::hotkey("Menu Key", Config::config.menuKey);
-		ImGui::Checkbox("RainbowText", &Config::config.rainbowText);
-		ImGui::Checkbox("EasySwitchSkin", &Config::config.easySwitchSkin);
-		ImGui::hotkey("Previous Skin Key", Config::config.previousSkinKey);
-		ImGui::hotkey("Next Skin Key", Config::config.nextSkinKey);
 		ImGui::Checkbox(Config::config.heroName ? "HeroName based" : "PlayerName based", &Config::config.heroName);
+		ImGui::Checkbox("Rainbow Text", &Config::config.rainbowText);
+		ImGui::Checkbox("Quick Skin Change", &Config::config.quickSkinChange);
+
+		if (Config::config.quickSkinChange) {
+			ImGui::Separator();
+			ImGui::hotkey("Previous Skin Key", Config::config.previousSkinKey);
+			ImGui::hotkey("Next Skin Key", Config::config.nextSkinKey);
+			ImGui::Separator();
+		}
+
 		ImGui::Text("FPS: %.0f FPS", ImGui::GetIO().Framerate);
 		
 		if (ImGui::Button("Force Close"))
@@ -104,7 +110,7 @@ void GUI::render() noexcept
 
 		ImGui::Separator();
 		ImGui::textUnformattedCentered((std::string("Last Build: ") + __DATE__ + " - " + __TIME__).c_str());
-		ImGui::textUnformattedCentered("Copyright (C) 2021 R3nzTheCodeGOD");
+		ImGui::textUnformattedCentered("Copyright (C) 2021-2022 R3nzTheCodeGOD");
 	}
 	ImGui::End();
 }

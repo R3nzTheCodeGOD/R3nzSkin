@@ -21,7 +21,7 @@ void Config::save() noexcept
 	config_json["previousSkinKey"] = config.previousSkinKey.toString();
 	config_json["heroName"] = config.heroName;
 	config_json["raibowText"] = config.rainbowText;
-	config_json["easySwitchSkin"] = config.easySwitchSkin;
+	config_json["quickSkinChange"] = config.quickSkinChange;
 	config_json["current_combo_ward_index"] = config.current_combo_ward_index;
 	config_json["current_ward_skin_index"] = config.current_ward_skin_index;
 
@@ -49,11 +49,11 @@ void Config::load() noexcept
 		config.current_combo_skin_index = config_json.value(std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index", 0);
 	
 	config.menuKey = KeyBind(config_json.value("menuKey", "INSERT").c_str());
-	config.nextSkinKey = KeyBind(config_json.value("nextSkinKey", "PAGE_DOWN").c_str());
-	config.previousSkinKey = KeyBind(config_json.value("previousSkinKey", "PAGE_UP").c_str());
+	config.nextSkinKey = KeyBind(config_json.value("nextSkinKey", "PAGE_UP").c_str());
+	config.previousSkinKey = KeyBind(config_json.value("previousSkinKey", "PAGE_DOWN").c_str());
 	config.heroName = config_json.value("heroName", true);
 	config.rainbowText = config_json.value("raibowText", false);
-	config.easySwitchSkin = config_json.value("easySwitchSkin", false);
+	config.quickSkinChange = config_json.value("quickSkinChange", false);
 	config.current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	config.current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
 
@@ -73,11 +73,11 @@ void Config::load() noexcept
 void Config::reset() noexcept
 {
 	config.menuKey = KeyBind(KeyBind::INSERT);
-	KeyBind nextSkinKey{ KeyBind(KeyBind::PAGE_DOWN) };
-	KeyBind previousSkinKey{ KeyBind(KeyBind::PAGE_UP) };
+	config.nextSkinKey = KeyBind(KeyBind::PAGE_UP);
+	config.previousSkinKey = KeyBind(KeyBind::PAGE_DOWN);
 	config.heroName = true;
 	config.rainbowText = true;
-	config.easySwitchSkin = false;
+	config.quickSkinChange = false;
 	config.current_combo_skin_index = 0;
 	config.current_combo_ward_index = 0;
 	config.current_ward_skin_index = -1;

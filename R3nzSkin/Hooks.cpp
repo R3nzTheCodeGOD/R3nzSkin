@@ -26,6 +26,34 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+static __forceinline void nextSkin() noexcept
+{
+	static const auto player{ Memory::getLocalPlayer() };
+	if (player) {
+		auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		Config::config.current_combo_skin_index++;
+		if (Config::config.current_combo_skin_index > int32_t(values.size()))
+			Config::config.current_combo_skin_index = int32_t(values.size());
+		if (Config::config.current_combo_skin_index > 0)
+			player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
+		Config::save();
+	}
+}
+
+static __forceinline void previousSkin() noexcept
+{
+	static const auto player{ Memory::getLocalPlayer() };
+	if (player) {
+		auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		Config::config.current_combo_skin_index--;
+		if (Config::config.current_combo_skin_index > 0)
+			player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
+		else
+			Config::config.current_combo_skin_index = 1;
+		Config::save();
+	}
+}
+
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
@@ -36,32 +64,14 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 		if (!GUI::is_open)
 			Config::save();
 	}
-	if (Config::config.easySwitchSkin) {
-		if (msg == WM_KEYDOWN && wParam == Config::config.nextSkinKey.getKey()) {
-			static const auto player{ Memory::getLocalPlayer() };
-			if (player) {
-				auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-				Config::config.current_combo_skin_index++;
-				if (Config::config.current_combo_skin_index > int32_t(values.size()))
-					Config::config.current_combo_skin_index = int32_t(values.size());
-				if (Config::config.current_combo_skin_index > 0)
-					player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
-				Config::save();
-			}
-		}
-		if (msg == WM_KEYDOWN && wParam == Config::config.previousSkinKey.getKey()) {
-			static const auto player{ Memory::getLocalPlayer() };
-			if (player) {
-				auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-				Config::config.current_combo_skin_index--;
-				if (Config::config.current_combo_skin_index > 0)
-					player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
-				else
-					Config::config.current_combo_skin_index = 0;
-				Config::save();
-			}
-		}
+
+	if (Config::config.quickSkinChange) {
+		if (msg == WM_KEYDOWN && wParam == Config::config.nextSkinKey.getKey())
+			nextSkin();
+		if (msg == WM_KEYDOWN && wParam == Config::config.previousSkinKey.getKey())
+			previousSkin();
 	}
+
 	return ::CallWindowProcW(originalWndProc, window, msg, wParam, lParam);
 }
 
