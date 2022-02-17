@@ -1,22 +1,24 @@
 name: Windows
+
 on: [push, pull_request]
+
 jobs:
   Riot-Games-Servers:
-    runs-on: windows-latest
-    env:
-      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
+    runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
     - name: Build
       shell: cmd
-      run: '"%MSBUILD_PATH%\MSBuild.exe" R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=RiotGamesServers'
+      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=RiotGamesServers
       
   China-Server:
-    runs-on: windows-latest
-    env:
-      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
+    runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
     - name: Build
       shell: cmd
-      run: '"%MSBUILD_PATH%\MSBuild.exe" R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=ChinaServer'
+      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=ChinaServer
