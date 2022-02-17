@@ -322,6 +322,7 @@ void Hooks::init() noexcept
 	static const auto minions{ Memory::getMinions() };
 
 	std::call_once(change_skins, [&]() {
+		Memory::getChat()->printChat("R3nzSkin Succesfuly Loaded!");
 		if (player) {
 			if (Config::config.current_combo_skin_index > 0) {
 				const auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };

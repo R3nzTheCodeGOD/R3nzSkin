@@ -18,6 +18,7 @@ namespace offsets {
 		inline std::uint32_t ManagerTemplate_AIMinionClient_{ 0 };
 		inline std::uint32_t ManagerTemplate_AIHero_{ 0 };
 		inline std::uint32_t GameClient{ 0 };
+		inline std::uint32_t ChatInstance{ 0 };
 	};
 
 	namespace AIBaseCommon {
@@ -38,5 +39,6 @@ namespace offsets {
 		inline std::uint32_t CharacterDataStack__Push{ 0 };
 		inline std::uint32_t CharacterDataStack__Update{ 0 };
 		inline std::uint32_t GetGoldRedirectTarget{ 0 };
+		inline std::uint32_t PrintChat{ 0 };
 	};
 };

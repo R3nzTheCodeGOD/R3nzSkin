@@ -7,6 +7,7 @@
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
 #include "SDK/AIMinionClient.hpp"
+#include "SDK/Chat.hpp"
 #include "SDK/GameClient.hpp"
 #include "SDK/ManagerTemplate.hpp"
 
@@ -19,4 +20,5 @@ namespace Memory {
 	[[nodiscard]] __forceinline auto getHeroes() noexcept { return *reinterpret_cast<ManagerTemplate<AIHero>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIHero_); }
 	[[nodiscard]] __forceinline auto getMinions() noexcept { return *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_); }
 	[[nodiscard]] __forceinline auto getRiotWindow() noexcept { return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window); }
+	[[nodiscard]] __forceinline auto getChat() noexcept { return *reinterpret_cast<Chat**>(getLeagueModule() + offsets::global::ChatInstance); }
 };

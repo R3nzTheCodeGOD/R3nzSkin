@@ -145,6 +145,14 @@ std::vector<offset_signature> sigs{
 	},
 	{
 		{
+			"8B 35 ? ? ? ? 8A 43 10",
+			"8B 0D ? ? ? ? 6A 00 50 E8 ? ? ? ? 84"
+		},
+		true, true, 0,
+		&offsets::global::ChatInstance
+	},
+	{
+		{
 			"8D 8E ? ? ? ? FF 74 24 4C"
 		},
 		false, true, 0,
@@ -217,6 +225,14 @@ std::vector<offset_signature> sigs{
 		},
 		true, false, 0,
 		&offsets::functions::GetGoldRedirectTarget
+	},
+	{
+		{
+			"E8 ? ? ? ? 8B 54 24 20 C6 47 14 01",
+			"E8 ? ? ? ? 8B 0D ? ? ? ? 6A 2F E8 ? ? ? ? 8D 4C 24 10"
+		},
+		true, false, 0,
+		&offsets::functions::PrintChat
 	}
 };
 

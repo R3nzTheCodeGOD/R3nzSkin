@@ -147,6 +147,7 @@
     <ClInclude Include="SDK\ChampionManager.hpp" />
     <ClInclude Include="SDK\CharacterDataStack.hpp" />
     <ClInclude Include="SDK\CharacterStackData.hpp" />
+    <ClInclude Include="SDK\Chat.hpp" />
     <ClInclude Include="SDK\GameClient.hpp" />
     <ClInclude Include="SDK\GameObject.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
