@@ -14,6 +14,7 @@ namespace Config {
 		KeyBind menuKey{ KeyBind(KeyBind::INSERT) };
 		bool rainbowText{ false };
 		bool heroName{ true };
+		bool easySwitchSkin{ false };
 		std::int32_t current_combo_skin_index{ 0 };
 		std::int32_t current_combo_ward_index{ 0 };
 		std::int32_t current_ward_skin_index{ -1 };

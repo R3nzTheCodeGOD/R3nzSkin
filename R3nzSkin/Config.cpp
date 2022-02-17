@@ -19,6 +19,7 @@ void Config::save() noexcept
 	config_json["menuKey"] = config.menuKey.toString();
 	config_json["heroName"] = config.heroName;
 	config_json["raibowText"] = config.rainbowText;
+	config_json["easySwitchSkin"] = config.easySwitchSkin;
 	config_json["current_combo_ward_index"] = config.current_combo_ward_index;
 	config_json["current_ward_skin_index"] = config.current_ward_skin_index;
 
@@ -48,6 +49,7 @@ void Config::load() noexcept
 	config.menuKey = KeyBind(config_json.value("menuKey", "INSERT").c_str());
 	config.heroName = config_json.value("heroName", true);
 	config.rainbowText = config_json.value("raibowText", false);
+	config.easySwitchSkin = config_json.value("easySwitchSkin", false);
 	config.current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	config.current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
 
@@ -69,6 +71,7 @@ void Config::reset() noexcept
 	config.menuKey = KeyBind(KeyBind::INSERT);
 	config.heroName = true;
 	config.rainbowText = true;
+	config.easySwitchSkin = false;
 	config.current_combo_skin_index = 0;
 	config.current_combo_ward_index = 0;
 	config.current_ward_skin_index = -1;
