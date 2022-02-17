@@ -93,7 +93,9 @@ void GUI::render() noexcept
 		ImGui::Separator();
 		ImGui::hotkey("Menu Key", Config::config.menuKey);
 		ImGui::Checkbox("RainbowText", &Config::config.rainbowText);
-		ImGui::Checkbox("EasySwitchSkin by PageUp,PageDown", &Config::config.easySwitchSkin);
+		ImGui::Checkbox("EasySwitchSkin", &Config::config.easySwitchSkin);
+		ImGui::hotkey("Previous Skin Key", Config::config.previousSkinKey);
+		ImGui::hotkey("Next Skin Key", Config::config.nextSkinKey);
 		ImGui::Checkbox(Config::config.heroName ? "HeroName based" : "PlayerName based", &Config::config.heroName);
 		ImGui::Text("FPS: %.0f FPS", ImGui::GetIO().Framerate);
 		

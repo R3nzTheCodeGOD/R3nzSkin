@@ -37,7 +37,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 			Config::save();
 	}
 	if (Config::config.easySwitchSkin) {
-		if (msg == WM_KEYDOWN && wParam == VK_NEXT) {
+		if (msg == WM_KEYDOWN && wParam == Config::config.nextSkinKey.getKey()) {
 			static const auto player{ Memory::getLocalPlayer() };
 			if (player) {
 				auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
@@ -49,7 +49,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 				Config::save();
 			}
 		}
-		if (msg == WM_KEYDOWN && wParam == VK_PRIOR) {
+		if (msg == WM_KEYDOWN && wParam == Config::config.previousSkinKey.getKey()) {
 			static const auto player{ Memory::getLocalPlayer() };
 			if (player) {
 				auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };

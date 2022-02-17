@@ -12,6 +12,8 @@ using json = nlohmann::json;
 namespace Config {
 	struct cfg {
 		KeyBind menuKey{ KeyBind(KeyBind::INSERT) };
+		KeyBind nextSkinKey{ KeyBind(KeyBind::PAGE_DOWN) };
+		KeyBind previousSkinKey{ KeyBind(KeyBind::PAGE_UP) };
 		bool rainbowText{ false };
 		bool heroName{ true };
 		bool easySwitchSkin{ false };
