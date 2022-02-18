@@ -211,7 +211,7 @@ namespace d3d_vtable {
 			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
 			cfg.MergeMode = true;
 			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
-			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 12.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
+			io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 15.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
 		}
 
