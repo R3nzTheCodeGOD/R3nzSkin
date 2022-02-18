@@ -35,6 +35,9 @@
     <Filter Include="Source Files\Config">
       <UniqueIdentifier>{a2d7fdd0-5331-4fcc-95c6-864f9d9d19bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui\imgui_upstream">
+      <UniqueIdentifier>{52be9bda-d74f-45ab-8c1f-b160093fdce2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="R3nzSkin.cpp" />
@@ -50,31 +53,7 @@
     <ClCompile Include="Hooks.cpp">
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_extend.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_dx9.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_dx11.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="Config.cpp">
@@ -88,6 +67,30 @@
     </ClCompile>
     <ClCompile Include="SDK\AIBaseCommon.cpp">
       <Filter>Source Files\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\imgui.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\imgui_demo.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\imgui_draw.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\imgui_tables.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\imgui_widgets.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\backends\imgui_impl_dx9.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClCompile>
+    <ClCompile Include="depend\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>Imgui\imgui_upstream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,34 +116,7 @@
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="imgui\imconfig.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_extend.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_dx9.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_dx11.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_win32.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
     </ClInclude>
     <ClInclude Include="json\json.hpp">
@@ -199,6 +175,33 @@
     </ClInclude>
     <ClInclude Include="SDK\Chat.hpp">
       <Filter>Source Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imconfig.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imgui.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imgui_internal.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imstb_rectpack.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imstb_textedit.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\imstb_truetype.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\backends\imgui_impl_dx9.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\backends\imgui_impl_dx11.h">
+      <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\imgui\backends\imgui_impl_win32.h">
+      <Filter>Imgui\imgui_upstream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

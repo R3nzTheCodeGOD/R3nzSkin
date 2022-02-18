@@ -3,9 +3,9 @@
 #include <array>
 #include <string_view>
 
-#include "imgui/imgui.h"
+#include "depend/imgui/imgui.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui/imgui_internal.h"
+#include "depend/imgui/imgui_internal.h"
 
 #include "Config.hpp"
 #include "Utils.hpp"

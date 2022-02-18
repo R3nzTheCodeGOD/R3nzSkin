@@ -1,9 +1,9 @@
 #pragma once
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "../imgui/imgui.h"
+#include "../depend/imgui/imgui.h"
 
 namespace ImGui {
-	bool Combo( const char* label, int* currIndex, std::vector<std::string>& values );
+bool Combo(const char *label, int *currIndex, std::vector<std::string> &values);
 };

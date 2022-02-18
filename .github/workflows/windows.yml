@@ -23,6 +23,10 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
+      - name: Initialization
+        shell: pwsh
+        run: "git submodule update --init --recursive"
+
       - name: Build China-Server
         shell: cmd
         run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=ChinaServer
