@@ -51,20 +51,20 @@ jobs:
         shell: pwsh
         run: "cp R3nzSkin_Injector/Release/RiotGamesServers/* R3nzSkin/Release/RiotGamesServers/"
 
-      - name: Upload  To Artifact
+      - name: Upload To Artifact
         uses: actions/upload-artifact@main
         with:
-          name: ${{ github.job }}
+          name: ChinaServer${{ github.job }}
           path: R3nzSkin/Release/ChinaServer
 
-      - name: Upload  To Artifact_Global
+      - name: Upload To Artifact_Global
         uses: actions/upload-artifact@main
         with:
-          name: ${{ github.job }}
+          name: RiotGamesServers${{ github.job }}
           path: R3nzSkin/Release/RiotGamesServers
 
       - name: Deploy ChinaServer Files To Release
-        if: github.event.inputs.release != null && github.event.inputs.release == true
+        if: github.event.inputs.release
         uses: ncipollo/release-action@v1
         with:
           name: ChinaServer
@@ -75,7 +75,7 @@ jobs:
           artifacts: R3nzSkin/Release/ChinaServer/*
 
       - name: Deploy Riot-Games-Servers Files To Release
-        if: github.event.inputs.release != null && github.event.inputs.release == true
+        if: github.event.inputs.release
         uses: ncipollo/release-action@v1
         with:
           name: Riot-Games-Servers
