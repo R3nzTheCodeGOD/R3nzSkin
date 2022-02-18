@@ -38,6 +38,9 @@
     <Filter Include="Imgui\imgui_upstream">
       <UniqueIdentifier>{52be9bda-d74f-45ab-8c1f-b160093fdce2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Json\json_upstream">
+      <UniqueIdentifier>{5182624f-f683-443e-b091-517dc69d328c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="R3nzSkin.cpp" />
@@ -119,9 +122,6 @@
     <ClInclude Include="imgui\imgui_extend.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="json\json.hpp">
-      <Filter>Json</Filter>
-    </ClInclude>
     <ClInclude Include="Config.hpp">
       <Filter>Source Files\Config</Filter>
     </ClInclude>
@@ -202,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="depend\imgui\backends\imgui_impl_win32.h">
       <Filter>Imgui\imgui_upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="depend\json\single_include\nlohmann\json.hpp">
+      <Filter>Json\json_upstream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

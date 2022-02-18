@@ -2,7 +2,8 @@
 #include <fstream>
 #include <string>
 
-#include "Json/json.hpp"
+#include "depend\json\single_include\nlohmann\json.hpp"
+
 
 #include "Config.hpp"
 #include "Memory.hpp"

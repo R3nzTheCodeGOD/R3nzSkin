@@ -1,3 +1,6 @@
 [submodule "R3nzSkin/depend/imgui"]
 	path = R3nzSkin/depend/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "R3nzSkin/depend/json"]
+	path = R3nzSkin/depend/json
+	url = https://github.com/nlohmann/json

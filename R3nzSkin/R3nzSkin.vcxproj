@@ -132,8 +132,8 @@
     <ClInclude Include="depend\imgui\imstb_rectpack.h" />
     <ClInclude Include="depend\imgui\imstb_textedit.h" />
     <ClInclude Include="depend\imgui\imstb_truetype.h" />
+    <ClInclude Include="depend\json\single_include\nlohmann\json.hpp" />
     <ClInclude Include="imgui\imgui_extend.h" />
-    <ClInclude Include="json\json.hpp" />
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="Encryption.hpp" />
     <ClInclude Include="fnv_hash.hpp" />
