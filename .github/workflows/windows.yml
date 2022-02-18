@@ -1,24 +1,82 @@
 name: Windows
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - "main"
+      - "releases/**"
 
-on: [push, pull_request]
-
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release version"
+        required: false
+        type: boolean
+        default: false
 jobs:
-  Riot-Games-Servers:
-    runs-on: windows-2019
+  Build:
+    runs-on: windows-2022
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build
-      shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=RiotGamesServers
-      
-  China-Server:
-    runs-on: windows-2019
-    steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build
-      shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=ChinaServer
+      - uses: actions/checkout@v2
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Build China-Server
+        shell: cmd
+        run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=ChinaServer
+
+      - name: Build China-Server_Injector
+        shell: cmd
+        run: msbuild R3nzSkin_Injector\R3nzSkin_Injector.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=ChinaServer
+
+      - name: Build Riot-Games-Servers
+        shell: cmd
+        run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=RiotGamesServers
+
+      - name: Build Riot-Games-Servers_Injector
+        shell: cmd
+        run: msbuild R3nzSkin_Injector\R3nzSkin_Injector.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=RiotGamesServers
+
+      - name: Organize files1
+        shell: pwsh
+        run: "cp R3nzSkin_Injector/Release/ChinaServer/* R3nzSkin/Release/ChinaServer/"
+
+      - name: Organize files2
+        shell: pwsh
+        run: "cp R3nzSkin_Injector/Release/RiotGamesServers/* R3nzSkin/Release/RiotGamesServers/"
+
+      - name: Upload  To Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ github.job }}
+          path: R3nzSkin/Release/ChinaServer
+
+      - name: Upload  To Artifact_Global
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ github.job }}
+          path: R3nzSkin/Release/RiotGamesServers
+
+      - name: Deploy ChinaServer Files To Release
+        if: github.event.inputs.release != null && github.event.inputs.release == true
+        uses: ncipollo/release-action@v1
+        with:
+          name: ChinaServer
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: ChinaServer
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: R3nzSkin/Release/ChinaServer/*
+
+      - name: Deploy Riot-Games-Servers Files To Release
+        if: github.event.inputs.release != null && github.event.inputs.release == true
+        uses: ncipollo/release-action@v1
+        with:
+          name: Riot-Games-Servers
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: Riot-Games-Servers
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: R3nzSkin/Release/RiotGamesServers/*
