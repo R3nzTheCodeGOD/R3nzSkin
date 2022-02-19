@@ -1,7 +1,10 @@
 #pragma once
 
-namespace GUI {
-	inline bool is_open;
-
+class GUI {
+public:
 	void render() noexcept;
+
+	bool is_open{ true };
+private:
+	char str_buffer[256];
 };

@@ -197,9 +197,7 @@
     <ClInclude Include="Encryption.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Chat.hpp">
-      <Filter>Source Files\SDK</Filter>
-    </ClInclude>
+    <ClInclude Include="CheatManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />

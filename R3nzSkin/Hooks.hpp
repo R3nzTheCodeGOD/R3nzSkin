@@ -5,10 +5,10 @@
 
 inline std::once_flag change_skins;
 inline WNDPROC originalWndProc;
-inline bool run;
 
-namespace Hooks {
-	void init() noexcept;
-	void WINAPI install() noexcept;
-	void WINAPI uninstall() noexcept;
+class Hooks {
+public:
+	void init() const noexcept;
+	void install() const noexcept;
+	void uninstall() const noexcept;
 };

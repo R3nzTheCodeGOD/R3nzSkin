@@ -1,26 +1,21 @@
 #include <Windows.h>
 #include <ShlObj.h>
 #include <cinttypes>
-#include <d3d11.h>
-#include <d3d9.h>
 #include <filesystem>
 #include <string>
 
 #include "fnv_hash.hpp"
 #include "imgui/imgui.h"
-#include "imgui/imgui_extend.h"
+#ifdef _RIOT
 #include "imgui/imgui_impl_dx11.h"
+#endif
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 #include "vmt_smart_hook.hpp"
 
-#include "Config.hpp"
-#include "GUI.hpp"
+#include "CheatManager.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
-#include "Offsets.hpp"
-#include "SkinDatabase.hpp"
-
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/GameState.hpp"
 
@@ -28,29 +23,29 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 static __forceinline void nextSkin() noexcept
 {
-	static const auto player{ Memory::getLocalPlayer() };
+	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
-		auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-		Config::config.current_combo_skin_index++;
-		if (Config::config.current_combo_skin_index > int32_t(values.size()))
-			Config::config.current_combo_skin_index = int32_t(values.size());
-		if (Config::config.current_combo_skin_index > 0)
-			player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
-		Config::save();
+		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		cheatManager.config->config.current_combo_skin_index++;
+		if (cheatManager.config->config.current_combo_skin_index > int32_t(values.size()))
+			cheatManager.config->config.current_combo_skin_index = int32_t(values.size());
+		if (cheatManager.config->config.current_combo_skin_index > 0)
+			player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
+		cheatManager.config->save();
 	}
 }
 
 static __forceinline void previousSkin() noexcept
 {
-	static const auto player{ Memory::getLocalPlayer() };
+	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
-		auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-		Config::config.current_combo_skin_index--;
-		if (Config::config.current_combo_skin_index > 0)
-			player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
+		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		cheatManager.config->config.current_combo_skin_index--;
+		if (cheatManager.config->config.current_combo_skin_index > 0)
+			player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
 		else
-			Config::config.current_combo_skin_index = 1;
-		Config::save();
+			cheatManager.config->config.current_combo_skin_index = 1;
+		cheatManager.config->save();
 	}
 }
 
@@ -59,16 +54,16 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
 
-	if (msg == WM_KEYDOWN && wParam == Config::config.menuKey.getKey()) {
-		GUI::is_open = !GUI::is_open;
-		if (!GUI::is_open)
-			Config::save();
+	if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.menuKey.getKey()) {
+		cheatManager.gui->is_open = !cheatManager.gui->is_open;
+		if (!cheatManager.gui->is_open)
+			cheatManager.config->save();
 	}
 
-	if (Config::config.quickSkinChange) {
-		if (msg == WM_KEYDOWN && wParam == Config::config.nextSkinKey.getKey())
+	if (cheatManager.config->config.quickSkinChange) {
+		if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.nextSkinKey.getKey())
 			nextSkin();
-		if (msg == WM_KEYDOWN && wParam == Config::config.previousSkinKey.getKey())
+		if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.previousSkinKey.getKey())
 			previousSkin();
 	}
 
@@ -77,7 +72,9 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
 std::once_flag init_device;
 std::unique_ptr<::vmt_smart_hook> d3d_device_vmt{ nullptr };
+#ifdef _RIOT
 std::unique_ptr<::vmt_smart_hook> swap_chain_vmt{ nullptr };
+#endif
 
 static const ImWchar ranges[] = {
 	0x0020, 0x00FF, // Basic Latin + Latin Supplement
@@ -105,6 +102,7 @@ static ImWchar* getFontGlyphRangesKr() noexcept
 }
 
 namespace d3d_vtable {
+#ifdef _RIOT
 	ID3D11Device* d3d11_device{ nullptr };
 	ID3D11DeviceContext* d3d11_device_context{ nullptr };
 	ID3D11RenderTargetView* main_render_target_view{ nullptr };
@@ -120,10 +118,11 @@ namespace d3d_vtable {
 			back_buffer->Release();
 		}
 	}
+#endif
 
 	static void init_imgui(void* device, bool is_d3d11 = false) noexcept
 	{
-		SkinDatabase::load();
+		cheatManager.database->load();
 		ImGui::CreateContext();
 		auto& style{ ImGui::GetStyle() };
 
@@ -215,40 +214,47 @@ namespace d3d_vtable {
 			cfg.MergeMode = false;
 		}
 
-		ImGui_ImplWin32_Init(Memory::getRiotWindow());
+		ImGui_ImplWin32_Init(cheatManager.memory->getRiotWindow());
 
 		if (is_d3d11) {
+#ifdef _RIOT
 			p_swap_chain = reinterpret_cast<IDXGISwapChain*>(device);
 			p_swap_chain->GetDevice(__uuidof(d3d11_device), reinterpret_cast<void**>(&(d3d11_device)));
 			d3d11_device->GetImmediateContext(&d3d11_device_context);
 			create_render_target();
 			::ImGui_ImplDX11_Init(d3d11_device, d3d11_device_context);
 			::ImGui_ImplDX11_CreateDeviceObjects();
-		} else
+#endif
+		}
+		else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
-		static const auto client{ Memory::getClient() };
+		static const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
-			Hooks::init();
-			if (GUI::is_open) {
-				if (is_d3d11)
+			cheatManager.hooks->init();
+			if (cheatManager.gui->is_open) {
+				if (is_d3d11) {
+#ifdef _RIOT
 					::ImGui_ImplDX11_NewFrame();
-				else
+#endif
+				} else
 					::ImGui_ImplDX9_NewFrame();
 				::ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
-				GUI::render();
+				cheatManager.gui->render();
 				ImGui::EndFrame();
 				ImGui::Render();
 
 				if (is_d3d11) {
+#ifdef _RIOT
 					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
 					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif
 				} else {
 					unsigned long colorwrite, srgbwrite;
 					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
@@ -314,19 +320,18 @@ namespace d3d_vtable {
 	decltype(reset::m_original) reset::m_original;
 };
 
-void Hooks::init() noexcept
+void Hooks::init() const noexcept
 {
-	static const auto league_module{ Memory::getLeagueModule() };
-	static const auto player{ Memory::getLocalPlayer() };
-	static const auto heroes{ Memory::getHeroes() };
-	static const auto minions{ Memory::getMinions() };
+	static const auto player{ cheatManager.memory->localPlayer };
+	static const auto heroes{ cheatManager.memory->heroList };
+	static const auto minions{ cheatManager.memory->minionList };
 
-	std::call_once(change_skins, [&]() {
-		Memory::getChat()->printChat("R3nzSkin Succesfuly Loaded!");
+	std::call_once(change_skins, [&]()
+	{
 		if (player) {
-			if (Config::config.current_combo_skin_index > 0) {
-				const auto& values{ SkinDatabase::champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-				player->change_skin(values[Config::config.current_combo_skin_index - 1].model_name.c_str(), values[Config::config.current_combo_skin_index - 1].skin_id);
+			if (cheatManager.config->config.current_combo_skin_index > 0) {
+				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+				player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
 			}
 		}
 
@@ -341,13 +346,13 @@ void Hooks::init() noexcept
 				continue;
 
 			const auto is_enemy{ my_team != hero->get_team() };
-			const auto& config_array{ is_enemy ? Config::config.current_combo_enemy_skin_index : Config::config.current_combo_ally_skin_index };
+			const auto& config_array{ is_enemy ? cheatManager.config->config.current_combo_enemy_skin_index : cheatManager.config->config.current_combo_ally_skin_index };
 			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
 				continue;
 
 			if (config_entry->second > 0) {
-				const auto& values = SkinDatabase::champions_skins[champion_name_hash];
+				const auto& values = cheatManager.database->champions_skins[champion_name_hash];
 				hero->change_skin(values[config_entry->second - 1].model_name.c_str(), values[config_entry->second - 1].skin_id);
 			}
 		}
@@ -375,7 +380,7 @@ void Hooks::init() noexcept
 				if (hash == FNV("TestCubeRender10Vision"))
 					change_skin_for_object(minion, 0);
 				else
-					change_skin_for_object(minion, Config::config.current_ward_skin_index);
+					change_skin_for_object(minion, cheatManager.config->config.current_ward_skin_index);
 			}
 			continue;
 		}
@@ -383,37 +388,33 @@ void Hooks::init() noexcept
 	}
 }
 
-void WINAPI Hooks::install() noexcept
+void Hooks::install() const noexcept
 {
-	const auto material_registry{ reinterpret_cast<std::uintptr_t(__stdcall*)()>(reinterpret_cast<std::uintptr_t>(::GetModuleHandleA(nullptr)) + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)() };
-	const auto d3d_device{ *reinterpret_cast<IDirect3DDevice9**>(material_registry + offsets::MaterialRegistry::D3DDevice) };
-#ifdef _RIOT
-	const auto swap_chain{ *reinterpret_cast<IDXGISwapChain**>(material_registry + offsets::MaterialRegistry::SwapChain) };
-#endif
-
-	if (d3d_device) {
-		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(d3d_device);
+	if (cheatManager.memory->d3dDevice) {
+		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->d3dDevice);
 		d3d_device_vmt->apply_hook<d3d_vtable::end_scene>(42);
 		d3d_device_vmt->apply_hook<d3d_vtable::reset>(16);
 	}
 
 #ifdef _RIOT
-	else if (swap_chain) {
-		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(swap_chain);
+	else if (cheatManager.memory->swapChain) {
+		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->swapChain);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_present>(8);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_resize_buffers>(13);
 	}
 #endif
 }
 
-void WINAPI Hooks::uninstall() noexcept
+void Hooks::uninstall() const noexcept
 {
-	::SetWindowLongW(Memory::getRiotWindow(), GWLP_WNDPROC, LONG_PTR(originalWndProc));
+	::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 
 	if (d3d_device_vmt)
 		d3d_device_vmt->unhook();
+#ifdef _RIOT
 	if (swap_chain_vmt)
 		swap_chain_vmt->unhook();
+#endif
 
-	run = false;
+	cheatManager.cheatState = false;
 }
