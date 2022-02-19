@@ -1,17 +1,16 @@
-#include <Windows.h>
 #include <fstream>
 #include <string>
 
 #include "depend\json\single_include\nlohmann\json.hpp"
 
 
-#include "Config.hpp"
+#include "CheatManager.hpp"
 #include "Memory.hpp"
-#include "Offsets.hpp"
+#include "Utils.hpp"
 
 void Config::save() noexcept
 {
-	static const auto player{ Memory::getLocalPlayer() };
+	const auto player{ cheatManager.memory->localPlayer };
 	auto out{ std::ofstream(L"R3nzSkin.json") };
 
 	if (player)
@@ -38,7 +37,7 @@ void Config::save() noexcept
 
 void Config::load() noexcept
 {
-	static const auto player{ Memory::getLocalPlayer() };
+	const auto player{ cheatManager.memory->localPlayer };
 	auto out{ std::ifstream(L"R3nzSkin.json") };
 
 	if (!out.good())

@@ -206,6 +206,7 @@
     <ClInclude Include="depend\json\single_include\nlohmann\json.hpp">
       <Filter>Json\json_upstream</Filter>
     </ClInclude>
+    <ClInclude Include="CheatManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />
