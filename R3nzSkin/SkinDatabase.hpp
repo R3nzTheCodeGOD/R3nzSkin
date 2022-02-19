@@ -1,12 +1,13 @@
 #pragma once
 
-#include <cinttypes>
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 
-namespace SkinDatabase {
+class SkinDatabase {
+public:
 	class skin_info {
 	public:
 		std::string model_name;
@@ -16,6 +17,6 @@ namespace SkinDatabase {
 
 	void load() noexcept;
 
-	extern std::map<std::uint32_t, std::vector<skin_info>> champions_skins;
-	extern std::vector<std::pair<std::uint32_t, std::string>> wards_skins;
+	std::map<std::uint32_t, std::vector<skin_info>> champions_skins;
+	std::vector<std::pair<std::uint32_t, std::string>> wards_skins;
 };

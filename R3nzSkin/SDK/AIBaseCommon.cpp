@@ -1,10 +1,13 @@
 #include <cstdint>
+#include <string>
 
 #include "AIBaseCommon.hpp"
 
 #include "../encryption.hpp"
 #include "../fnv_hash.hpp"
 #include "../offsets.hpp"
+
+#include "../CheatManager.hpp"
 
 bool AIBaseCommon::skin_model_push(const char* model, std::int32_t skin) noexcept
 {

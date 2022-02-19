@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <thread>
 
+#include "CheatManager.hpp"
+
 #include "Config.hpp"
 #include "GUI.hpp"
 #include "Hooks.hpp"
@@ -33,31 +35,25 @@ static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 	using namespace std::chrono_literals;
 
 	HideThread(::GetCurrentThread());
-
-	Memory::Search(true);
-	auto client{ Memory::getClient() };
-
+	cheatManager.start();
+	cheatManager.memory->Search(true);
 	while (true) {
 		std::this_thread::sleep_for(1s);
-
-		if (!client) {
-			Memory::Search(true);
-			client = Memory::getClient();
-		} else {
-			if (client->game_state == GGameState_s::Running)
+		
+		if (!cheatManager.memory->client)
+			cheatManager.memory->Search(true);
+		else
+			if (cheatManager.memory->client->game_state == GGameState_s::Running)
 				break;
-		}
 	}
 
-	GUI::is_open = true;
 	std::this_thread::sleep_for(500ms);
-	Memory::Search(false);
+	cheatManager.memory->Search(false);
 	std::this_thread::sleep_for(500ms);
-	Config::load();
-	Hooks::install();
+	cheatManager.config->load();
+	cheatManager.hooks->install();
 		
-	run = true;
-	while (run)
+	while (cheatManager.cheatState)
 		std::this_thread::sleep_for(250ms);
 
 	::ExitProcess(0u);

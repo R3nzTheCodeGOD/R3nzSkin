@@ -122,6 +122,7 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CheatManager.hpp" />
     <ClInclude Include="Config.hpp" />
     <ClInclude Include="depend\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="depend\imgui\backends\imgui_impl_dx9.h" />
@@ -149,7 +150,6 @@
     <ClInclude Include="SDK\ChampionManager.hpp" />
     <ClInclude Include="SDK\CharacterDataStack.hpp" />
     <ClInclude Include="SDK\CharacterStackData.hpp" />
-    <ClInclude Include="SDK\Chat.hpp" />
     <ClInclude Include="SDK\GameClient.hpp" />
     <ClInclude Include="SDK\GameObject.hpp" />
     <ClInclude Include="SDK\GameState.hpp" />
