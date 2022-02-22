@@ -6,9 +6,7 @@
 
 #include "fnv_hash.hpp"
 #include "imgui/imgui.h"
-#ifdef _RIOT
 #include "imgui/imgui_impl_dx11.h"
-#endif
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 #include "vmt_smart_hook.hpp"
@@ -72,9 +70,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
 std::once_flag init_device;
 std::unique_ptr<::vmt_smart_hook> d3d_device_vmt{ nullptr };
-#ifdef _RIOT
 std::unique_ptr<::vmt_smart_hook> swap_chain_vmt{ nullptr };
-#endif
 
 static const ImWchar ranges[] = {
 	0x0020, 0x00FF, // Basic Latin + Latin Supplement
@@ -102,7 +98,6 @@ static ImWchar* getFontGlyphRangesKr() noexcept
 }
 
 namespace d3d_vtable {
-#ifdef _RIOT
 	ID3D11Device* d3d11_device{ nullptr };
 	ID3D11DeviceContext* d3d11_device_context{ nullptr };
 	ID3D11RenderTargetView* main_render_target_view{ nullptr };
@@ -118,7 +113,6 @@ namespace d3d_vtable {
 			back_buffer->Release();
 		}
 	}
-#endif
 
 	static void init_imgui(void* device, bool is_d3d11 = false) noexcept
 	{
@@ -217,16 +211,13 @@ namespace d3d_vtable {
 		ImGui_ImplWin32_Init(cheatManager.memory->getRiotWindow());
 
 		if (is_d3d11) {
-#ifdef _RIOT
 			p_swap_chain = reinterpret_cast<IDXGISwapChain*>(device);
 			p_swap_chain->GetDevice(__uuidof(d3d11_device), reinterpret_cast<void**>(&(d3d11_device)));
 			d3d11_device->GetImmediateContext(&d3d11_device_context);
 			create_render_target();
 			::ImGui_ImplDX11_Init(d3d11_device, d3d11_device_context);
 			::ImGui_ImplDX11_CreateDeviceObjects();
-#endif
-		}
-		else
+		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
@@ -239,9 +230,7 @@ namespace d3d_vtable {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
 				if (is_d3d11) {
-#ifdef _RIOT
 					::ImGui_ImplDX11_NewFrame();
-#endif
 				} else
 					::ImGui_ImplDX9_NewFrame();
 				::ImGui_ImplWin32_NewFrame();
@@ -251,10 +240,8 @@ namespace d3d_vtable {
 				ImGui::Render();
 
 				if (is_d3d11) {
-#ifdef _RIOT
 					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
 					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-#endif
 				} else {
 					unsigned long colorwrite, srgbwrite;
 					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
@@ -270,7 +257,6 @@ namespace d3d_vtable {
 		}
 	}
 
-#ifdef _RIOT
 	struct dxgi_present {
 		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
 		{
@@ -293,7 +279,6 @@ namespace d3d_vtable {
 		static decltype(&hooked) m_original;
 	};
 	decltype(dxgi_resize_buffers::m_original) dxgi_resize_buffers::m_original;
-#endif
 
 	struct end_scene {
 		static long WINAPI hooked(IDirect3DDevice9* p_device) noexcept
@@ -394,15 +379,11 @@ void Hooks::install() const noexcept
 		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->d3dDevice);
 		d3d_device_vmt->apply_hook<d3d_vtable::end_scene>(42);
 		d3d_device_vmt->apply_hook<d3d_vtable::reset>(16);
-	}
-
-#ifdef _RIOT
-	else if (cheatManager.memory->swapChain) {
+	} else if (cheatManager.memory->swapChain) {
 		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->swapChain);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_present>(8);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_resize_buffers>(13);
 	}
-#endif
 }
 
 void Hooks::uninstall() const noexcept
@@ -411,10 +392,8 @@ void Hooks::uninstall() const noexcept
 
 	if (d3d_device_vmt)
 		d3d_device_vmt->unhook();
-#ifdef _RIOT
 	if (swap_chain_vmt)
 		swap_chain_vmt->unhook();
-#endif
 
 	cheatManager.cheatState = false;
 }
