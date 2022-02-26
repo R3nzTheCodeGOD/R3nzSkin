@@ -89,9 +89,7 @@ void Memory::update(bool gameClient) noexcept
 		this->translateString = reinterpret_cast<const char* (__cdecl*)(const char*)>(this->getLeagueModule() + offsets::functions::translateString_UNSAFE_DONOTUSE);
 		this->materialRegistry = reinterpret_cast<std::uintptr_t(__stdcall*)()>(this->getLeagueModule() + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
-#ifdef _RIOT
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
-#endif
 	}
 }
 

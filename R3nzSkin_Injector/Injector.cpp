@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <cstdlib>
 #include <fstream>
 #include <psapi.h>
 #include <string>
@@ -147,6 +148,30 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 				::CloseHandle(token);
 		}
 	}
+}
+
+std::string Injector::randomString(std::uint32_t size) noexcept
+{
+	static const char alphanum[]{ "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" };
+	std::string tmp_s;
+	tmp_s.reserve(size);
+
+	for (auto i{ 0u }; i < size; ++i)
+		tmp_s += alphanum[std::rand() % (sizeof(alphanum) - 1)];
+
+	return tmp_s;
+}
+
+void Injector::renameExe() noexcept
+{
+	char szExeFileName[MAX_PATH];
+	GetModuleFileNameA(nullptr, szExeFileName, MAX_PATH);
+
+	const auto path{ std::string(szExeFileName) };
+	const auto exe{ path.substr(path.find_last_of("\\") + 1, path.size()) };
+	const auto newName{ randomString(std::rand() % (10 - 7 + 1) + 7) + ".exe" };
+
+	rename(exe.c_str(), newName.c_str());
 }
 
 void Injector::run() noexcept

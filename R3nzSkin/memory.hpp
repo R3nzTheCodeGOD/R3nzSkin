@@ -3,9 +3,7 @@
 #include <Windows.h>
 #include <cstdint>
 #include <d3d9.h>
-#ifdef _RIOT
 #include <d3d11.h>
-#endif
 
 
 #include "Offsets.hpp"
@@ -39,9 +37,7 @@ public:
 	const char*(__cdecl* translateString)(const char*);
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
-#ifdef _RIOT
 	IDXGISwapChain* swapChain;
-#endif
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -129,7 +125,6 @@ private:
 			false, true, 0,
 			&offsets::MaterialRegistry::D3DDevice
 		},
-	#ifdef _RIOT
 		{
 			{
 				"8B 95 ? ? ? ? 0F 10 44 24 ?",
@@ -139,7 +134,6 @@ private:
 			false, true, 0,
 			&offsets::MaterialRegistry::SwapChain
 		},
-	#endif
 		{
 			{
 				"83 EC 50 53 55 56 57 8B F9 8B 47 04"
@@ -156,8 +150,8 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? FF 75 38",
 				"E8 ? ? ? ? FF 73 58",
+				"E8 ? ? ? ? FF 75 3C",
 			},
 			true, false, 0,
 			&offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
