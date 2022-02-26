@@ -27,9 +27,7 @@ namespace offsets {
 
 	namespace MaterialRegistry {
 		inline std::uint32_t D3DDevice{ 0 };
-#ifdef _RIOT
 		inline std::uint32_t SwapChain{ 0 };
-#endif
 	};
 
 	namespace functions {
