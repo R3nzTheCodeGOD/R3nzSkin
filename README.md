@@ -22,7 +22,7 @@
 
 # Building
 1. Clone the source with `git clone --recursive https://github.com/R3nzTheCodeGOD/R3nzSkin.git`
-2. Build in Visual Studio 2017/19 with configuration "Release | x86"
+2. Build in Visual Studio 2017/19 with configuration "Your Region"
 
 # Usage
 1. Use `R3nzSkin_Injector` or inject the resulting DLL into the game yourself.
@@ -32,10 +32,8 @@
 2. Press <kbd>Insert</kbd> to bring up the menu.
 3. Select skin for you, your teammates, enemies, wards.
 
-Note: If you are going to use the cheat on the China Server, you need to run the game as Legacy DirexctX9.
-
 # Further optimizations
-If your CPU supports AVX / AVX2 / AVX-512 instruction set, you can enable it in project settings. This should result in more performant code, optimized for your CPU. Currently SSE2 instructions are selected in project settings.
+If your CPU supports AVX / AVX2 / AVX-512 instruction set, you can enable it in project settings. This should result in more performant code, optimized for your CPU.
 
 # Credits
 This program is an improved and updated version of the <a href="https://github.com/B3akers">B3akers</a>/<a href="https://github.com/B3akers/LeagueSkinChanger">LeagueSkinChanger</a> project.
