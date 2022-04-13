@@ -8,9 +8,11 @@
 #include "Skin.hpp"
 
 class Champion {
-public:
 	PAD(0x4);
+public:
 	AString champion_name;
+private:
 	PAD(0x48);
+public:
 	std::vector<Skin> skins;
 };

@@ -6,7 +6,7 @@
 #include "Pad.hpp"
 
 class ChampionManager {
-public:
 	PAD(0x18);
+public:
 	std::vector<Champion*> champions;
 };

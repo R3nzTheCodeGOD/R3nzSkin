@@ -8,7 +8,10 @@
 class CharacterStackData {
 public:
     AString model;
+private:
     PAD(0xC);
+public:
     std::int32_t skin;
+private:
     PAD(0x40);
 };

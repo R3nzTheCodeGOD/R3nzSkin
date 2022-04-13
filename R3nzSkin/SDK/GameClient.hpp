@@ -4,7 +4,7 @@
 #include "Pad.hpp"
 
 class GameClient {
-public:
 	PAD(0x8);
+public:
 	GGameState_s game_state;
 };

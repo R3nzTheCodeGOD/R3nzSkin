@@ -6,8 +6,8 @@
 
 template <class T>
 class ManagerTemplate {
-public:
 	PAD(0x4);
+public:
 	T** list;
 	std::size_t length;
 	std::size_t capacity;
