@@ -343,7 +343,21 @@ void Hooks::init() const noexcept
 		}
 	});
 
-	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept {
+	for (auto i{ 0u }; i < heroes->length; ++i) {
+		if (const auto hero{ heroes->list[i] }; hero->get_character_data_stack()->stack.size() > 0) {
+			// Viego transforms into another champion as 2nd form, our own skin's id may not match for every champion.
+			if (const auto championName{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) }; championName == FNV("Viego"))
+				continue;
+
+			if (auto& stack{ hero->get_character_data_stack()->stack.front() }; stack.skin != hero->get_character_data_stack()->base_skin.skin) {
+				stack.skin = hero->get_character_data_stack()->base_skin.skin;
+				hero->get_character_data_stack()->update(true);
+			}
+		}
+	}
+
+	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept
+	{
 		if (skin == -1)
 			return;
 
