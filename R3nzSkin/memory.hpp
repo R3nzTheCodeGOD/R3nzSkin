@@ -61,7 +61,7 @@ private:
 		{
 			{
 				"A1 ? ? ? ? 8B 54 24 14 53 55",
-				"A1 ? ? ? ? 8B 70 04 8B 40 08 8D 3C 86 3B F7 74 ?"
+				"8B 0D ? ? ? ? E8 ? ? ? ? 85 C0 74 24 05 ? ? ? ? C2 04 00"
 			}, true, true, 0, &offsets::global::ManagerTemplate_AIHero_
 		},
 		{
@@ -107,12 +107,12 @@ private:
 		},
 		{
 			{
-				"83 EC 50 53 55 56 57 8B F9 8B 47 04 39 07"
+				"83 EC 74 53 55 56 57 8B F9 8B 47 04 39 07"
 			}, true, false, 0, &offsets::functions::CharacterDataStack__Push },
 		{
 			{
-				"E8 ? ? ? ? 5F 5E 5B 83 C4 44 C2 04 00",
-				"83 EC 1C 56 57 8D 44 24 ? 8B F1 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50"
+				"83 EC 1C 56 57 8D 44 24 ? 8B F1 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50",
+				"E8 ? ? ? ? 8B 8E ? ? ? ? 5E 8B 01 FF 60 ?"
 			}, true, false, 0, &offsets::functions::CharacterDataStack__Update
 		},
 		{
