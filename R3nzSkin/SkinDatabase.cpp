@@ -15,8 +15,11 @@ void SkinDatabase::load() noexcept
 	for (const auto& champion : cheatManager.memory->championManager->champions) {
 		std::vector<std::int32_t> skins_ids;
 		
-		for (const auto& skin : champion->skins)
+		for (const auto& skin : champion->skins) {
+			if (skin.skin_id > 0xff || skin.skin_id < 0x0)
+				break;
 			skins_ids.push_back(skin.skin_id);
+		}
 		
 		std::ranges::sort(skins_ids);
 
