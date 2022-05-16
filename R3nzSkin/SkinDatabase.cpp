@@ -26,13 +26,14 @@ void SkinDatabase::load() noexcept
 		std::map<std::string, std::int32_t> temp_skin_list;
 		for (const auto& i : skins_ids) {
 			const auto skin_display_name{ std::string("game_character_skin_displayname_") + champion->champion_name.str + "_" + std::to_string(i) };
-
 			auto skin_display_name_translated{ i > 0 ? std::string(translateString(skin_display_name.c_str())) : std::string(champion->champion_name.str) };
-			const auto it{ temp_skin_list.find(skin_display_name_translated) };
 
-			if (it == temp_skin_list.end())
+			if (skin_display_name_translated == skin_display_name)
+				continue;
+
+			if (const auto it{ temp_skin_list.find(skin_display_name_translated) }; it == temp_skin_list.end()) {
 				temp_skin_list[skin_display_name_translated] = 1;
-			else {
+			} else {
 				skin_display_name_translated.append(" Chroma " + std::to_string(it->second));
 				it->second = it->second + 1;
 			}
