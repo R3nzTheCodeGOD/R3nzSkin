@@ -90,7 +90,7 @@ private:
 		},
 		{
 			{
-				"80 BE ? ? 00 00 00 75 ? 0F 31 33 C9 66 C7 86 ? ? ? ? ? ? 89 44 24 ? 33 DB 89 54 24 ? 66 66 0F 1F 84 ? ? ? ? ?",
+				"80 BE ? ? 00 00 00 75 ? 0F 31 33 C9 66 C7 86 ? ? ? ? 01 00 89 44 24 ? 33 DB 89 54 24 ? 8A 44 0C ? 41 88 84 33 ? ? 00 00",
 			}, false, true, 0, &offsets::AIBaseCommon::SkinId
 		},
 		{
@@ -129,8 +129,8 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 39 44 24 1C 5F 5E 5D 0F 94 C0 5B",
-				"E8 ? ? ? ? 8B F8 8B 03 8B CB"
+				"E8 ? ? ? ? 3B F8 5F 5E 5D 0F 94 C0 5B",
+				"E8 ? ? ? ? 85 C0 74 09 8B CE"
 			}, true, false, 0, &offsets::functions::GetGoldRedirectTarget
 		}
 	};
