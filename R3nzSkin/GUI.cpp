@@ -33,6 +33,13 @@ void GUI::render() noexcept
 			return true;
 		};
 
+		static auto vector_getter_default = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
+			const auto& vector{ *static_cast<std::vector<std::string>*>(vec) };
+			if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
+			*out_text = idx == 0 ? "Default" : vector.at(idx - 1).c_str();
+			return true;
+		};
+
 		ImGui::rainbowText();
 
 		if (player) {
@@ -48,6 +55,21 @@ void GUI::render() noexcept
 
 			ImGui::Separator();
 		}
+
+		ImGui::Text("Global Skins Settings:");
+		if (ImGui::Combo("Minion Skins:", &cheatManager.config->config.current_combo_minion_index, vector_getter_default, static_cast<void*>(&cheatManager.database->minions_skins), cheatManager.database->minions_skins.size() + 1))
+			cheatManager.config->config.current_minion_skin_index = cheatManager.config->config.current_combo_minion_index - 1;
+		ImGui::Separator();
+		ImGui::Text("Jungle Mobs Skins Settings:");
+		for (auto& it : cheatManager.database->jungle_mobs_skins) {
+			snprintf(str_buffer, 256, "Current %s skin", it.name.c_str());
+			const auto config_entry{ cheatManager.config->config.current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(),0 }) };
+			if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
+				for (const auto& hash : it.name_hashes)
+					cheatManager.config->config.current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
+		}
+
+		ImGui::Separator();
 
 		ImGui::Text("Other Champs Skins Settings:");
 		std::int32_t last_team{ 0 };

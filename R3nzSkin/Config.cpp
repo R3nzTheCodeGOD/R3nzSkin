@@ -23,12 +23,16 @@ void Config::save() noexcept
 	config_json["quickSkinChange"] = config.quickSkinChange;
 	config_json["current_combo_ward_index"] = config.current_combo_ward_index;
 	config_json["current_ward_skin_index"] = config.current_ward_skin_index;
+	config_json["current_minion_skin_index"] = config.current_minion_skin_index;
 
 	for (const auto& it : config.current_combo_ally_skin_index)
 		config_json["current_combo_ally_skin_index"][std::to_string(it.first)] = it.second;
 
 	for (const auto& it : config.current_combo_enemy_skin_index)
 		config_json["current_combo_enemy_skin_index"][std::to_string(it.first)] = it.second;
+
+	for (const auto& it : config.current_combo_jungle_mob_skin_index)
+		config_json["current_combo_jungle_mob_skin_index"][std::to_string(it.first)] = it.second;
 
 	out << config_json.dump();
 	out.close();
@@ -55,16 +59,22 @@ void Config::load() noexcept
 	config.quickSkinChange = config_json.value("quickSkinChange", false);
 	config.current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	config.current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
+	config.current_minion_skin_index = config_json.value("current_minion_skin_index", -1);
 
 	const auto ally_skins{ config_json.find("current_combo_ally_skin_index") };
 	if (ally_skins != config_json.end())
 		for (const auto& it : ally_skins.value().items())
-			config.current_combo_ally_skin_index[std::stoul(it.key())] = it.value().get<int32_t>();
+			config.current_combo_ally_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
 
 	const auto enemy_skins{ config_json.find("current_combo_enemy_skin_index") };
 	if (enemy_skins != config_json.end())
 		for (const auto& it : enemy_skins.value().items())
-			config.current_combo_enemy_skin_index[std::stoul(it.key())] = it.value().get<int32_t>();
+			config.current_combo_enemy_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
+
+	const auto jungle_mobs_skins{ config_json.find("current_combo_jungle_mob_skin_index") };
+	if (jungle_mobs_skins != config_json.end())
+		for (const auto& it : jungle_mobs_skins.value().items())
+			config.current_combo_jungle_mob_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
 
 	out.close();
 }
@@ -79,7 +89,10 @@ void Config::reset() noexcept
 	config.quickSkinChange = false;
 	config.current_combo_skin_index = 0;
 	config.current_combo_ward_index = 0;
+	config.current_combo_minion_index = 0;
+	config.current_minion_skin_index = -1;
 	config.current_ward_skin_index = -1;
 	config.current_combo_ally_skin_index.clear();
 	config.current_combo_enemy_skin_index.clear();
+	config.current_combo_jungle_mob_skin_index.clear();
 }

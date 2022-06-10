@@ -201,10 +201,10 @@ namespace d3d_vtable {
 			::CoTaskMemFree(pathToFonts);
 			ImFontConfig cfg;
 			cfg.SizePixels = 15.0f;
-			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
+			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 14.0f, &cfg, ranges);
 			cfg.MergeMode = true;
-			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
-			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 12.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
+			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 15.0f, &cfg, getFontGlyphRangesKr());
+			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 11.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
 		}
 
@@ -371,19 +371,30 @@ void Hooks::init() const noexcept
 		const auto minion{ minions->list[i] };
 		const auto owner{ minion->get_gold_redirect_target() };
 
-		if (!owner)
-			continue;
-
-		if (const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) }; hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
-			if (!player || owner == player) {
-				if (hash == FNV("TestCubeRender10Vision"))
-					change_skin_for_object(minion, 0);
-				else
-					change_skin_for_object(minion, cheatManager.config->config.current_ward_skin_index);
+		if (owner) {
+			if (const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) }; hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
+				if (!player || owner == player) {
+					if (hash == FNV("TestCubeRender10Vision"))
+						change_skin_for_object(minion, 0);
+					else
+						change_skin_for_object(minion, cheatManager.config->config.current_ward_skin_index);
+				}
+				continue;
 			}
-			continue;
+			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
+		} else {
+			if (minion->is_lane_minion()) {
+				if (player && player->get_team() == 200)
+					change_skin_for_object(minion, cheatManager.config->config.current_minion_skin_index * 2 + 1);
+				else
+					change_skin_for_object(minion, cheatManager.config->config.current_minion_skin_index * 2);
+			} else {
+				const auto config_entry{ cheatManager.config->config.current_combo_jungle_mob_skin_index.find(fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str)) };
+				if (config_entry == cheatManager.config->config.current_combo_jungle_mob_skin_index.end() || config_entry->second == 0)
+					continue;
+				change_skin_for_object(minion, config_entry->second - 1);
+			}
 		}
-		change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 	}
 }
 

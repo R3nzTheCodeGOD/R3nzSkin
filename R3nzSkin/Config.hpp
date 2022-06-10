@@ -11,7 +11,8 @@ using json = nlohmann::json;
 
 class Config {
 private:
-	struct cfg {
+	class cfg {
+	public:
 		KeyBind menuKey{ KeyBind(KeyBind::INSERT) };
 		KeyBind nextSkinKey{ KeyBind(KeyBind::PAGE_UP) };
 		KeyBind previousSkinKey{ KeyBind(KeyBind::PAGE_DOWN) };
@@ -20,9 +21,12 @@ private:
 		bool quickSkinChange{ false };
 		std::int32_t current_combo_skin_index{ 0 };
 		std::int32_t current_combo_ward_index{ 0 };
+		std::int32_t current_combo_minion_index{ 0 };
+		std::int32_t current_minion_skin_index{ -1 };
 		std::int32_t current_ward_skin_index{ -1 };
 		std::map<std::uint32_t, std::int32_t> current_combo_ally_skin_index;
 		std::map<std::uint32_t, std::int32_t> current_combo_enemy_skin_index;
+		std::map<std::uint32_t, std::int32_t> current_combo_jungle_mob_skin_index;
 	};
 
 	json config_json{ json() };

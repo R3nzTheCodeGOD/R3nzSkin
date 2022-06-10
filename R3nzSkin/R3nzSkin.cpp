@@ -2,6 +2,7 @@
 #pragma warning(disable : 4715)
 
 #include <Windows.h>
+#include <clocale>
 #include <chrono>
 #include <cstdint>
 #include <thread>
@@ -64,6 +65,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	HideThread(hModule);
 
 	if (reason == DLL_PROCESS_ATTACH) {
+		std::setlocale(LC_ALL, ".utf8");
 		::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
 		::CloseHandle(hModule);
 		return TRUE;

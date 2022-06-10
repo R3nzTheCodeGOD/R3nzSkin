@@ -30,6 +30,10 @@ namespace offsets {
 		inline std::uint32_t SwapChain{ 0 };
 	};
 
+	namespace AIMinionClient {
+		inline std::uint32_t IsLaneMinion{ 0 };
+	};
+
 	namespace functions {
 		inline std::uint32_t Riot__Renderer__MaterialRegistry__GetSingletonPtr{ 0 };
 		inline std::uint32_t translateString_UNSAFE_DONOTUSE{ 0 };
