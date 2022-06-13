@@ -163,6 +163,29 @@ void GUI::render() noexcept
 					}
 				} infoText("Defaults the skin of all champions.");
 
+				if (ImGui::Button("Random Skins")) {
+					for (auto i{ 0u }; i < heroes->length; ++i) {
+						const auto hero{ heroes->list[i] };
+						const auto championHash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+						const auto skinCount{ cheatManager.database->champions_skins[championHash].size() };
+						auto& skinDatabase{ cheatManager.database->champions_skins[championHash] };
+						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
+
+						if (championHash == FNV("PracticeTool_TargetDummy"))
+							continue;
+
+						if (hero == player) {
+							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
+							hero->change_skin(skinDatabase[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), skinDatabase[cheatManager.config->current_combo_skin_index - 1].skin_id);
+						}
+						else {
+							auto& data{ config[championHash] };
+							data = random(1u, skinCount);
+							hero->change_skin(skinDatabase[data - 1].model_name.c_str(), skinDatabase[data - 1].skin_id);
+						}
+					}
+				} infoText("Randomly changes the skin of all champions.");
+
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
 				infoText("You will be returned to the reconnect screen.");
