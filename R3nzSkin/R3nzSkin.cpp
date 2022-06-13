@@ -51,6 +51,7 @@ static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);
 	std::this_thread::sleep_for(500ms);
+	cheatManager.config->init();
 	cheatManager.config->load();
 	cheatManager.hooks->install();
 		

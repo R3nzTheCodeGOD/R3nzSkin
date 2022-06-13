@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <map>
 
 #include "json/json.hpp"
@@ -11,6 +12,7 @@ using json = nlohmann::json;
 
 class Config {
 public:
+	void init() noexcept;
 	void save() noexcept;
 	void load() noexcept;
 	void reset() noexcept;
@@ -30,5 +32,6 @@ public:
 	std::map<std::uint32_t, std::int32_t> current_combo_enemy_skin_index;
 	std::map<std::uint32_t, std::int32_t> current_combo_jungle_mob_skin_index;
 private:
+	std::filesystem::path path;
 	json config_json{ json() };
 };
