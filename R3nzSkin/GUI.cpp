@@ -147,6 +147,22 @@ void GUI::render() noexcept
 					ImGui::Separator();
 				}
 
+				if (ImGui::Button("No Skins")) {
+					cheatManager.config->current_combo_skin_index = 1;
+					player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
+
+					for (auto& enemy : cheatManager.config->current_combo_enemy_skin_index)
+						enemy.second = 1;
+
+					for (auto& ally : cheatManager.config->current_combo_ally_skin_index)
+						ally.second = 1;
+
+					for (auto i{ 0u }; i < heroes->length; ++i) {
+						const auto hero{ heroes->list[i] };
+						hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
+					}
+				} infoText("Defaults the skin of all champions.");
+
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
 				infoText("You will be returned to the reconnect screen.");
