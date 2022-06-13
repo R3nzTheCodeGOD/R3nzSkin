@@ -72,14 +72,14 @@ private:
 		},
 		{
 			{
-				"A1 ? ? ? ? 53 55 8B 6C 24 1C 56 57 8B 78 04 8B 40 08",
-				"8B 35 ? ? ? ? 8B 56 04 8D 4E 04 8B 41 04 8D 04 82"
+				"8B 35 ? ? ? ? 8B 56 04 8D 4E 04 8B 41 04 8D 04 82",
+				"A1 ? ? ? ? 55 57 8B 78 04 8B 40 08 8D 2C 87 3B FD"
 			}, true, true, 0, &offsets::global::ManagerTemplate_AIMinionClient_
 		},
 		{
 			{
-				"3B 05 ? ? ? ? 75 72 8B 0D ? ? ? ? 85 C9",
-				"A3 ? ? ? ? 6A 64 6A 00 FF 15 ? ? ? ? 6A 50"
+				"A3 ? ? ? ? 6A 64 6A 00",
+				"8B 35 ? ? ? ? FF 15 ? ? ? ? 3B C6 75 ? 8B 0D ? ? ? ? 85 C9 74 ? 8B 01"
 			}, true, true, 0, &offsets::global::Riot__g_window
 		},
 		{
