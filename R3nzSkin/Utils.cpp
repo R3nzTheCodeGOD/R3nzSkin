@@ -233,7 +233,7 @@ void ImGui::rainbowText() noexcept
 	static float g{ 0.f };
 	static float b{ 0.f };
 
-	if (cheatManager.config->config.rainbowText) {
+	if (cheatManager.config->rainbowText) {
 		if (r == 1.f && g >= 0.f && b <= 0.f) {
 			g += 0.005f;
 			b = 0.f;

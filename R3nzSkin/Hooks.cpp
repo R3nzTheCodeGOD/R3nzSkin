@@ -24,11 +24,11 @@ static __forceinline void nextSkin() noexcept
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
 		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-		cheatManager.config->config.current_combo_skin_index++;
-		if (cheatManager.config->config.current_combo_skin_index > int32_t(values.size()))
-			cheatManager.config->config.current_combo_skin_index = int32_t(values.size());
-		if (cheatManager.config->config.current_combo_skin_index > 0)
-			player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
+		cheatManager.config->current_combo_skin_index++;
+		if (cheatManager.config->current_combo_skin_index > int32_t(values.size()))
+			cheatManager.config->current_combo_skin_index = int32_t(values.size());
+		if (cheatManager.config->current_combo_skin_index > 0)
+			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 		cheatManager.config->save();
 	}
 }
@@ -38,11 +38,11 @@ static __forceinline void previousSkin() noexcept
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
 		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-		cheatManager.config->config.current_combo_skin_index--;
-		if (cheatManager.config->config.current_combo_skin_index > 0)
-			player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
+		cheatManager.config->current_combo_skin_index--;
+		if (cheatManager.config->current_combo_skin_index > 0)
+			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 		else
-			cheatManager.config->config.current_combo_skin_index = 1;
+			cheatManager.config->current_combo_skin_index = 1;
 		cheatManager.config->save();
 	}
 }
@@ -52,16 +52,16 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
 
-	if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.menuKey.getKey()) {
+	if (msg == WM_KEYDOWN && wParam == cheatManager.config->menuKey.getKey()) {
 		cheatManager.gui->is_open = !cheatManager.gui->is_open;
 		if (!cheatManager.gui->is_open)
 			cheatManager.config->save();
 	}
 
-	if (cheatManager.config->config.quickSkinChange) {
-		if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.nextSkinKey.getKey())
+	if (cheatManager.config->quickSkinChange) {
+		if (msg == WM_KEYDOWN && wParam == cheatManager.config->nextSkinKey.getKey())
 			nextSkin();
-		if (msg == WM_KEYDOWN && wParam == cheatManager.config->config.previousSkinKey.getKey())
+		if (msg == WM_KEYDOWN && wParam == cheatManager.config->previousSkinKey.getKey())
 			previousSkin();
 	}
 
@@ -314,9 +314,9 @@ void Hooks::init() const noexcept
 	std::call_once(change_skins, [&]()
 	{
 		if (player) {
-			if (cheatManager.config->config.current_combo_skin_index > 0) {
+			if (cheatManager.config->current_combo_skin_index > 0) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-				player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
+				player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 			}
 		}
 
@@ -331,7 +331,7 @@ void Hooks::init() const noexcept
 				continue;
 
 			const auto is_enemy{ my_team != hero->get_team() };
-			const auto& config_array{ is_enemy ? cheatManager.config->config.current_combo_enemy_skin_index : cheatManager.config->config.current_combo_ally_skin_index };
+			const auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
 				continue;
@@ -377,7 +377,7 @@ void Hooks::init() const noexcept
 					if (hash == FNV("TestCubeRender10Vision"))
 						change_skin_for_object(minion, 0);
 					else
-						change_skin_for_object(minion, cheatManager.config->config.current_ward_skin_index);
+						change_skin_for_object(minion, cheatManager.config->current_ward_skin_index);
 				}
 				continue;
 			}
@@ -385,12 +385,12 @@ void Hooks::init() const noexcept
 		} else {
 			if (minion->is_lane_minion()) {
 				if (player && player->get_team() == 200)
-					change_skin_for_object(minion, cheatManager.config->config.current_minion_skin_index * 2 + 1);
+					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 				else
-					change_skin_for_object(minion, cheatManager.config->config.current_minion_skin_index * 2);
+					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2);
 			} else {
-				const auto config_entry{ cheatManager.config->config.current_combo_jungle_mob_skin_index.find(fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str)) };
-				if (config_entry == cheatManager.config->config.current_combo_jungle_mob_skin_index.end() || config_entry->second == 0)
+				const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.find(fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str)) };
+				if (config_entry == cheatManager.config->current_combo_jungle_mob_skin_index.end() || config_entry->second == 0)
 					continue;
 				change_skin_for_object(minion, config_entry->second - 1);
 			}

@@ -45,27 +45,27 @@ void GUI::render() noexcept
 			auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 			ImGui::Text("Player Skins Settings:");
 
-			if (ImGui::Combo("Current Skin", &cheatManager.config->config.current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
-				if (cheatManager.config->config.current_combo_skin_index > 0)
-					player->change_skin(values[cheatManager.config->config.current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->config.current_combo_skin_index - 1].skin_id);
+			if (ImGui::Combo("Current Skin", &cheatManager.config->current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
+				if (cheatManager.config->current_combo_skin_index > 0)
+					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 
-			if (ImGui::Combo("Current Ward Skin", &cheatManager.config->config.current_combo_ward_index, vector_getter_ward_skin, static_cast<void*>(&cheatManager.database->wards_skins), cheatManager.database->wards_skins.size() + 1))
-				cheatManager.config->config.current_ward_skin_index = cheatManager.config->config.current_combo_ward_index == 0 ? -1 : cheatManager.database->wards_skins.at(cheatManager.config->config.current_combo_ward_index - 1).first;
+			if (ImGui::Combo("Current Ward Skin", &cheatManager.config->current_combo_ward_index, vector_getter_ward_skin, static_cast<void*>(&cheatManager.database->wards_skins), cheatManager.database->wards_skins.size() + 1))
+				cheatManager.config->current_ward_skin_index = cheatManager.config->current_combo_ward_index == 0 ? -1 : cheatManager.database->wards_skins.at(cheatManager.config->current_combo_ward_index - 1).first;
 
 			ImGui::Separator();
 		}
 
 		ImGui::Text("Global Skins Settings:");
-		if (ImGui::Combo("Minion Skins:", &cheatManager.config->config.current_combo_minion_index, vector_getter_default, static_cast<void*>(&cheatManager.database->minions_skins), cheatManager.database->minions_skins.size() + 1))
-			cheatManager.config->config.current_minion_skin_index = cheatManager.config->config.current_combo_minion_index - 1;
+		if (ImGui::Combo("Minion Skins:", &cheatManager.config->current_combo_minion_index, vector_getter_default, static_cast<void*>(&cheatManager.database->minions_skins), cheatManager.database->minions_skins.size() + 1))
+			cheatManager.config->current_minion_skin_index = cheatManager.config->current_combo_minion_index - 1;
 		ImGui::Separator();
 		ImGui::Text("Jungle Mobs Skins Settings:");
 		for (auto& it : cheatManager.database->jungle_mobs_skins) {
 			snprintf(str_buffer, 256, "Current %s skin", it.name.c_str());
-			const auto config_entry{ cheatManager.config->config.current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(),0 }) };
+			const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(),0 }) };
 			if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
 				for (const auto& hash : it.name_hashes)
-					cheatManager.config->config.current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
+					cheatManager.config->current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
 		}
 
 		ImGui::Separator();
@@ -95,10 +95,10 @@ void GUI::render() noexcept
 				last_team = hero_team;
 			}
 
-			auto& config_array{ is_enemy ? cheatManager.config->config.current_combo_enemy_skin_index : cheatManager.config->config.current_combo_ally_skin_index };
+			auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 			const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-			snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->config.heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->config.heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
+			snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 			auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 			if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
@@ -107,15 +107,15 @@ void GUI::render() noexcept
 		}
 
 		ImGui::Separator();
-		ImGui::hotkey("Menu Key", cheatManager.config->config.menuKey);
-		ImGui::Checkbox(cheatManager.config->config.heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->config.heroName);
-		ImGui::Checkbox("Rainbow Text", &cheatManager.config->config.rainbowText);
-		ImGui::Checkbox("Quick Skin Change", &cheatManager.config->config.quickSkinChange);
+		ImGui::hotkey("Menu Key", cheatManager.config->menuKey);
+		ImGui::Checkbox(cheatManager.config->heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->heroName);
+		ImGui::Checkbox("Rainbow Text", &cheatManager.config->rainbowText);
+		ImGui::Checkbox("Quick Skin Change", &cheatManager.config->quickSkinChange);
 
-		if (cheatManager.config->config.quickSkinChange) {
+		if (cheatManager.config->quickSkinChange) {
 			ImGui::Separator();
-			ImGui::hotkey("Previous Skin Key", cheatManager.config->config.previousSkinKey);
-			ImGui::hotkey("Next Skin Key", cheatManager.config->config.nextSkinKey);
+			ImGui::hotkey("	Previous Skin Key", cheatManager.config->previousSkinKey);
+			ImGui::hotkey("	Next Skin Key", cheatManager.config->nextSkinKey);
 			ImGui::Separator();
 		}
 
