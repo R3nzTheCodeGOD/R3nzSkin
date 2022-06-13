@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <map>
 #include <ranges>
+#include <string>
 #include <utility>
 
 #include "CheatManager.hpp"
@@ -15,11 +16,8 @@ void SkinDatabase::load() noexcept
 	for (const auto& champion : cheatManager.memory->championManager->champions) {
 		std::vector<std::int32_t> skins_ids;
 		
-		for (const auto& skin : champion->skins) {
-			if (skin.skin_id > 0xff || skin.skin_id < 0x0)
-				break;
-			skins_ids.push_back(skin.skin_id);
-		}
+		for (auto i{ 0u }; i < champion->skins.size; ++i)
+			skins_ids.push_back(champion->skins.list[i].skin_id);
 		
 		std::ranges::sort(skins_ids);
 
