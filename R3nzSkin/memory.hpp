@@ -84,6 +84,22 @@ private:
 		},
 		{
 			{
+				"F3 0F 5C 0D ? ? ? ? 0F 2F C1 F3 0F 11 4C 24 ?",
+				"F3 0F 11 05 ? ? ? ? 8B 49 08"
+			}, true, true, 0, &offsets::global::GameTime
+		},
+		{
+			{
+				"81 C1 ? ? ? ? C6 44 24 ? 00 56 E8 ? ? ? ? 8B D8 85 DB"
+			}, false, true, 0, &offsets::Spell::SpellBook
+		},
+		{
+			{
+				"8B BE ? ? ? ? 8B 07 8B CF 8B 40 08"
+			}, false, true, 0, &offsets::Spell::SpellSlot
+		},
+		{
+			{
 				"8D 8E ? ? ? ? FF 74 24 4C",
 				"8D 8E ? ? ? ? FF 74 24 ? FF 74 24 ? E8 ? ? ? ? 8B 74 ? ? 85 F6 74 ? 8B C7 F0 0F C1 46 04"
 			}, false, true, 0, &offsets::AIBaseCommon::CharacterDataStack
