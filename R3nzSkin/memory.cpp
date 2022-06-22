@@ -97,6 +97,7 @@ void Memory::update(bool gameClient) noexcept
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
 		this->translateString = reinterpret_cast<FnTranslateString>(this->getLeagueModule() + offsets::functions::translateString_UNSAFE_DONOTUSE);
 		this->worldToScreen = reinterpret_cast<FnWorldToScreen>(this->getLeagueModule() + offsets::functions::WorldToScreen);
+		this->isAlive = reinterpret_cast<FnIsAlive>(this->getLeagueModule() + offsets::functions::IsAlive);
 	}
 }
 

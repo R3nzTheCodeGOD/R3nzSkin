@@ -48,5 +48,6 @@ namespace offsets {
 		inline std::uint32_t CharacterDataStack__Update{ 0 };
 		inline std::uint32_t GetGoldRedirectTarget{ 0 };
 		inline std::uint32_t WorldToScreen{ 0 };
+		inline std::uint32_t IsAlive{ 0 };
 	};
 };

@@ -12,6 +12,7 @@
 #include "SDK/ChampionManager.hpp"
 #include "SDK/GameClient.hpp"
 #include "SDK/ManagerTemplate.hpp"
+#include "SDK/Vector.hpp"
 
 class offset_signature {
 public:
@@ -40,9 +41,11 @@ public:
 
 	using FnTranslateString = const char*(__cdecl*)(const char*);
 	using FnWorldToScreen = bool(__cdecl*)(Vector*, Vector*);
+	using FnIsAlive = bool(__thiscall*)(AIBaseCommon*);
 	
 	FnTranslateString translateString;
 	FnWorldToScreen worldToScreen;
+	FnIsAlive isAlive;
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -165,6 +168,11 @@ private:
 				"83 EC 10 56 E8 ? ? ? ? 8B 08",
 				"E8 ? ? ? ? 8D 44 24 10 50 8B 44 24 54"
 			}, true, false, 0, &offsets::functions::WorldToScreen
+		},
+		{
+			{
+				"E8 ? ? ? ? 84 C0 74 2E 8D 8E ? ? ? ? "
+			}, true, false, 0, &offsets::functions::IsAlive
 		}
 	};
 };
