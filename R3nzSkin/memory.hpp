@@ -34,10 +34,15 @@ public:
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
 	ChampionManager* championManager;
-	const char*(__cdecl* translateString)(const char*);
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
+
+	using FnTranslateString = const char*(__cdecl*)(const char*);
+	using FnWorldToScreen = bool(__cdecl*)(Vector*, Vector*);
+	
+	FnTranslateString translateString;
+	FnWorldToScreen worldToScreen;
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -92,12 +97,12 @@ private:
 		{
 			{
 				"81 C1 ? ? ? ? C6 44 24 ? 00 56 E8 ? ? ? ? 8B D8 85 DB"
-			}, false, true, 0, &offsets::Spell::SpellBook
+			}, false, true, 0, &offsets::SpellBook::SpellBook
 		},
 		{
 			{
 				"8B BE ? ? ? ? 8B 07 8B CF 8B 40 08"
-			}, false, true, 0, &offsets::Spell::SpellSlot
+			}, false, true, 0, &offsets::SpellBook::SpellSlot
 		},
 		{
 			{
@@ -154,6 +159,12 @@ private:
 				"E8 ? ? ? ? 3B F8 5F 5E 5D 0F 94 C0 5B",
 				"E8 ? ? ? ? 85 C0 74 09 8B CE"
 			}, true, false, 0, &offsets::functions::GetGoldRedirectTarget
+		},
+		{
+			{
+				"83 EC 10 56 E8 ? ? ? ? 8B 08",
+				"E8 ? ? ? ? 8D 44 24 10 50 8B 44 24 54"
+			}, true, false, 0, &offsets::functions::WorldToScreen
 		}
 	};
 };
