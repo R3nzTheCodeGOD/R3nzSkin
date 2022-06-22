@@ -8,6 +8,7 @@ namespace offsets {
 			Team = 0x34,
 			Name = 0x54,
 			Position = 0x1DC,
+			Visible = 0x274
 		};
 	};
 
