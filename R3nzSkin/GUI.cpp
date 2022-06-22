@@ -38,7 +38,6 @@ void GUI::render() noexcept
 {
 	static const auto player{ cheatManager.memory->localPlayer };
 	static const auto heroes{ cheatManager.memory->heroList };
-	static const std::uintptr_t gametimePtr{ cheatManager.memory->getLeagueModule() + offsets::global::GameTime };
 	static const auto my_team{ player ? player->get_team() : 100 };
 
 	static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
@@ -136,40 +135,6 @@ void GUI::render() noexcept
 							cheatManager.config->current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
 				}
 				footer();
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Spells Cooldowns")) {
-				static const auto drawTimer = [](const SpellSlot* spell, const char slotName, const bool sameLine) noexcept
-				{
-					const float gametime{ *reinterpret_cast<float*>(gametimePtr) };
-
-					if (spell->level <= 0)
-						ImGui::TextColored(ImVec4(1, 0, 0, 1), " %c: Close", slotName);
-					else if (spell->level > 0 && spell->time > gametime)
-						ImGui::TextColored(ImVec4(1, 1, 0, 1), " %c: %.1f", slotName, static_cast<float>(spell->time - gametime));
-					else
-						ImGui::TextColored(ImVec4(0, 1, 0, 1), " %c: Ready", slotName);
-					if (sameLine)
-						ImGui::SameLine();
-				};
-
-				for (auto i{ 0u }; i < heroes->length; ++i) {
-					const auto hero{ heroes->list[i] };
-
-					// just draw cooldowns of enemy champions.
-					if (hero == player || hero->get_team() == my_team)
-						continue;
-
-					ImGui::Text(hero->get_character_data_stack()->base_skin.model.str);
-					drawTimer(hero->getSpellSlot(Spell::Q), 'Q', true);
-					drawTimer(hero->getSpellSlot(Spell::W), 'W', true);
-					drawTimer(hero->getSpellSlot(Spell::E), 'E', true);
-					drawTimer(hero->getSpellSlot(Spell::R), 'R', false);
-					drawTimer(hero->getSpellSlot(Spell::D), 'D', true);
-					drawTimer(hero->getSpellSlot(Spell::F), 'F', false);
-					ImGui::Separator();
-				}
 				ImGui::EndTabItem();
 			}
 
