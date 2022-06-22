@@ -201,6 +201,9 @@
     <ClInclude Include="SDK\Spell.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\Vector.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />

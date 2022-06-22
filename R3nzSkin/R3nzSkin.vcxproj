@@ -157,6 +157,7 @@
     <ClInclude Include="SDK\SkinArray.hpp" />
     <ClInclude Include="SDK\Spell.hpp" />
     <ClInclude Include="SDK\SpellSlot.hpp" />
+    <ClInclude Include="SDK\Vector.hpp" />
     <ClInclude Include="SkinDatabase.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="vmt_smart_hook.hpp" />
