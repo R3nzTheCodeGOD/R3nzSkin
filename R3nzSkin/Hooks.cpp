@@ -1,3 +1,5 @@
+#pragma warning(disable : 26451)
+
 #include <Windows.h>
 #include <ShlObj.h>
 #include <cinttypes>
@@ -224,8 +226,40 @@ namespace d3d_vtable {
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
+	class SpellData {
+	public:
+		std::string text;
+		ImColor color;
+		std::int32_t level;
+	};
+
 	static void renderCooldown() noexcept 
 	{
+		static const auto player{ cheatManager.memory->localPlayer };
+		static const auto heroes{ cheatManager.memory->heroList };
+		static const auto my_team{ player ? player->get_team() : 100 };
+		
+		static const auto getSpellData = [](const SpellSlot* spell, const char slotName) noexcept
+		{
+			const float gametime{ *reinterpret_cast<float*>(cheatManager.memory->gametime) };
+			SpellData ret;
+			ret.color = ImColor(0xff, 0x19, 0x19);
+			ret.level = spell->level;
+
+			if (spell->level <= 0) {
+				ret.text = '-';
+			} else if (spell->level > 0 && spell->time > gametime) {
+				char buffer[16];
+				std::snprintf(buffer, sizeof(buffer), "%.1f", static_cast<float>(spell->time - gametime));
+				ret.text = std::string(buffer);
+				ret.color = ImColor(0xff, 0x96, 0x1f);
+			} else {
+				ret.text = slotName;
+				ret.color = ImColor(0x19, 0xff, 0x19);
+			}
+			return ret;
+		};
+
 		ImGui::Begin("##overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
 		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
 		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
