@@ -5,7 +5,6 @@
 namespace offsets {
 	namespace GameObject {
 		enum {
-			ID = 0x20,
 			Team = 0x34,
 			Name = 0x54
 		};
@@ -21,7 +20,7 @@ namespace offsets {
 		inline std::uint32_t GameTime{ 0 };
 	};
 
-	namespace Spell {
+	namespace SpellBook {
 		inline std::uint32_t SpellBook{ 0 };
 		inline std::uint32_t SpellSlot{ 0 };
 	};
