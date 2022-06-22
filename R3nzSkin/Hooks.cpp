@@ -1,4 +1,4 @@
-#pragma warning(disable : 26451)
+#pragma warning(disable : 26451 26495)
 
 #include <Windows.h>
 #include <ShlObj.h>
@@ -204,10 +204,10 @@ namespace d3d_vtable {
 			::CoTaskMemFree(pathToFonts);
 			ImFontConfig cfg;
 			cfg.SizePixels = 15.0f;
-			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 14.0f, &cfg, ranges);
+			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
 			cfg.MergeMode = true;
-			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 15.0f, &cfg, getFontGlyphRangesKr());
-			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 11.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
+			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
+			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 12.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
 		}
 
@@ -263,6 +263,71 @@ namespace d3d_vtable {
 		ImGui::Begin("##overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
 		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
 		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+
+		for (auto i{ 0u }; i < heroes->length; ++i) {
+			const auto hero{ heroes->list[i] };
+
+			if (!cheatManager.config->drawPlayerSpells)
+				if (player && hero == player)
+					continue;
+
+			if (!cheatManager.config->drawAllySpells)
+				if (player && hero != player && hero->get_team() == my_team)
+					continue;
+
+			if (!cheatManager.config->drawEnemySpells)
+				if (hero->get_team() != my_team)
+					continue;
+
+
+			if (!cheatManager.memory->isAlive(hero) || !hero->get_visiblity())
+				continue;
+
+			Vector pos;
+			Vector pos3d{ hero->get_position() };
+			cheatManager.memory->worldToScreen(&pos3d, &pos);
+
+			if (pos.x == .0f && pos.y == .0f)
+				continue;
+
+			if (!hero->isOnScreen(pos))
+				continue;
+
+			auto data{ getSpellData(hero->getSpellSlot(Spell::Q), 'Q') };
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 35 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 35, pos.y + 17), data.color, data.text.c_str());
+			if (cheatManager.config->drawSpellLevel)
+				for (auto i{ 1 }; i <= data.level; ++i)
+					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) - 45, pos.y + 11), ImVec2(pos.x + (i * 4) - 42, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+			data = getSpellData(hero->getSpellSlot(Spell::W), 'W');
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x, pos.y + 17), data.color, data.text.c_str());
+			if (cheatManager.config->drawSpellLevel)
+				for (auto i{ 1 }; i <= data.level; ++i)
+					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) - 8, pos.y + 11), ImVec2(pos.x + (i * 4) - 5, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+			data = getSpellData(hero->getSpellSlot(Spell::E), 'E');
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 35 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 35, pos.y + 17), data.color, data.text.c_str());
+			if (cheatManager.config->drawSpellLevel)
+				for (auto i{ 1 }; i <= data.level; ++i)
+					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) + 25, pos.y + 11), ImVec2(pos.x + (i * 4) + 28, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+			data = getSpellData(hero->getSpellSlot(Spell::R), 'R');
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 70 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 70, pos.y + 17), data.color, data.text.c_str());
+			if (cheatManager.config->drawSpellLevel)
+				for (auto i{ 1 }; i <= data.level; ++i)
+					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) + 65, pos.y + 11), ImVec2(pos.x + (i * 4) + 68, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+			data = getSpellData(hero->getSpellSlot(Spell::D), 'D');
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 10 + 1, pos.y + 35 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 10, pos.y + 35), data.color, data.text.c_str());
+			data = getSpellData(hero->getSpellSlot(Spell::F), 'F');
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 40 + 1, pos.y + 35 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+			ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 40, pos.y + 35), data.color, data.text.c_str());
+		}
 
 		ImGui::GetWindowDrawList()->PushClipRectFullScreen();
 	}

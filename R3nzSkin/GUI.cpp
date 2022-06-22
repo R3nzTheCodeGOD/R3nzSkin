@@ -138,6 +138,15 @@ void GUI::render() noexcept
 				ImGui::EndTabItem();
 			}
 
+			if (ImGui::BeginTabItem("Spell Tracker")) {
+				ImGui::Checkbox("Draw LocalPlayer", &cheatManager.config->drawPlayerSpells); ImGui::SameLine();
+				ImGui::Checkbox("Draw Ally", &cheatManager.config->drawAllySpells); ImGui::SameLine();
+				ImGui::Checkbox("Draw Enemy", &cheatManager.config->drawEnemySpells); ImGui::Separator();
+				ImGui::Checkbox("Draw SpellLevel", &cheatManager.config->drawSpellLevel);
+				footer();
+				ImGui::EndTabItem();
+			}
+
 			if (ImGui::BeginTabItem("Extras")) {
 				ImGui::hotkey("Menu Key", cheatManager.config->menuKey);
 				ImGui::Checkbox(cheatManager.config->heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->heroName);

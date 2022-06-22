@@ -40,6 +40,10 @@ void Config::save() noexcept
 	config_json["heroName"] = this->heroName;
 	config_json["raibowText"] = this->rainbowText;
 	config_json["quickSkinChange"] = this->quickSkinChange;
+	config_json["drawPlayerSpells"] = this->drawPlayerSpells;
+	config_json["drawAllySpells"] = this->drawAllySpells;
+	config_json["drawEnemySpells"] = this->drawEnemySpells;
+	config_json["drawSpellLevel"] = this->drawSpellLevel;
 	config_json["current_combo_ward_index"] = this->current_combo_ward_index;
 	config_json["current_ward_skin_index"] = this->current_ward_skin_index;
 	config_json["current_minion_skin_index"] = this->current_minion_skin_index;
@@ -79,6 +83,10 @@ void Config::load() noexcept
 	this->heroName = config_json.value("heroName", true);
 	this->rainbowText = config_json.value("raibowText", false);
 	this->quickSkinChange = config_json.value("quickSkinChange", false);
+	this->drawPlayerSpells = config_json.value("drawPlayerSpells", false);
+	this->drawAllySpells = config_json.value("drawAllySpells", false);
+	this->drawEnemySpells = config_json.value("drawEnemySpells", true);
+	this->drawSpellLevel = config_json.value("drawSpellLevel", true);
 	this->current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	this->current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
 	this->current_minion_skin_index = config_json.value("current_minion_skin_index", -1);
@@ -107,8 +115,12 @@ void Config::reset() noexcept
 	this->nextSkinKey = KeyBind(KeyBind::PAGE_UP);
 	this->previousSkinKey = KeyBind(KeyBind::PAGE_DOWN);
 	this->heroName = true;
-	this->rainbowText = true;
+	this->rainbowText = false;
 	this->quickSkinChange = false;
+	this->drawPlayerSpells = false;
+	this->drawAllySpells = false;
+	this->drawEnemySpells = true;
+	this->drawSpellLevel = true;
 	this->current_combo_skin_index = 0;
 	this->current_combo_ward_index = 0;
 	this->current_combo_minion_index = 0;
