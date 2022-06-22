@@ -30,6 +30,7 @@ public:
 
 	GameClient* client;
 	AIBaseCommon* localPlayer;
+	std::uintptr_t gametime;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
 	ChampionManager* championManager;

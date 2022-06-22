@@ -88,6 +88,7 @@ void Memory::update(bool gameClient) noexcept
 		this->client = *reinterpret_cast<GameClient**>(this->getLeagueModule() + offsets::global::GameClient);
 	} else {
 		this->localPlayer = *reinterpret_cast<AIBaseCommon**>(this->getLeagueModule() + offsets::global::Player);
+		this->gametime = std::uintptr_t(this->getLeagueModule() + offsets::global::GameTime);
 		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->getLeagueModule() + offsets::global::ChampionManager);
