@@ -16,6 +16,7 @@
 #include "Memory.hpp"
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/GameState.hpp"
+#include "SDK/Vector.hpp"
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -223,36 +224,46 @@ namespace d3d_vtable {
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
+	static void renderCooldown() noexcept 
+	{
+		ImGui::Begin("##overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
+		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+
+		ImGui::GetWindowDrawList()->PushClipRectFullScreen();
+	}
+
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
 		static const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
-			if (cheatManager.gui->is_open) {
-				if (is_d3d11) {
-					::ImGui_ImplDX11_NewFrame();
-				} else
-					::ImGui_ImplDX9_NewFrame();
-				::ImGui_ImplWin32_NewFrame();
-				ImGui::NewFrame();
+			if (is_d3d11)
+				::ImGui_ImplDX11_NewFrame();
+			else
+				::ImGui_ImplDX9_NewFrame();
+			::ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+			renderCooldown();
+			if (cheatManager.gui->is_open)
 				cheatManager.gui->render();
-				ImGui::EndFrame();
-				ImGui::Render();
+			ImGui::End();
+			ImGui::EndFrame();
+			ImGui::Render();
 
-				if (is_d3d11) {
-					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
-					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-				} else {
-					unsigned long colorwrite, srgbwrite;
-					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
-					dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
-					dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
-					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
-					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
-					::ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, colorwrite);
-					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbwrite);
-				}
+			if (is_d3d11) {
+				d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
+				::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			} else {
+				unsigned long colorwrite, srgbwrite;
+				const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
+				dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
+				dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
+				dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
+				dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
+				::ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+				dvc->SetRenderState(D3DRS_COLORWRITEENABLE, colorwrite);
+				dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbwrite);
 			}
 		}
 	}
