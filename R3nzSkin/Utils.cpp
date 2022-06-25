@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <string_view>
 
 #include "imgui/imgui.h"
@@ -286,4 +287,21 @@ void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const 
     }
 
     PopID();
+}
+
+void ImGui::drawCircle(const Vector& worldPos, const float radius, const ImColor color, int numPoints, const float thickness) noexcept
+{
+    static ImVec2 points[128];
+    if (numPoints > 128) numPoints = 128;
+
+    const float step{ 6.2831f / numPoints };
+    float theta{ .0f };
+    for (int i{ 0 }; i < numPoints; i++, theta += step) {
+        Vector screenSpace;
+        Vector worldSpace = { worldPos.x + radius * std::cos(theta), worldPos.y, worldPos.z - radius * std::sin(theta) };
+        cheatManager.memory->worldToScreen(&worldSpace, &screenSpace);
+        points[i].x = screenSpace.x;
+        points[i].y = screenSpace.y;
+    }
+    ImGui::GetWindowDrawList()->AddPolyline(points, numPoints, color, true, thickness);
 }

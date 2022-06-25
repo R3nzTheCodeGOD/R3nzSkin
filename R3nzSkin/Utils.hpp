@@ -5,6 +5,7 @@
 #include <random>
 
 #include "imgui/imgui.h"
+#include "SDK/Vector.hpp"
 
 class RandomGenerator {
 public:
@@ -86,4 +87,5 @@ namespace ImGui
 	void textUnformattedCentered(const char* text) noexcept;
 	void rainbowText() noexcept;
     void hotkey(const char* label, KeyBind& key, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept;
+    void drawCircle(const Vector& worldPos, const float radius, const ImColor color, int numPoints = 128, const float thickness = 1.0f) noexcept;
 };
