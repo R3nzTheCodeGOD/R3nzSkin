@@ -9,6 +9,7 @@
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
 #include "SDK/AIMinionClient.hpp"
+#include "SDK/AITurret.hpp"
 #include "SDK/ChampionManager.hpp"
 #include "SDK/GameClient.hpp"
 #include "SDK/ManagerTemplate.hpp"
@@ -34,6 +35,7 @@ public:
 	std::uintptr_t gametime;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
+	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
@@ -84,6 +86,12 @@ private:
 				"8B 35 ? ? ? ? 8B 56 04 8D 4E 04 8B 41 04 8D 04 82",
 				"A1 ? ? ? ? 55 57 8B 78 04 8B 40 08 8D 2C 87 3B FD"
 			}, true, true, 0, &offsets::global::ManagerTemplate_AIMinionClient_
+		},
+		{
+			{
+				"8B 35 ? ? ? ? 8B 76 18 85 F6 74 ?",
+				"A1 ? ? ? ? 8B 78 04 8B 40 08 8D 2C 87 33 C0 3B FD"
+			}, true, true, 0, &offsets::global::ManagerTemplate_AITurret_
 		},
 		{
 			{

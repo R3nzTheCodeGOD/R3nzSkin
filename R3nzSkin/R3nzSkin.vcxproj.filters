@@ -207,6 +207,9 @@
     <ClInclude Include="SDK\CallVirtual.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\AITurret.hpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />

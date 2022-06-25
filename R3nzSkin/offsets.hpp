@@ -19,6 +19,7 @@ namespace offsets {
 		inline std::uint32_t Riot__g_window{ 0 };
 		inline std::uint32_t ManagerTemplate_AIMinionClient_{ 0 };
 		inline std::uint32_t ManagerTemplate_AIHero_{ 0 };
+		inline std::uint32_t ManagerTemplate_AITurret_{ 0 };
 		inline std::uint32_t GameClient{ 0 };
 		inline std::uint32_t GameTime{ 0 };
 	};

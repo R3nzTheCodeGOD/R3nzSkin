@@ -91,6 +91,7 @@ void Memory::update(bool gameClient) noexcept
 		this->gametime = std::uintptr_t(this->getLeagueModule() + offsets::global::GameTime);
 		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
+		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AITurret_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->getLeagueModule() + offsets::global::ChampionManager);
 		this->materialRegistry = reinterpret_cast<std::uintptr_t(__stdcall*)()>(this->getLeagueModule() + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
