@@ -26,8 +26,8 @@ public:
 class Memory {
 public:
 	void Search(bool gameClient = true) noexcept;
-	[[nodiscard]] auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
-	[[nodiscard]] auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window); }
+	[[nodiscard]] inline auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
+	[[nodiscard]] inline auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(this->getLeagueModule() + offsets::global::Riot__g_window); }
 
 	GameClient* client;
 	AIBaseCommon* localPlayer;

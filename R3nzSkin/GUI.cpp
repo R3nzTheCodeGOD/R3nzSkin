@@ -16,14 +16,14 @@
 #include "SkinDatabase.hpp"
 #include "Utils.hpp"
 
-__forceinline static void footer() noexcept
+inline void footer() noexcept
 {
 	ImGui::Separator();
 	ImGui::textUnformattedCentered((std::string("Last Build: ") + __DATE__ + " - " + __TIME__).c_str());
 	ImGui::textUnformattedCentered("Copyright (C) 2021-2022 R3nzTheCodeGOD");
 }
 
-__forceinline static void infoText(const char* desc) noexcept
+inline void infoText(const char* desc) noexcept
 {
 	if (ImGui::IsItemHovered()) {
 		ImGui::BeginTooltip();
@@ -38,7 +38,7 @@ void GUI::render() noexcept
 {
 	static const auto player{ cheatManager.memory->localPlayer };
 	static const auto heroes{ cheatManager.memory->heroList };
-	static const auto my_team{ player ? player->get_team() : 100 };
+	static const auto my_team{ player ? player->getTeam() : 100 };
 
 	static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
 		const auto& vector{ *static_cast<std::vector<SkinDatabase::skin_info>*>(vec) };
@@ -94,7 +94,7 @@ void GUI::render() noexcept
 					if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
 						continue;
 
-					const auto hero_team{ hero->get_team() };
+					const auto hero_team{ hero->getTeam() };
 					const auto is_enemy{ hero_team != my_team };
 
 					if (last_team == 0 || hero_team != last_team) {
@@ -110,7 +110,7 @@ void GUI::render() noexcept
 					auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 					const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
+					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->getName().c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 					auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
@@ -183,7 +183,7 @@ void GUI::render() noexcept
 						const auto championHash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
 						const auto skinCount{ cheatManager.database->champions_skins[championHash].size() };
 						auto& skinDatabase{ cheatManager.database->champions_skins[championHash] };
-						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
+						auto& config{ (hero->getTeam() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 
 						if (championHash == FNV("PracticeTool_TargetDummy"))
 							continue;

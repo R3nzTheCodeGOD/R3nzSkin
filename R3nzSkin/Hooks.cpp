@@ -22,7 +22,7 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static __forceinline void nextSkin() noexcept
+inline void nextSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
@@ -36,7 +36,7 @@ static __forceinline void nextSkin() noexcept
 	}
 }
 
-static __forceinline void previousSkin() noexcept
+inline void previousSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
@@ -237,7 +237,7 @@ namespace d3d_vtable {
 	{
 		static const auto player{ cheatManager.memory->localPlayer };
 		static const auto heroes{ cheatManager.memory->heroList };
-		static const auto my_team{ player ? player->get_team() : 100 };
+		static const auto my_team{ player ? player->getTeam() : 100 };
 		
 		static const auto getSpellData = [](const SpellSlot* spell, const char slotName) noexcept
 		{
@@ -272,19 +272,19 @@ namespace d3d_vtable {
 					continue;
 
 			if (!cheatManager.config->drawAllySpells)
-				if (player && hero != player && hero->get_team() == my_team)
+				if (player && hero != player && hero->getTeam() == my_team)
 					continue;
 
 			if (!cheatManager.config->drawEnemySpells)
-				if (hero->get_team() != my_team)
+				if (hero->getTeam() != my_team)
 					continue;
 
 
-			if (!cheatManager.memory->isAlive(hero) || !hero->get_visiblity())
+			if (!cheatManager.memory->isAlive(hero) || !hero->getVisiblity())
 				continue;
 
 			Vector pos;
-			Vector pos3d{ hero->get_position() };
+			Vector pos3d{ hero->getPos() };
 			cheatManager.memory->worldToScreen(&pos3d, &pos);
 
 			if (pos.x == .0f && pos.y == .0f)
@@ -430,7 +430,7 @@ void Hooks::init() const noexcept
 			}
 		}
 
-		const auto my_team{ player ? player->get_team() : 100 };
+		const auto my_team{ player ? player->getTeam() : 100 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
 			if (hero == player)
@@ -440,7 +440,7 @@ void Hooks::init() const noexcept
 			if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
 				continue;
 
-			const auto is_enemy{ my_team != hero->get_team() };
+			const auto is_enemy{ my_team != hero->getTeam() };
 			const auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
@@ -494,7 +494,7 @@ void Hooks::init() const noexcept
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
 			if (minion->is_lane_minion()) {
-				if (player && player->get_team() == 200)
+				if (player && player->getTeam() == 200)
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 				else
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2);
