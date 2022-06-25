@@ -424,6 +424,7 @@ void Hooks::init() const noexcept
 	std::call_once(change_skins, [&]()
 	{
 		if (player) {
+			std::snprintf(cheatManager.gui->nickBuffer, sizeof(cheatManager.gui->nickBuffer), "%s", player->getName().c_str());
 			if (cheatManager.config->current_combo_skin_index > 0) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 				player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);

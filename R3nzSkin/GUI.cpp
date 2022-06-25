@@ -161,6 +161,13 @@ void GUI::render() noexcept
 					ImGui::Separator();
 				}
 
+				if (player) {
+					ImGui::InputText("##changeSummonerName", this->nickBuffer, sizeof(this->nickBuffer));
+					ImGui::SameLine();
+					if (ImGui::Button("Change SummonerName"))
+						player->setName(std::string(this->nickBuffer));
+				}
+
 				if (ImGui::Button("No Skins")) {
 					cheatManager.config->current_combo_skin_index = 1;
 					player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
