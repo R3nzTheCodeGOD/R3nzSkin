@@ -138,11 +138,19 @@ void GUI::render() noexcept
 				ImGui::EndTabItem();
 			}
 
-			if (ImGui::BeginTabItem("Spell Tracker")) {
+			if (ImGui::BeginTabItem("Drawings")) {
+				ImGui::TextUnformatted("Drawing Quality");
+				ImGui::RadioButton(cheatManager.config->drawingQuality ? "Best" : "Worst", &cheatManager.config->drawingQuality);
+				ImGui::Separator();
+				ImGui::TextUnformatted("Spell Tracker Settings");
 				ImGui::Checkbox("Draw LocalPlayer", &cheatManager.config->drawPlayerSpells); ImGui::SameLine();
 				ImGui::Checkbox("Draw Ally", &cheatManager.config->drawAllySpells); ImGui::SameLine();
-				ImGui::Checkbox("Draw Enemy", &cheatManager.config->drawEnemySpells); ImGui::Separator();
+				ImGui::Checkbox("Draw Enemy", &cheatManager.config->drawEnemySpells);
 				ImGui::Checkbox("Draw SpellLevel", &cheatManager.config->drawSpellLevel);
+				ImGui::Separator();
+				ImGui::TextUnformatted("Draw Attack Range");
+				ImGui::Checkbox("Draw LocalPlayer AttackRange", &cheatManager.config->drawAttackRange);
+				ImGui::Separator();
 				footer();
 				ImGui::EndTabItem();
 			}

@@ -27,6 +27,8 @@ public:
 	bool drawAllySpells{ false };
 	bool drawEnemySpells{ true };
 	bool drawSpellLevel{ true };
+	bool drawAttackRange{ true };
+	bool drawingQuality{ false };
 	std::int32_t current_combo_skin_index{ 0 };
 	std::int32_t current_combo_ward_index{ 0 };
 	std::int32_t current_combo_minion_index{ 0 };

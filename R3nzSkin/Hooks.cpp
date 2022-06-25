@@ -233,7 +233,7 @@ namespace d3d_vtable {
 		std::int32_t level;
 	};
 
-	static void renderCooldown() noexcept 
+	static void renderOverlay() noexcept 
 	{
 		static const auto player{ cheatManager.memory->localPlayer };
 		static const auto heroes{ cheatManager.memory->heroList };
@@ -263,6 +263,10 @@ namespace d3d_vtable {
 		ImGui::Begin("##overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
 		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
 		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+
+		if (player)
+			if (cheatManager.memory->isAlive(player))
+				ImGui::drawCircle(player->getPos(), player->getAttackRange() + player->getBoundingRadius(), ImColor(0xff, 0xff, 0x0), cheatManager.config->drawingQuality ? 128 : 16);
 
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
@@ -343,7 +347,7 @@ namespace d3d_vtable {
 				::ImGui_ImplDX9_NewFrame();
 			::ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-			renderCooldown();
+			renderOverlay();
 			if (cheatManager.gui->is_open)
 				cheatManager.gui->render();
 			ImGui::End();
