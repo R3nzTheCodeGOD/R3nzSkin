@@ -1,3 +1,5 @@
+#pragma warning(disable : 26451 26495)
+
 #include <Windows.h>
 #include <ShlObj.h>
 #include <cinttypes>
@@ -16,10 +18,11 @@
 #include "Memory.hpp"
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/GameState.hpp"
+#include "SDK/Vector.hpp"
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static __forceinline void nextSkin() noexcept
+inline void nextSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
@@ -33,7 +36,7 @@ static __forceinline void nextSkin() noexcept
 	}
 }
 
-static __forceinline void previousSkin() noexcept
+inline void previousSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
@@ -140,6 +143,10 @@ namespace d3d_vtable {
 		style.TabRounding = 0.0f;
 		style.PopupRounding = 0.0f;
 
+		style.AntiAliasedFill = true;
+		style.AntiAliasedLines = true;
+		style.AntiAliasedLinesUseTex = true;
+
 		auto colors{ style.Colors };
 
 		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -223,36 +230,175 @@ namespace d3d_vtable {
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
+	class SpellData {
+	public:
+		std::string text;
+		ImColor color;
+		std::int32_t level;
+	};
+
+	static void renderOverlay() noexcept 
+	{
+		static const auto player{ cheatManager.memory->localPlayer };
+		static const auto heroes{ cheatManager.memory->heroList };
+		static const auto turrets{ cheatManager.memory->turretList };
+		static const auto my_team{ player ? player->getTeam() : 100 };
+		
+		static const auto getSpellData = [](const SpellSlot* spell, const char slotName) noexcept
+		{
+			const float gametime{ *reinterpret_cast<float*>(cheatManager.memory->gametime) };
+			SpellData ret;
+			ret.color = ImColor(0xff, 0x19, 0x19);
+			ret.level = spell->level;
+
+			if (spell->level <= 0) {
+				ret.text = '-';
+			} else if (spell->level > 0 && spell->time > gametime) {
+				char buffer[16];
+				std::snprintf(buffer, sizeof(buffer), "%.1f", static_cast<float>(spell->time - gametime));
+				ret.text = std::string(buffer);
+				ret.color = ImColor(0xff, 0x96, 0x1f);
+			} else {
+				ret.text = slotName;
+				ret.color = ImColor(0x19, 0xff, 0x19);
+			}
+			return ret;
+		};
+
+		ImGui::Begin("##overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
+		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+		
+		if (cheatManager.config->drawAttackRange)
+			if (player)
+				if (cheatManager.memory->isAlive(player))
+					ImGui::drawCircle(player->getPos(), player->getAttackRange() + player->getBoundingRadius(), ImColor(0xff, 0xff, 0x0), cheatManager.config->drawingQuality ? 128 : 16);
+
+		if (cheatManager.config->drawTurretRange) {
+			for (auto i{ 0u }; i < turrets->length; ++i) {
+				const auto turret{ turrets->list[i] };
+
+				if (!cheatManager.memory->isAlive(turret))
+					continue;
+
+				Vector pos;
+				Vector pos3d{ turret->getTurretPosition() };
+				cheatManager.memory->worldToScreen(&pos3d, &pos);
+
+				if (!turret->isOnScreen(pos))
+					continue;
+
+				if (cheatManager.config->drawEnemyTurretRange)
+					if (turret->getTeam() != my_team)
+						ImGui::drawCircle(pos3d, turret->getTurretRange() + player->getBoundingRadius(), ImColor(0xff, 0x19, 0x19), cheatManager.config->drawingQuality ? 128 : 16);
+				
+				if (cheatManager.config->drawAllyTurretRange)
+					if (turret->getTeam() == my_team)
+						ImGui::drawCircle(pos3d, turret->getTurretRange() + player->getBoundingRadius(), ImColor(0x19, 0xff, 0x19), cheatManager.config->drawingQuality ? 128 : 16);
+			}
+		}
+
+		if (cheatManager.config->drawSpellTracker) {
+			for (auto i{ 0u }; i < heroes->length; ++i) {
+				const auto hero{ heroes->list[i] };
+
+				if (!cheatManager.config->drawPlayerSpells)
+					if (player && hero == player)
+						continue;
+
+				if (!cheatManager.config->drawAllySpells)
+					if (player && hero != player && hero->getTeam() == my_team)
+						continue;
+
+				if (!cheatManager.config->drawEnemySpells)
+					if (hero->getTeam() != my_team)
+						continue;
+
+
+				if (!cheatManager.memory->isAlive(hero) || !hero->getVisiblity())
+					continue;
+
+				Vector pos;
+				Vector pos3d{ hero->getPos() };
+				cheatManager.memory->worldToScreen(&pos3d, &pos);
+
+				if (pos.x == .0f && pos.y == .0f)
+					continue;
+
+				if (!hero->isOnScreen(pos))
+					continue;
+
+				auto data{ getSpellData(hero->getSpellSlot(Spell::Q), 'Q') };
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 35 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 35, pos.y + 17), data.color, data.text.c_str());
+				if (cheatManager.config->drawSpellLevel)
+					for (auto i{ 1 }; i <= data.level; ++i)
+						ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) - 45, pos.y + 11), ImVec2(pos.x + (i * 4) - 42, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+				data = getSpellData(hero->getSpellSlot(Spell::W), 'W');
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x, pos.y + 17), data.color, data.text.c_str());
+				if (cheatManager.config->drawSpellLevel)
+					for (auto i{ 1 }; i <= data.level; ++i)
+						ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) - 8, pos.y + 11), ImVec2(pos.x + (i * 4) - 5, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+				data = getSpellData(hero->getSpellSlot(Spell::E), 'E');
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 35 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 35, pos.y + 17), data.color, data.text.c_str());
+				if (cheatManager.config->drawSpellLevel)
+					for (auto i{ 1 }; i <= data.level; ++i)
+						ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) + 25, pos.y + 11), ImVec2(pos.x + (i * 4) + 28, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+				data = getSpellData(hero->getSpellSlot(Spell::R), 'R');
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 70 + 1, pos.y + 17 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 70, pos.y + 17), data.color, data.text.c_str());
+				if (cheatManager.config->drawSpellLevel)
+					for (auto i{ 1 }; i <= data.level; ++i)
+						ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x + (i * 4) + 65, pos.y + 11), ImVec2(pos.x + (i * 4) + 68, pos.y + 14), ImColor(0x19, 0x19, 0xff));
+
+				data = getSpellData(hero->getSpellSlot(Spell::D), 'D');
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 10 + 1, pos.y + 35 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x - 10, pos.y + 35), data.color, data.text.c_str());
+				data = getSpellData(hero->getSpellSlot(Spell::F), 'F');
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 40 + 1, pos.y + 35 + 1), ImGui::ColorConvertFloat4ToU32(data.color) & IM_COL32_A_MASK, data.text.c_str());
+				ImGui::GetWindowDrawList()->AddText(ImVec2(pos.x + 40, pos.y + 35), data.color, data.text.c_str());
+			}
+		}
+
+		ImGui::GetWindowDrawList()->PushClipRectFullScreen();
+	}
+
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
 		static const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
-			if (cheatManager.gui->is_open) {
-				if (is_d3d11) {
-					::ImGui_ImplDX11_NewFrame();
-				} else
-					::ImGui_ImplDX9_NewFrame();
-				::ImGui_ImplWin32_NewFrame();
-				ImGui::NewFrame();
+			if (is_d3d11)
+				::ImGui_ImplDX11_NewFrame();
+			else
+				::ImGui_ImplDX9_NewFrame();
+			::ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+			renderOverlay();
+			if (cheatManager.gui->is_open)
 				cheatManager.gui->render();
-				ImGui::EndFrame();
-				ImGui::Render();
+			ImGui::End();
+			ImGui::EndFrame();
+			ImGui::Render();
 
-				if (is_d3d11) {
-					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
-					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-				} else {
-					unsigned long colorwrite, srgbwrite;
-					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
-					dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
-					dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
-					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
-					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
-					::ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, colorwrite);
-					dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbwrite);
-				}
+			if (is_d3d11) {
+				d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
+				::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			} else {
+				unsigned long colorwrite, srgbwrite;
+				const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
+				dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
+				dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
+				dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
+				dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
+				::ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+				dvc->SetRenderState(D3DRS_COLORWRITEENABLE, colorwrite);
+				dvc->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbwrite);
 			}
 		}
 	}
@@ -314,13 +460,14 @@ void Hooks::init() const noexcept
 	std::call_once(change_skins, [&]()
 	{
 		if (player) {
+			std::snprintf(cheatManager.gui->nickBuffer, sizeof(cheatManager.gui->nickBuffer), "%s", player->getName().c_str());
 			if (cheatManager.config->current_combo_skin_index > 0) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 				player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 			}
 		}
 
-		const auto my_team{ player ? player->get_team() : 100 };
+		const auto my_team{ player ? player->getTeam() : 100 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
 			if (hero == player)
@@ -330,7 +477,7 @@ void Hooks::init() const noexcept
 			if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
 				continue;
 
-			const auto is_enemy{ my_team != hero->get_team() };
+			const auto is_enemy{ my_team != hero->getTeam() };
 			const auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 			const auto config_entry{ config_array.find(champion_name_hash) };
 			if (config_entry == config_array.end())
@@ -384,7 +531,7 @@ void Hooks::init() const noexcept
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
 			if (minion->is_lane_minion()) {
-				if (player && player->get_team() == 200)
+				if (player && player->getTeam() == 200)
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 				else
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2);

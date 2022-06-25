@@ -10,7 +10,7 @@
 
 class CheatManager {
 public:
-	void __stdcall start() noexcept
+	inline void start() noexcept
 	{
 		this->hooks = std::make_unique<Hooks>();
 		this->config = std::make_unique<Config>();

@@ -5,10 +5,12 @@
 namespace offsets {
 	namespace GameObject {
 		enum {
-			ID = 0x20,
 			Team = 0x34,
-			Name = 0x54
+			Name = 0x54,
+			Position = 0x1DC,
+			Visible = 0x274
 		};
+		inline std::uint32_t AtkRange{ 0 };
 	};
 
 	namespace global {
@@ -17,7 +19,14 @@ namespace offsets {
 		inline std::uint32_t Riot__g_window{ 0 };
 		inline std::uint32_t ManagerTemplate_AIMinionClient_{ 0 };
 		inline std::uint32_t ManagerTemplate_AIHero_{ 0 };
+		inline std::uint32_t ManagerTemplate_AITurret_{ 0 };
 		inline std::uint32_t GameClient{ 0 };
+		inline std::uint32_t GameTime{ 0 };
+	};
+
+	namespace SpellBook {
+		inline std::uint32_t SpellBook{ 0 };
+		inline std::uint32_t SpellSlot{ 0 };
 	};
 
 	namespace AIBaseCommon {
@@ -40,5 +49,7 @@ namespace offsets {
 		inline std::uint32_t CharacterDataStack__Push{ 0 };
 		inline std::uint32_t CharacterDataStack__Update{ 0 };
 		inline std::uint32_t GetGoldRedirectTarget{ 0 };
+		inline std::uint32_t WorldToScreen{ 0 };
+		inline std::uint32_t IsAlive{ 0 };
 	};
 };

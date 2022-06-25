@@ -9,9 +9,11 @@
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
 #include "SDK/AIMinionClient.hpp"
+#include "SDK/AITurret.hpp"
 #include "SDK/ChampionManager.hpp"
 #include "SDK/GameClient.hpp"
 #include "SDK/ManagerTemplate.hpp"
+#include "SDK/Vector.hpp"
 
 class offset_signature {
 public:
@@ -25,18 +27,27 @@ public:
 class Memory {
 public:
 	void Search(bool gameClient = true) noexcept;
-	[[nodiscard]] auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
-	[[nodiscard]] auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window); }
+	[[nodiscard]] inline auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
+	[[nodiscard]] inline auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(this->getLeagueModule() + offsets::global::Riot__g_window); }
 
 	GameClient* client;
 	AIBaseCommon* localPlayer;
+	std::uintptr_t gametime;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
+	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
-	const char*(__cdecl* translateString)(const char*);
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
+
+	using FnTranslateString = const char*(__cdecl*)(const char*);
+	using FnWorldToScreen = bool(__cdecl*)(Vector*, Vector*);
+	using FnIsAlive = bool(__thiscall*)(AIBaseCommon*);
+	
+	FnTranslateString translateString;
+	FnWorldToScreen worldToScreen;
+	FnIsAlive isAlive;
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -78,9 +89,31 @@ private:
 		},
 		{
 			{
+				"8B 35 ? ? ? ? 8B 76 18 85 F6 74 ?",
+				"A1 ? ? ? ? 8B 78 04 8B 40 08 8D 2C 87 33 C0 3B FD"
+			}, true, true, 0, &offsets::global::ManagerTemplate_AITurret_
+		},
+		{
+			{
 				"A3 ? ? ? ? 6A 64 6A 00",
 				"8B 35 ? ? ? ? FF 15 ? ? ? ? 3B C6 75 ? 8B 0D ? ? ? ? 85 C9 74 ? 8B 01"
 			}, true, true, 0, &offsets::global::Riot__g_window
+		},
+		{
+			{
+				"F3 0F 5C 0D ? ? ? ? 0F 2F C1 F3 0F 11 4C 24 ?",
+				"F3 0F 11 05 ? ? ? ? 8B 49 08"
+			}, true, true, 0, &offsets::global::GameTime
+		},
+		{
+			{
+				"81 C1 ? ? ? ? C6 44 24 ? 00 56 E8 ? ? ? ? 8B D8 85 DB"
+			}, false, true, 0, &offsets::SpellBook::SpellBook
+		},
+		{
+			{
+				"8B BE ? ? ? ? 8B 07 8B CF 8B 40 08"
+			}, false, true, 0, &offsets::SpellBook::SpellSlot
 		},
 		{
 			{
@@ -137,6 +170,23 @@ private:
 				"E8 ? ? ? ? 3B F8 5F 5E 5D 0F 94 C0 5B",
 				"E8 ? ? ? ? 85 C0 74 09 8B CE"
 			}, true, false, 0, &offsets::functions::GetGoldRedirectTarget
+		},
+		{
+			{
+				"83 EC 10 56 E8 ? ? ? ? 8B 08",
+				"E8 ? ? ? ? 8D 44 24 10 50 8B 44 24 54"
+			}, true, false, 0, &offsets::functions::WorldToScreen
+		},
+		{
+			{
+				"56 8B F1 8B 06 8B 80 ? ? ? ? FF D0 84 C0 74 ? 8B 86 ? ? ? ? 8D 8E ? ? ? ? 8B 40 ? FF D0",
+				"E8 ? ? ? ? 84 C0 74 ? 8D 8F ? ? ? ? E8 ? ? ? ? 84 C0 74 ? 85 F6"
+			}, true, false, 0, &offsets::functions::IsAlive
+		},
+		{
+			{
+				"F3 0F 10 85 ? ? ? ? F3 0F 11 44 24 ? E8 ? ? ? ? 8B F0 8B CE E8 ? ? ? ? F3 0F 10 44 24 ? 8D 8D ? ? ? ? 0F 5A C0 6A 00 6A 00"
+			}, false, true, 0, &offsets::GameObject::AtkRange
 		}
 	};
 };
