@@ -23,7 +23,7 @@ void Config::init() noexcept
 
 void Config::save() noexcept
 {
-	static const auto player{ cheatManager.memory->localPlayer };
+	const auto player{ cheatManager.memory->localPlayer };
 	std::error_code ec;
 	std::filesystem::create_directory(this->path, ec);
 	auto out{ std::ofstream(this->path / u8"R3nzSkin")};
@@ -45,7 +45,12 @@ void Config::save() noexcept
 	config_json["drawEnemySpells"] = this->drawEnemySpells;
 	config_json["drawSpellLevel"] = this->drawSpellLevel;
 	config_json["drawAttackRange"] = this->drawAttackRange;
+	config_json["drawPlayerAttackRange"] = this->drawPlayerAttackRange;
 	config_json["drawingQuality"] = this->drawingQuality;
+	config_json["drawSpellTracker"] = this->drawSpellTracker;
+	config_json["drawTurretRange"] = this->drawTurretRange;
+	config_json["drawAllyTurretRange"] = this->drawAllyTurretRange;
+	config_json["drawEnemyTurretRange"] = this->drawEnemyTurretRange;
 	config_json["current_combo_ward_index"] = this->current_combo_ward_index;
 	config_json["current_ward_skin_index"] = this->current_ward_skin_index;
 	config_json["current_minion_skin_index"] = this->current_minion_skin_index;
@@ -90,7 +95,12 @@ void Config::load() noexcept
 	this->drawEnemySpells = config_json.value("drawEnemySpells", true);
 	this->drawSpellLevel = config_json.value("drawSpellLevel", true);
 	this->drawAttackRange = config_json.value("drawAttackRange", true);
+	this->drawPlayerAttackRange = config_json.value("drawPlayerAttackRange", true);
 	this->drawingQuality = config_json.value("drawingQuality", false);
+	this->drawSpellTracker = config_json.value("drawSpellTracker", true);
+	this->drawTurretRange = config_json.value("drawTurretRange", true);
+	this->drawAllyTurretRange = config_json.value("drawAllyTurretRange", true);
+	this->drawEnemyTurretRange = config_json.value("drawEnemyTurretRange", true);
 	this->current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	this->current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
 	this->current_minion_skin_index = config_json.value("current_minion_skin_index", -1);
@@ -126,7 +136,12 @@ void Config::reset() noexcept
 	this->drawEnemySpells = true;
 	this->drawSpellLevel = true;
 	this->drawAttackRange = true;
+	this->drawPlayerAttackRange = true;
 	this->drawingQuality = false;
+	this->drawSpellTracker = true;
+	this->drawTurretRange = true;
+	this->drawAllyTurretRange = true;
+	this->drawEnemyTurretRange = true;
 	this->current_combo_skin_index = 0;
 	this->current_combo_ward_index = 0;
 	this->current_combo_minion_index = 0;

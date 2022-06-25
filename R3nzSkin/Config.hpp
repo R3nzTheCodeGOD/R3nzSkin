@@ -23,12 +23,17 @@ public:
 	bool rainbowText{ false };
 	bool heroName{ true };
 	bool quickSkinChange{ false };
+	bool drawSpellTracker{ true };
 	bool drawPlayerSpells{ false };
 	bool drawAllySpells{ false };
 	bool drawEnemySpells{ true };
 	bool drawSpellLevel{ true };
 	bool drawAttackRange{ true };
+	bool drawPlayerAttackRange{ true };
 	bool drawingQuality{ false };
+	bool drawTurretRange{ true };
+	bool drawAllyTurretRange{ true };
+	bool drawEnemyTurretRange{ true };
 	std::int32_t current_combo_skin_index{ 0 };
 	std::int32_t current_combo_ward_index{ 0 };
 	std::int32_t current_combo_minion_index{ 0 };

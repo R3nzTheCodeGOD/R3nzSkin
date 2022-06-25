@@ -128,7 +128,7 @@ void GUI::render() noexcept
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
 				for (auto& it : cheatManager.database->jungle_mobs_skins) {
-					snprintf(str_buffer, 256, "Current %s skin", it.name.c_str());
+					std::snprintf(this->str_buffer, sizeof(this->str_buffer), "Current %s skin", it.name.c_str());
 					const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(),0 }) };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
 						for (const auto& hash : it.name_hashes)
@@ -139,18 +139,39 @@ void GUI::render() noexcept
 			}
 
 			if (ImGui::BeginTabItem("Drawings")) {
-				ImGui::TextUnformatted("Drawing Quality");
-				ImGui::RadioButton(cheatManager.config->drawingQuality ? "Best" : "Worst", &cheatManager.config->drawingQuality);
+				ImGui::TextUnformatted("Drawing Quality: ");
+				ImGui::SameLine();
+				ImGui::Checkbox(cheatManager.config->drawingQuality ? "Best" : "Worst", &cheatManager.config->drawingQuality);
 				ImGui::Separator();
-				ImGui::TextUnformatted("Spell Tracker Settings");
-				ImGui::Checkbox("Draw LocalPlayer", &cheatManager.config->drawPlayerSpells); ImGui::SameLine();
-				ImGui::Checkbox("Draw Ally", &cheatManager.config->drawAllySpells); ImGui::SameLine();
-				ImGui::Checkbox("Draw Enemy", &cheatManager.config->drawEnemySpells);
-				ImGui::Checkbox("Draw SpellLevel", &cheatManager.config->drawSpellLevel);
+				
+				ImGui::TextUnformatted("[*]"); ImGui::SameLine(); ImGui::Checkbox("Draw SpellTracker", &cheatManager.config->drawSpellTracker);
+				if (cheatManager.config->drawSpellTracker) {
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw LocalPlayer", &cheatManager.config->drawPlayerSpells);
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw Ally", &cheatManager.config->drawAllySpells);
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw Enemy", &cheatManager.config->drawEnemySpells);
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw SpellLevel", &cheatManager.config->drawSpellLevel);
+				}
 				ImGui::Separator();
-				ImGui::TextUnformatted("Draw Attack Range");
-				ImGui::Checkbox("Draw LocalPlayer AttackRange", &cheatManager.config->drawAttackRange);
+				
+				ImGui::TextUnformatted("[*]"); ImGui::SameLine(); ImGui::Checkbox("Draw Attack Range", &cheatManager.config->drawAttackRange);
+				if (cheatManager.config->drawAttackRange) {
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw LocalPlayer", &cheatManager.config->drawPlayerAttackRange);
+				}
 				ImGui::Separator();
+				
+				ImGui::TextUnformatted("[*]"); ImGui::SameLine(); ImGui::Checkbox("Draw Turrets Range", &cheatManager.config->drawTurretRange);
+				if (cheatManager.config->drawTurretRange) {
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw Ally Turrets Range", &cheatManager.config->drawAllyTurretRange);
+					ImGui::TextUnformatted("->"); ImGui::SameLine(); ImGui::Checkbox("Draw Enemy Turrets Range", &cheatManager.config->drawEnemyTurretRange);
+				}
+				ImGui::Separator();
+				if (player) {
+					ImGui::InputText("##changeSummonerName", this->nickBuffer, sizeof(this->nickBuffer));
+					ImGui::SameLine();
+					if (ImGui::Button("Change SummonerName"))
+						player->setName(std::string(this->nickBuffer));
+				}
+
 				footer();
 				ImGui::EndTabItem();
 			}
@@ -167,13 +188,6 @@ void GUI::render() noexcept
 					ImGui::hotkey("Previous Skin Key", cheatManager.config->previousSkinKey);
 					ImGui::hotkey("Next Skin Key", cheatManager.config->nextSkinKey);
 					ImGui::Separator();
-				}
-
-				if (player) {
-					ImGui::InputText("##changeSummonerName", this->nickBuffer, sizeof(this->nickBuffer));
-					ImGui::SameLine();
-					if (ImGui::Button("Change SummonerName"))
-						player->setName(std::string(this->nickBuffer));
 				}
 
 				if (ImGui::Button("No Skins")) {
@@ -206,8 +220,7 @@ void GUI::render() noexcept
 						if (hero == player) {
 							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
 							hero->change_skin(skinDatabase[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), skinDatabase[cheatManager.config->current_combo_skin_index - 1].skin_id);
-						}
-						else {
+						} else {
 							auto& data{ config[championHash] };
 							data = random(1u, skinCount);
 							hero->change_skin(skinDatabase[data - 1].model_name.c_str(), skinDatabase[data - 1].skin_id);
