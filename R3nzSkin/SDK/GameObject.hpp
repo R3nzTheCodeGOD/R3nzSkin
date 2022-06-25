@@ -18,5 +18,7 @@ public:
 	[[nodiscard]] float getAttackRange() const noexcept { return *reinterpret_cast<float*>(std::uintptr_t(this) + offsets::GameObject::AtkRange); }
 	[[nodiscard]] float getBoundingRadius() noexcept { return callVirtual<34, float>(this); }
 
+	void setName(const std::string& newNick) const noexcept { *reinterpret_cast<std::string*>(std::uintptr_t(this) + offsets::GameObject::Name) = newNick; }
+
 	[[nodiscard]] bool isOnScreen(const Vector& vec) const noexcept { return (((vec.x > 0) && vec.x < ImGui::GetIO().DisplaySize.x) && ((vec.y > 0) && vec.y < ImGui::GetIO().DisplaySize.y)); }
 };
