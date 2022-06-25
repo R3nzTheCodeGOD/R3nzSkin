@@ -173,6 +173,11 @@ private:
 			{
 				"E8 ? ? ? ? 84 C0 74 2E 8D 8E ? ? ? ? "
 			}, true, false, 0, &offsets::functions::IsAlive
+		},
+		{
+			{
+				"F3 0F 10 85 ? ? ? ? F3 0F 11 44 24 ? E8 ? ? ? ? 8B F0 8B CE E8 ? ? ? ? F3 0F 10 44 24 ? 8D 8D ? ? ? ? 0F 5A C0 6A 00 6A 00"
+			}, false, true, 0, &offsets::GameObject::AtkRange
 		}
 	};
 };

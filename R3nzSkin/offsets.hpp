@@ -10,6 +10,7 @@ namespace offsets {
 			Position = 0x1DC,
 			Visible = 0x274
 		};
+		inline std::uint32_t AtkRange{ 0 };
 	};
 
 	namespace global {
