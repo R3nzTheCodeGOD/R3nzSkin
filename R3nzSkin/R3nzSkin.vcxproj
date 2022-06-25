@@ -144,6 +144,7 @@
     <ClInclude Include="SDK\AIHero.hpp" />
     <ClInclude Include="SDK\AIMinionClient.hpp" />
     <ClInclude Include="SDK\AString.hpp" />
+    <ClInclude Include="SDK\CallVirtual.hpp" />
     <ClInclude Include="SDK\Champion.hpp" />
     <ClInclude Include="SDK\ChampionManager.hpp" />
     <ClInclude Include="SDK\CharacterDataStack.hpp" />
