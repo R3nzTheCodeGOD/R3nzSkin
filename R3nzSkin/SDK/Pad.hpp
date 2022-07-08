@@ -2,6 +2,21 @@
 
 #include <cstddef>
 
-#define __CONCAT__(a, b) a##b
-#define __PAD_NAME__(n) __CONCAT__(pad, n)
-#define PAD(size) std::byte __PAD_NAME__(__LINE__) [size];
+#define CONCAT(a, b) a##b
+#define PAD_NAME(n) CONCAT(pad, n)
+#define PAD(size) \
+private: \
+    std::byte PAD_NAME(__LINE__)[size]; \
+public:
+
+#define CLASS_GETTER(returnType, name, offset) \
+[[nodiscard]] inline returnType name() const noexcept \
+{ \
+	return *reinterpret_cast<returnType*>(std::uintptr_t(this) + offset); \
+}
+
+#define CLASS_GETTER_P(returnType, name, offset) \
+[[nodiscard]] inline returnType* name() const noexcept \
+{ \
+	return reinterpret_cast<returnType*>(std::uintptr_t(this) + offset); \
+}
