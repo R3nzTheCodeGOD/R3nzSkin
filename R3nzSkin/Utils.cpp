@@ -227,6 +227,17 @@ void ImGui::textUnformattedCentered(const char* text) noexcept
     ImGui::TextUnformatted(text);
 }
 
+void ImGui::hoverInfo(const char* desc) noexcept
+{
+    if (ImGui::IsItemHovered()) {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
 void ImGui::rainbowText() noexcept
 {
 	static float r{ 1.0f };

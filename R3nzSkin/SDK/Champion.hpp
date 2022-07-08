@@ -6,11 +6,8 @@
 #include "SkinArray.hpp"
 
 class Champion {
-	PAD(0x4);
-public:
+	PAD(0x4)
 	AString champion_name;
-private:
-	PAD(0x48);
-public:
+	PAD(0x48)
 	SkinArray<Skin> skins;
 };

@@ -91,10 +91,10 @@ void Memory::update(bool gameClient) noexcept
 		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->getLeagueModule() + offsets::global::ChampionManager);
-		this->translateString = reinterpret_cast<const char*(__cdecl*)(const char*)>(this->getLeagueModule() + offsets::functions::translateString_UNSAFE_DONOTUSE);
 		this->materialRegistry = reinterpret_cast<std::uintptr_t(__stdcall*)()>(this->getLeagueModule() + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
+		this->translateString = reinterpret_cast<FnTranlateString>(this->getLeagueModule() + offsets::functions::translateString_UNSAFE_DONOTUSE);
 	}
 }
 

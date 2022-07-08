@@ -25,18 +25,21 @@ public:
 class Memory {
 public:
 	void Search(bool gameClient = true) noexcept;
-	[[nodiscard]] auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
-	[[nodiscard]] auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(getLeagueModule() + offsets::global::Riot__g_window); }
+	[[nodiscard]] inline auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
+	[[nodiscard]] inline auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(this->getLeagueModule() + offsets::global::Riot__g_window); }
 
 	GameClient* client;
 	AIBaseCommon* localPlayer;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
 	ChampionManager* championManager;
-	const char*(__cdecl* translateString)(const char*);
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
+
+	using FnTranlateString = const char*(__cdecl*)(const char*);
+	
+	FnTranlateString translateString;
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -44,8 +47,8 @@ private:
 	{
 		{
 			{
-				"A1 ? ? ? ? 56 83 78 08 00 75 ?",
-				"A1 ? ? ? ? 68 ? ? ? ? 8B 70 08 E8 ? ? ? ?"
+				"A1 ? ? ? ? 68 ? ? ? ? 8B 70 08 E8 ? ? ? ?",
+				"A1 ? ? ? ? 56 83 78 08 00 75 ?"
 			}, true, true, 0, &offsets::global::GameClient
 		}
 	};

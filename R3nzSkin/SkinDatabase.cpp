@@ -3,6 +3,7 @@
 #include <map>
 #include <ranges>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include "CheatManager.hpp"
@@ -37,28 +38,28 @@ void SkinDatabase::load() noexcept
 			}
 
 			const auto champ_name{ fnv::hash_runtime(champion->champion_name.str) };
-			this->champions_skins[champ_name].push_back(skin_info{ std::string(champion->champion_name.str), skin_display_name_translated, i });
+			this->champions_skins[champ_name].push_back({ champion->champion_name.str, skin_display_name_translated, i });
 
 			if (i == 7 && champ_name == FNV("Lux")) {
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxAir", "Elementalist Air Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxDark", "Elementalist Dark Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxFire", "Elementalist Fire Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxIce", "Elementalist Ice Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxMagma", "Elementalist Magma Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxMystic", "Elementalist Mystic Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxNature", "Elementalist Nature Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxStorm", "Elementalist Storm Lux", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "LuxWater", "Elementalist Water Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxAir", "Elementalist Air Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxDark", "Elementalist Dark Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxFire", "Elementalist Fire Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxIce", "Elementalist Ice Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxMagma", "Elementalist Magma Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxMystic", "Elementalist Mystic Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxNature", "Elementalist Nature Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxStorm", "Elementalist Storm Lux", i });
+				this->champions_skins[champ_name].push_back({ "LuxWater", "Elementalist Water Lux", i });
 			} else if (i == 6 && champ_name == FNV("Sona")) {
-				this->champions_skins[champ_name].push_back(skin_info{ "SonaDJGenre02", "DJ Sona 2", i });
-				this->champions_skins[champ_name].push_back(skin_info{ "SonaDJGenre03", "DJ Sona 3", i });
+				this->champions_skins[champ_name].push_back({ "SonaDJGenre02", "DJ Sona 2", i });
+				this->champions_skins[champ_name].push_back({ "SonaDJGenre03", "DJ Sona 3", i });
 			}
 		}
 	}
 
 	for (auto ward_skin_id{ 1u };; ++ward_skin_id) {
 		const auto ward_display_name{ "game_character_skin_displayname_SightWard_" + std::to_string(ward_skin_id) };
-		const auto ward_display_name_translated{ std::string(translateString(ward_display_name.c_str())) };
+		const auto ward_display_name_translated{ std::string_view(translateString(ward_display_name.c_str())) };
 		
 		if (ward_display_name == ward_display_name_translated)
 			break;

@@ -19,7 +19,8 @@
 bool NTAPI HideThread(HANDLE hThread) noexcept
 {
 	__try {
-		static const auto NtSetInformationThread{ reinterpret_cast<NTSTATUS(NTAPI*)(HANDLE, UINT, PVOID, ULONG)>(GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtSetInformationThread")) };
+		using FnSetInformationThread = NTSTATUS(NTAPI*)(HANDLE, UINT, PVOID, ULONG);
+		const auto NtSetInformationThread{ reinterpret_cast<FnSetInformationThread>(::GetProcAddress(::GetModuleHandle(L"ntdll.dll"), "NtSetInformationThread")) };
 
 		if (NtSetInformationThread == NULL)
 			return false;

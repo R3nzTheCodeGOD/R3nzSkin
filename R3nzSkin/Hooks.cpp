@@ -19,11 +19,11 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static __forceinline void nextSkin() noexcept
+inline void nextSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
-		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 		cheatManager.config->current_combo_skin_index++;
 		if (cheatManager.config->current_combo_skin_index > int32_t(values.size()))
 			cheatManager.config->current_combo_skin_index = int32_t(values.size());
@@ -33,11 +33,11 @@ static __forceinline void nextSkin() noexcept
 	}
 }
 
-static __forceinline void previousSkin() noexcept
+inline void previousSkin() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	if (player) {
-		auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 		cheatManager.config->current_combo_skin_index--;
 		if (cheatManager.config->current_combo_skin_index > 0)
 			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
@@ -82,7 +82,7 @@ static const ImWchar ranges[] = {
 	0,
 };
 
-static ImWchar* getFontGlyphRangesKr() noexcept
+inline ImWchar* getFontGlyphRangesKr() noexcept
 {
 	static ImVector<ImWchar> rangesKR;
 	if (rangesKR.empty()) {
@@ -311,8 +311,7 @@ void Hooks::init() const noexcept
 	static const auto heroes{ cheatManager.memory->heroList };
 	static const auto minions{ cheatManager.memory->minionList };
 
-	std::call_once(change_skins, [&]()
-	{
+	std::call_once(change_skins, [&]() noexcept -> void {
 		if (player) {
 			if (cheatManager.config->current_combo_skin_index > 0) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
@@ -356,14 +355,13 @@ void Hooks::init() const noexcept
 		}
 	}
 
-	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept
-	{
+	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept -> void {
 		if (skin == -1)
 			return;
-
-		if (obj->get_character_data_stack()->base_skin.skin != skin) {
-			obj->get_character_data_stack()->base_skin.skin = skin;
-			obj->get_character_data_stack()->update(true);
+		
+		if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
+			stack->base_skin.skin = skin;
+			stack->update(true);
 		}
 	};
 

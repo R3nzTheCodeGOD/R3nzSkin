@@ -5,7 +5,6 @@
 namespace offsets {
 	namespace GameObject {
 		enum {
-			ID = 0x20,
 			Team = 0x34,
 			Name = 0x54
 		};

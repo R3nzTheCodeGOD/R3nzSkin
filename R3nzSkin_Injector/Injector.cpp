@@ -189,6 +189,7 @@ void Injector::run() noexcept
 			if (!Injector::isInjected(pid)) {
 				R3nzSkinInjector::cheatState = false;
 				if (R3nzSkinInjector::btnState) {
+					std::this_thread::sleep_for(1.5s);
 					if (Injector::inject(pid))
 						R3nzSkinInjector::cheatState = true;
 					else

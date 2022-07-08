@@ -86,6 +86,9 @@
     <ClCompile Include="SDK\AIBaseCommon.cpp">
       <Filter>Source Files\SDK</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\AIMinionClient.cpp">
+      <Filter>Source Files\SDK</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SkinDatabase.hpp">

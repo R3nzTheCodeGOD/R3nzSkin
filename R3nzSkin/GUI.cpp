@@ -1,32 +1,22 @@
-#include <fstream>
 #include <string>
-
-#include "Json/json.hpp"
-#include "fnv_hash.hpp"
-#include "imgui/imgui.h"
+#include <string_view>
+#include <vector>
 
 #include "CheatManager.hpp"
 #include "GUI.hpp"
 #include "Memory.hpp"
 #include "SkinDatabase.hpp"
 #include "Utils.hpp"
+#include "fnv_hash.hpp"
+#include "imgui/imgui.h"
 
-__forceinline static void footer() noexcept
+inline void footer() noexcept
 {
+	using namespace std::string_literals;
+	static const std::string buildText{ "Last Build: "s + __DATE__ + " - " + __TIME__ };
 	ImGui::Separator();
-	ImGui::textUnformattedCentered((std::string("Last Build: ") + __DATE__ + " - " + __TIME__).c_str());
+	ImGui::textUnformattedCentered(buildText.c_str());
 	ImGui::textUnformattedCentered("Copyright (C) 2021-2022 R3nzTheCodeGOD");
-}
-
-__forceinline static void infoText(const char* desc) noexcept
-{
-	if (ImGui::IsItemHovered()) {
-		ImGui::BeginTooltip();
-		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-		ImGui::TextUnformatted(desc);
-		ImGui::PopTextWrapPos();
-		ImGui::EndTooltip();
-	}
 }
 
 void GUI::render() noexcept
@@ -43,16 +33,16 @@ void GUI::render() noexcept
 	};
 
 	static const auto vector_getter_ward_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
-		const auto& vector{ *static_cast<std::vector<std::pair<std::int32_t, std::string>>*>(vec) };
+		const auto& vector{ *static_cast<std::vector<std::pair<std::int32_t, std::string_view>>*>(vec) };
 		if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
-		*out_text = idx == 0 ? "Default" : vector.at(idx - 1).second.c_str();
+		*out_text = idx == 0 ? "Default" : vector.at(idx - 1).second.data();
 		return true;
 	};
 
 	static auto vector_getter_default = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
-		const auto& vector{ *static_cast<std::vector<std::string>*>(vec) };
+		const auto& vector{ *static_cast<std::vector<std::string_view>*>(vec) };
 		if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
-		*out_text = idx == 0 ? "Default" : vector.at(idx - 1).c_str();
+		*out_text = idx == 0 ? "Default" : vector.at(idx - 1).data();
 		return true;
 	};
 
@@ -105,7 +95,7 @@ void GUI::render() noexcept
 					auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 					const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name().c_str(), reinterpret_cast<std::uintptr_t>(hero));
+					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 					auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
@@ -123,8 +113,8 @@ void GUI::render() noexcept
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
 				for (auto& it : cheatManager.database->jungle_mobs_skins) {
-					snprintf(str_buffer, 256, "Current %s skin", it.name.c_str());
-					const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(),0 }) };
+					snprintf(str_buffer, 256, "Current %s skin", it.name.data());
+					const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(), 0 }) };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
 						for (const auto& hash : it.name_hashes)
 							cheatManager.config->current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
@@ -138,7 +128,7 @@ void GUI::render() noexcept
 				ImGui::Checkbox(cheatManager.config->heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->heroName);
 				ImGui::Checkbox("Rainbow Text", &cheatManager.config->rainbowText);
 				ImGui::Checkbox("Quick Skin Change", &cheatManager.config->quickSkinChange);
-				infoText("It allows you to change skin without opening the menu with the key you assign from the keyboard.");
+				ImGui::hoverInfo("It allows you to change skin without opening the menu with the key you assign from the keyboard.");
 
 				if (cheatManager.config->quickSkinChange) {
 					ImGui::Separator();
@@ -161,7 +151,7 @@ void GUI::render() noexcept
 						const auto hero{ heroes->list[i] };
 						hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
 					}
-				} infoText("Defaults the skin of all champions.");
+				} ImGui::hoverInfo("Defaults the skin of all champions.");
 
 				if (ImGui::Button("Random Skins")) {
 					for (auto i{ 0u }; i < heroes->length; ++i) {
@@ -177,18 +167,17 @@ void GUI::render() noexcept
 						if (hero == player) {
 							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
 							hero->change_skin(skinDatabase[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), skinDatabase[cheatManager.config->current_combo_skin_index - 1].skin_id);
-						}
-						else {
+						} else {
 							auto& data{ config[championHash] };
 							data = random(1u, skinCount);
 							hero->change_skin(skinDatabase[data - 1].model_name.c_str(), skinDatabase[data - 1].skin_id);
 						}
 					}
-				} infoText("Randomly changes the skin of all champions.");
+				} ImGui::hoverInfo("Randomly changes the skin of all champions.");
 
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
-				infoText("You will be returned to the reconnect screen.");
+				ImGui::hoverInfo("You will be returned to the reconnect screen.");
 				ImGui::Text("FPS: %.0f FPS", ImGui::GetIO().Framerate);
 				footer();
 				ImGui::EndTabItem();
