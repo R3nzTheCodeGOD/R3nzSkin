@@ -369,6 +369,7 @@ void Hooks::init() const noexcept
 		const auto minion{ minions->list[i] };
 		const auto owner{ minion->get_gold_redirect_target() };
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
+		const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 
 		if (owner) {
 			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
@@ -383,7 +384,7 @@ void Hooks::init() const noexcept
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
 			// Just LocalPlayer
-			if (const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) }; hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) {
+			if ((hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) || (hash == FNV("KindredWolf") && playerHash == FNV("Kindred"))) {
 				change_skin_for_object(minion, player->get_character_data_stack()->base_skin.skin);
 				continue;
 			}
