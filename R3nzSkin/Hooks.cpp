@@ -229,9 +229,9 @@ namespace d3d_vtable {
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
-				if (is_d3d11) {
+				if (is_d3d11)
 					::ImGui_ImplDX11_NewFrame();
-				} else
+				else
 					::ImGui_ImplDX9_NewFrame();
 				::ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
@@ -368,9 +368,10 @@ void Hooks::init() const noexcept
 	for (auto i{ 0u }; i < minions->length; ++i) {
 		const auto minion{ minions->list[i] };
 		const auto owner{ minion->get_gold_redirect_target() };
+		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
 
 		if (owner) {
-			if (const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) }; hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
+			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
 				if (!player || owner == player) {
 					if (hash == FNV("TestCubeRender10Vision"))
 						change_skin_for_object(minion, 0);
@@ -381,6 +382,12 @@ void Hooks::init() const noexcept
 			}
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
+			// Just LocalPlayer
+			if (const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) }; hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) {
+				change_skin_for_object(minion, player->get_character_data_stack()->base_skin.skin);
+				continue;
+			}
+
 			if (minion->is_lane_minion()) {
 				if (player && player->get_team() == 200)
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
