@@ -355,6 +355,17 @@ void Hooks::init() const noexcept
 		}
 	}
 
+	static const auto change_model_for_object = [](AIBaseCommon* obj, const char* model, const std::int32_t skin) noexcept -> void {
+		if (skin == -1)
+			return;
+
+		if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
+			stack->base_skin.skin = skin;
+			stack->stack.clear();
+			stack->push(model, skin);
+		}
+	};
+
 	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept -> void {
 		if (skin == -1)
 			return;
@@ -372,9 +383,16 @@ void Hooks::init() const noexcept
 		const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 
 		if (owner) {
-			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
+			if (hash == FNV("JammerDevice") ||
+				hash == FNV("SightWard") ||
+				hash == FNV("YellowTrinket") ||
+				hash == FNV("VisionWard") ||
+				hash == FNV("TestCubeRender10Vision"))
+			{
 				if (!player || owner == player) {
-					if (hash == FNV("TestCubeRender10Vision"))
+					if (hash == FNV("TestCubeRender10Vision") && playerHash == FNV("Yone"))
+						change_model_for_object(minion, "Yone", owner->get_character_data_stack()->base_skin.skin);
+					else if (hash == FNV("TestCubeRender10Vision"))
 						change_skin_for_object(minion, 0);
 					else
 						change_skin_for_object(minion, cheatManager.config->current_ward_skin_index);
