@@ -34,7 +34,7 @@ public:
 		"Project Minion", "Snowdown Minion",
 		"Draven Minion", "Star Guardian Minion",
 		"Arcade Minion", "Snowdown 2 Minion",
-		"Odyssey Minion", "Dvc Minion", "True Shoot Minion"
+		"Odyssey Minion", "Mouse Minion", "Arcane Minion"
 	};
 	std::vector<jungle_mob_skin_info> jungle_mobs_skins =
 	{
