@@ -138,8 +138,10 @@ void GUI::render() noexcept
 				}
 
 				if (ImGui::Button("No Skins")) {
-					cheatManager.config->current_combo_skin_index = 1;
-					player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
+					if (player) {
+						cheatManager.config->current_combo_skin_index = 1;
+						player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
+					}
 
 					for (auto& enemy : cheatManager.config->current_combo_enemy_skin_index)
 						enemy.second = 1;

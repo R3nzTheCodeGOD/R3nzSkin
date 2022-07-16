@@ -21,12 +21,11 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 inline void nextSkin() noexcept
 {
-	const auto player{ cheatManager.memory->localPlayer };
-	if (player) {
+	if (const auto player{ cheatManager.memory->localPlayer }; player) {
 		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 		cheatManager.config->current_combo_skin_index++;
-		if (cheatManager.config->current_combo_skin_index > int32_t(values.size()))
-			cheatManager.config->current_combo_skin_index = int32_t(values.size());
+		if (cheatManager.config->current_combo_skin_index > static_cast<std::int32_t>(values.size()))
+			cheatManager.config->current_combo_skin_index = static_cast<std::int32_t>(values.size());
 		if (cheatManager.config->current_combo_skin_index > 0)
 			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 		cheatManager.config->save();
@@ -35,8 +34,7 @@ inline void nextSkin() noexcept
 
 inline void previousSkin() noexcept
 {
-	const auto player{ cheatManager.memory->localPlayer };
-	if (player) {
+	if (const auto player{ cheatManager.memory->localPlayer }; player) {
 		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 		cheatManager.config->current_combo_skin_index--;
 		if (cheatManager.config->current_combo_skin_index > 0)
@@ -310,6 +308,7 @@ void Hooks::init() const noexcept
 	static const auto player{ cheatManager.memory->localPlayer };
 	static const auto heroes{ cheatManager.memory->heroList };
 	static const auto minions{ cheatManager.memory->minionList };
+	static const auto playerHash{ player ? fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) : 0u };
 
 	std::call_once(change_skins, [&]() noexcept -> void {
 		if (player) {
@@ -380,7 +379,6 @@ void Hooks::init() const noexcept
 		const auto minion{ minions->list[i] };
 		const auto owner{ minion->get_gold_redirect_target() };
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
-		const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 
 		if (owner) {
 			if (hash == FNV("JammerDevice") ||
