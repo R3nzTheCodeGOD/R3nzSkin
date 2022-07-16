@@ -400,7 +400,10 @@ void Hooks::init() const noexcept
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
 			// Just LocalPlayer
-			if ((hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) || (hash == FNV("KindredWolf") && playerHash == FNV("Kindred"))) {
+			if ((hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) ||
+				(hash == FNV("KindredWolf") && playerHash == FNV("Kindred")) ||
+				(hash == FNV("QuinnValor") && playerHash == FNV("Quinn")))
+			{
 				change_skin_for_object(minion, player->get_character_data_stack()->base_skin.skin);
 				continue;
 			}
