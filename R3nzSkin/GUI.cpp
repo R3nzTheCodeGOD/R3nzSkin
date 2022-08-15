@@ -12,7 +12,7 @@
 inline void footer() noexcept
 {
 	using namespace std::string_literals;
-	static const std::string buildText{ "Last Build: "s + __DATE__ + " - " + __TIME__ };
+	static const auto buildText{ "Last Build: "s + __DATE__ + " - " + __TIME__ };
 	ImGui::Separator();
 	ImGui::textUnformattedCentered(buildText.c_str());
 	ImGui::textUnformattedCentered("Copyright (C) 2021-2022 R3nzTheCodeGOD");
@@ -162,6 +162,9 @@ void GUI::render() noexcept
 					ImGui::hotkey("Next Skin Key", cheatManager.config->nextSkinKey);
 					ImGui::Separator();
 				}
+
+				if (player)
+					ImGui::InputText("Change Nick", player->get_name());
 
 				if (ImGui::Button("No Skins")) {
 					if (player) {

@@ -276,6 +276,35 @@ void ImGui::rainbowText() noexcept
 	}
 }
 
+struct InputTextCallback_UserData {
+    std::string* Str;
+    ImGuiInputTextCallback ChainCallback;
+    void* ChainCallbackUserData;
+};
+
+static int InputTextCallback(ImGuiInputTextCallbackData* data) noexcept
+{
+    const auto user_data{ static_cast<InputTextCallback_UserData*>(data->UserData) };
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
+        const auto str{ user_data->Str };
+        IM_ASSERT(data->Buf == str->c_str());
+        str->resize(data->BufTextLen);
+        data->Buf = const_cast<char*>(str->c_str());
+    } else if (user_data->ChainCallback) {
+        data->UserData = user_data->ChainCallbackUserData;
+        return user_data->ChainCallback(data);
+    }
+    return 0;
+}
+
+bool ImGui::InputText(const char* label, std::string* str, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* userData) noexcept
+{
+    IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
+    flags |= ImGuiInputTextFlags_CallbackResize;
+    auto cbUserData{ InputTextCallback_UserData(str, callback, userData) };
+    return InputText(label, const_cast<char*>(str->c_str()), str->capacity() + 1, flags, InputTextCallback, &cbUserData);
+}
+
 void ImGui::hotkey(const char* label, KeyBind& key, float samelineOffset, const ImVec2& size) noexcept
 {
     const auto id{ GetID(label) };
