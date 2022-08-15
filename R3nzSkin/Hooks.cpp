@@ -396,7 +396,7 @@ void Hooks::init() const noexcept
 						change_skin_for_object(minion, cheatManager.config->current_ward_skin_index);
 				}
 				continue;
-			}
+			} else if (hash == FNV("DominationScout")) continue;
 			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
 		} else {
 			// Just LocalPlayer
