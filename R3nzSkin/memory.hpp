@@ -81,6 +81,12 @@ private:
 		},
 		{
 			{
+				"8B 35 ? ? ? ? 8B 76 18 85 F6 74 ?",
+				"89 35 ? ? ? ? 57 68 ? ? ? ? C7 46 04 00 00 00 00 C7 46 08 00 00 00 00"
+			}, true, true, 0, &offsets::global::ManagerTemplate_AITurret_
+		},
+		{
+			{
 				"A3 ? ? ? ? 6A 64 6A 00",
 				"8B 35 ? ? ? ? FF 15 ? ? ? ? 3B C6 75 ? 8B 0D ? ? ? ? 85 C9 74 ? 8B 01"
 			}, true, true, 0, &offsets::global::Riot__g_window
