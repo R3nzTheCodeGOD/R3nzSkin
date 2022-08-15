@@ -380,6 +380,9 @@ void Hooks::init() const noexcept
 		const auto owner{ minion->get_gold_redirect_target() };
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
 
+		// TODO: if the selected tower model has a shield, replace it
+		// if (hash == FNV("PreSeason_Turret_Shield")) {}
+
 		if (owner) {
 			if (hash == FNV("JammerDevice") ||
 				hash == FNV("SightWard") ||

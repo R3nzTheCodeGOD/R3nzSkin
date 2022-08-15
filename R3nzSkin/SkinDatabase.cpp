@@ -3,7 +3,6 @@
 #include <map>
 #include <ranges>
 #include <string>
-#include <string_view>
 #include <utility>
 
 #include "CheatManager.hpp"
@@ -59,7 +58,7 @@ void SkinDatabase::load() noexcept
 
 	for (auto ward_skin_id{ 1u };; ++ward_skin_id) {
 		const auto ward_display_name{ "game_character_skin_displayname_SightWard_" + std::to_string(ward_skin_id) };
-		const auto ward_display_name_translated{ std::string_view(translateString(ward_display_name.c_str())) };
+		const auto ward_display_name_translated{ translateString(ward_display_name.c_str()) };
 		
 		if (ward_display_name == ward_display_name_translated)
 			break;

@@ -23,13 +23,26 @@ public:
 	bool rainbowText{ false };
 	bool heroName{ true };
 	bool quickSkinChange{ false };
+	// player
 	std::int32_t current_combo_skin_index{ 0 };
-	std::int32_t current_combo_ward_index{ 0 };
+
+	// minion
 	std::int32_t current_combo_minion_index{ 0 };
 	std::int32_t current_minion_skin_index{ -1 };
+
+	// ward
+	std::int32_t current_combo_ward_index{ 0 };
 	std::int32_t current_ward_skin_index{ -1 };
+
+	// turrets, don't save them in config
+	std::int32_t current_combo_order_turret_index{ 0 };
+	std::int32_t current_combo_chaos_turret_index{ 0 };
+
+	// other champions
 	std::map<std::uint32_t, std::int32_t> current_combo_ally_skin_index;
 	std::map<std::uint32_t, std::int32_t> current_combo_enemy_skin_index;
+
+	// jungle mobs
 	std::map<std::uint32_t, std::int32_t> current_combo_jungle_mob_skin_index;
 private:
 	std::filesystem::path path;

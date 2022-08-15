@@ -114,6 +114,8 @@ void Config::reset() noexcept
 	this->current_combo_minion_index = 0;
 	this->current_minion_skin_index = -1;
 	this->current_ward_skin_index = -1;
+	this->current_combo_order_turret_index = 0;
+	this->current_combo_chaos_turret_index = 0;
 	this->current_combo_ally_skin_index.clear();
 	this->current_combo_enemy_skin_index.clear();
 	this->current_combo_jungle_mob_skin_index.clear();

@@ -8,6 +8,7 @@
 #include "Offsets.hpp"
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
+#include "SDK/AITurret.hpp"
 #include "SDK/AIMinionClient.hpp"
 #include "SDK/ChampionManager.hpp"
 #include "SDK/GameClient.hpp"
@@ -32,6 +33,7 @@ public:
 	AIBaseCommon* localPlayer;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
+	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
