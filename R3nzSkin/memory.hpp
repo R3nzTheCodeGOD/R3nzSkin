@@ -70,7 +70,7 @@ private:
 		{
 			{
 				"89 1D ? ? ? ? 57 8D 4B 08 89 5C 24 ? C7 03 ? ? ? ? E8 ? ? ? ?",
-				"8B 3D ? ? ? ? 85 FF 74 2B 8B 4F 1C 8B 47 ? 3B C1"
+				"8B 0D ? ? ? ? 83 C1 18 89 14 24 8B 41 04 3B 41 08"
 			}, true, true, 0, &offsets::global::ChampionManager
 		},
 		{
