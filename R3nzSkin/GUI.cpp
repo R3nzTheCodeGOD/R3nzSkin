@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -45,6 +46,7 @@ void GUI::render() noexcept
 	static const auto player{ cheatManager.memory->localPlayer };
 	static const auto heroes{ cheatManager.memory->heroList };
 	static const auto my_team{ player ? player->get_team() : 100 };
+	static int gear{ player ? player->get_character_data_stack()->base_skin.gear : 0 };
 
 	static const auto vector_getter_skin = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
 		const auto& vector{ *static_cast<std::vector<SkinDatabase::skin_info>*>(vec) };
@@ -57,6 +59,13 @@ void GUI::render() noexcept
 		const auto& vector{ *static_cast<std::vector<std::pair<std::int32_t, const char*>>*>(vec) };
 		if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
 		*out_text = idx == 0 ? "Default" : vector.at(idx - 1).second;
+		return true;
+	};
+
+	static auto vector_getter_gear = [](void* vec, std::int32_t idx, const char** out_text) noexcept {
+		const auto& vector{ *static_cast<std::vector<const char*>*>(vec) };
+		if (idx < 0 || idx > static_cast<std::int32_t>(vector.size())) return false;
+		*out_text = vector[idx];
 		return true;
 	};
 
@@ -79,6 +88,24 @@ void GUI::render() noexcept
 					if (ImGui::Combo("Current Skin", &cheatManager.config->current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
 						if (cheatManager.config->current_combo_skin_index > 0)
 							player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+					
+					const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
+					if (const auto it{ std::find_if(cheatManager.database->specialSkins.begin(), cheatManager.database->specialSkins.end(),
+						[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
+						{
+							return x.champHash == ph && (x.skinIdStart <= skin && x.skinIdEnd >= skin);
+						}) };
+						it != cheatManager.database->specialSkins.end())
+					{
+						const auto stack{ player->get_character_data_stack() };
+						gear = stack->base_skin.gear;
+
+						if (ImGui::Combo("Current Gear", &gear, vector_getter_gear, static_cast<void*>(&it->gears), it->gears.size())) {
+							player->get_character_data_stack()->base_skin.gear = static_cast<std::int8_t>(gear);
+							player->get_character_data_stack()->update(true);
+						}
+						ImGui::Separator();
+					}
 
 					if (ImGui::Combo("Current Ward Skin", &cheatManager.config->current_combo_ward_index, vector_getter_ward_skin, static_cast<void*>(&cheatManager.database->wards_skins), cheatManager.database->wards_skins.size() + 1))
 						cheatManager.config->current_ward_skin_index = cheatManager.config->current_combo_ward_index == 0 ? -1 : cheatManager.database->wards_skins.at(cheatManager.config->current_combo_ward_index - 1).first;
