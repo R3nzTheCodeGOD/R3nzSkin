@@ -10,5 +10,7 @@ public:
     AString model;
     PAD(0xC)
     std::int32_t skin;
-    PAD(0x4A)
+    PAD(0x44)
+    std::int8_t gear;
+    PAD(0x7)
 };
