@@ -11,5 +11,5 @@ public:
 
 	void change_skin(const char* model, const std::int32_t skin) noexcept;
 private:
-	bool skin_model_push(const char* model, const std::int32_t skin) noexcept;
+	bool checkSpecialSkins(const char* model, const std::int32_t skin) noexcept;
 };
