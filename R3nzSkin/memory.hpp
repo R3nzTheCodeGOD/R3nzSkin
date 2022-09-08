@@ -77,8 +77,8 @@ private:
 		},
 		{
 			{
-				"8B 35 ? ? ? ? 8B 56 04 8D 4E 04 8B 41 04 8D 04 82",
-				"A1 ? ? ? ? 55 57 8B 78 04 8B 40 08 8D 2C 87 3B FD"
+				"A1 ? ? ? ? 55 57 8B 78 04 8B 40 08 8D 2C 87 3B FD",
+				"8B 0D ? ? ? ? E8 ? ? ? ? EB 09"
 			}, true, true, 0, &offsets::global::ManagerTemplate_AIMinionClient_
 		},
 		{
@@ -90,7 +90,7 @@ private:
 		{
 			{
 				"A3 ? ? ? ? 6A 64 6A 00",
-				"8B 35 ? ? ? ? FF 15 ? ? ? ? 3B C6 75 ? 8B 0D ? ? ? ? 85 C9 74 ? 8B 01"
+				"FF 35 ? ? ? ? 8B CE E8 ? ? ? ? 8D 44 24 24"
 			}, true, true, 0, &offsets::global::Riot__g_window
 		},
 		{
@@ -118,7 +118,7 @@ private:
 		},
 		{
 			{
-				"0F B6 97 ? ? ? ? 88 4C 24 ? 33 C9 85 D2 74 ? 0F 1F 44 00 00"
+				"0F B6 96 ? ? ? ? 88 4C 24 ? 33 C9 85 D2 74 ? 0F 1F 44 00 00"
 			}, false, true, -1, &offsets::AIMinionClient::IsLaneMinion
 		},
 		{
