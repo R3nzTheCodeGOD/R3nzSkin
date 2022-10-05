@@ -77,8 +77,8 @@ private:
 		},
 		{
 			{
-				"A1 ? ? ? ? 55 57 8B 78 04 8B 40 08 8D 2C 87 3B FD",
-				"8B 0D ? ? ? ? E8 ? ? ? ? EB 09"
+				"8B 0D ? ? ? ? E8 ? ? ? ? EB 09",
+				"8B 0D ? ? ? ? 8B D0 8B 5C 24 ? 89 54 24 ?"
 			}, true, true, 0, &offsets::global::ManagerTemplate_AIMinionClient_
 		},
 		{
