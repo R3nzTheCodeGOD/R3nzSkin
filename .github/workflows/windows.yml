@@ -3,22 +3,16 @@ name: Windows
 on: [push, pull_request]
 
 jobs:
-  Riot-Games-Servers:
-    runs-on: windows-2019
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
+        configuration: [RiotGamesServers, ChinaServer]
     steps:
     - uses: actions/checkout@v2
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     - name: Build
       shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=RiotGamesServers
-      
-  China-Server:
-    runs-on: windows-2019
-    steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build
-      shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=ChinaServer
+      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=${{ matrix.configuration }}
