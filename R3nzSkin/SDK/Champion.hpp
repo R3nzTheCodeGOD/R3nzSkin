@@ -8,6 +8,6 @@
 class Champion {
 	PAD(0x4)
 	AString champion_name;
-	PAD(0x6C)
+	PAD(0x78)
 	SkinArray<Skin> skins;
 };
