@@ -231,7 +231,7 @@ namespace R3nzSkinInjector {
 			   //
 			   // notifyIcon
 			   //
-			   this->notifyIcon->Text = "R3nzInjector";
+			   this->notifyIcon->Text = L"R3nzSkin";
 			   this->notifyIcon->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			   this->notifyIcon->Visible = false;
 			   this->notifyIcon->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &R3nzUI::notifyIcon_MouseDoubleClick);
