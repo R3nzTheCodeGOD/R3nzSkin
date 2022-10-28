@@ -67,6 +67,7 @@ namespace R3nzSkinInjector {
 	private: System::Windows::Forms::NotifyIcon^ notifyIcon;
 	private: System::Windows::Forms::ContextMenu^ contextMenu;
 	private: System::Windows::Forms::MenuItem^ menuItem;
+	private: System::Windows::Forms::MenuItem^ menuItem2;
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
@@ -84,6 +85,7 @@ namespace R3nzSkinInjector {
 			   this->notifyIcon = (gcnew System::Windows::Forms::NotifyIcon());
 			   this->contextMenu = (gcnew System::Windows::Forms::ContextMenu());
 			   this->menuItem = (gcnew System::Windows::Forms::MenuItem());
+			   this->menuItem2 = (gcnew System::Windows::Forms::MenuItem());
 			   this->groupBox1->SuspendLayout();
 			   this->groupBox2->SuspendLayout();
 			   this->groupBox3->SuspendLayout();
@@ -236,9 +238,13 @@ namespace R3nzSkinInjector {
 			   // contextMenu
 			   //
 			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem });
+			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem2 });
 			   //
 			   // menuItem
-			   this->menuItem->Index = 0;
+			   this->menuItem2->Index = 0;
+			   this->menuItem2->Text = L"Start";
+			   this->menuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem2_OnClick);
+			   this->menuItem->Index = 1;
 			   this->menuItem->Text = L"Exit";
 			   this->menuItem->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem_OnClick);
 			   //
@@ -271,11 +277,7 @@ namespace R3nzSkinInjector {
 			   this->MaximizeBox = false;
 			   this->Name = L"R3nzUI";
 			   this->RightToLeft = System::Windows::Forms::RightToLeft::No;
-#ifdef _RIOT
 			   this->Text = L"R3nzSkin";
-#else
-			   this->Text = L"R3nzSkin China";
-#endif
 			   this->Load += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Load);
 			   this->Resize += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Resize);
 			   this->groupBox1->ResumeLayout(false);
@@ -301,12 +303,13 @@ namespace R3nzSkinInjector {
 				this->label1->ForeColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
 				this->button1->Text = L"Stop";
 				this->label1->Text = L"Working";
-			}
-			else {
+				this->menuItem2->Text = L"Stop";
+			} else {
 				this->button1->BackColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
 				this->label1->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
 				this->button1->Text = L"Start";
 				this->label1->Text = L"Stopped";
+				this->menuItem2->Text = L"Start";
 			}
 		}
 	private:
@@ -333,6 +336,11 @@ namespace R3nzSkinInjector {
 		System::Void menuItem_OnClick(System::Object^ sender, System::EventArgs^ e)
 		{
 			this->Close();
+		}
+	private:
+		System::Void menuItem2_OnClick(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->button1_Click(nullptr, nullptr);
 		}
 	};
 }
