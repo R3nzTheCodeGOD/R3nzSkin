@@ -65,6 +65,8 @@ namespace R3nzSkinInjector {
 	private: System::Windows::Forms::LinkLabel^ linkLabel1;
 	private: System::ComponentModel::Container^ components;
 	private: System::Windows::Forms::NotifyIcon^ notifyIcon;
+	private: System::Windows::Forms::ContextMenu^ contextMenu;
+	private: System::Windows::Forms::MenuItem^ menuItem;
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
@@ -80,6 +82,8 @@ namespace R3nzSkinInjector {
 			   this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			   this->linkLabel1 = (gcnew System::Windows::Forms::LinkLabel());
 			   this->notifyIcon = (gcnew System::Windows::Forms::NotifyIcon());
+			   this->contextMenu = (gcnew System::Windows::Forms::ContextMenu());
+			   this->menuItem = (gcnew System::Windows::Forms::MenuItem());
 			   this->groupBox1->SuspendLayout();
 			   this->groupBox2->SuspendLayout();
 			   this->groupBox3->SuspendLayout();
@@ -229,11 +233,21 @@ namespace R3nzSkinInjector {
 			   this->linkLabel1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			   this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &R3nzUI::linkLabel1_LinkClicked);
 			   //
+			   // contextMenu
+			   //
+			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem });
+			   //
+			   // menuItem
+			   this->menuItem->Index = 0;
+			   this->menuItem->Text = L"Exit";
+			   this->menuItem->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem_OnClick);
+			   //
 			   // notifyIcon
 			   //
 			   this->notifyIcon->Text = L"R3nzSkin";
 			   this->notifyIcon->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			   this->notifyIcon->Visible = false;
+			   this->notifyIcon->ContextMenu = this->contextMenu;
 			   this->notifyIcon->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &R3nzUI::notifyIcon_MouseDoubleClick);
 			   // 
 			   // R3nzUI
@@ -314,6 +328,11 @@ namespace R3nzSkinInjector {
 			this->Show();
 			this->WindowState = FormWindowState::Normal;
 			this->notifyIcon->Visible = false;
+		}
+	private:
+		System::Void menuItem_OnClick(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->Close();
 		}
 	};
 }
