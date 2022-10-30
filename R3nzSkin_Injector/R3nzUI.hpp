@@ -226,21 +226,21 @@ namespace R3nzSkinInjector {
 			   this->linkLabel1->Cursor = System::Windows::Forms::Cursors::Hand;
 			   this->linkLabel1->LinkBehavior = System::Windows::Forms::LinkBehavior::NeverUnderline;
 			   this->linkLabel1->LinkColor = System::Drawing::Color::Silver;
-			   this->linkLabel1->Location = System::Drawing::Point(34, 274);
+			   this->linkLabel1->Location = System::Drawing::Point(20, 274);
 			   this->linkLabel1->Name = L"linkLabel1";
 			   this->linkLabel1->Size = System::Drawing::Size(207, 14);
 			   this->linkLabel1->TabIndex = 11;
 			   this->linkLabel1->TabStop = true;
-			   this->linkLabel1->Text = L"Copyright (c) 2021 R3nzTheCodeGOD";
+			   this->linkLabel1->Text = L"Copyright (c) 2021-2022 R3nzTheCodeGOD";
 			   this->linkLabel1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			   this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &R3nzUI::linkLabel1_LinkClicked);
 			   //
 			   // contextMenu
 			   //
-			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem });
-			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem2 });
+			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem, this->menuItem2 });
 			   //
 			   // menuItem
+			   //
 			   this->menuItem2->Index = 0;
 			   this->menuItem2->Text = L"Start";
 			   this->menuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem2_OnClick);
