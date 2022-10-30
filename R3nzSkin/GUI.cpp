@@ -233,6 +233,12 @@ void GUI::render() noexcept
 					}
 				} ImGui::hoverInfo("Randomly changes the skin of all champions.");
 
+				ImGui::Text("Font Scale");
+				ImGui::SliderFloat("##fontScale", &cheatManager.config->fontScale, 1.0f, 3.0f, "%.3g:1", 1.f);
+				if (ImGui::GetIO().FontGlobalScale != cheatManager.config->fontScale) {
+					ImGui::GetIO().FontGlobalScale = cheatManager.config->fontScale;
+				} ImGui::hoverInfo("Changes the menu font scale.");
+				
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
 				ImGui::hoverInfo("You will be returned to the reconnect screen.");
