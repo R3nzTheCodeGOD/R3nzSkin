@@ -140,7 +140,7 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 	if (::OpenProcessToken(::GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
 		LUID value;
 		if (::LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
-			TOKEN_PRIVILEGES tp;
+			TOKEN_PRIVILEGES tp{};
 			tp.PrivilegeCount = 1;
 			tp.Privileges[0].Luid = value;
 			tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
@@ -152,11 +152,11 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 
 std::string Injector::randomString(std::uint32_t size) noexcept
 {
-	static const char alphanum[]{ "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" };
+	static auto& alphanum = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	std::string tmp_s;
 	tmp_s.reserve(size);
 
-	for (auto i{ 0u }; i < size; ++i)
+	while(size--)
 		tmp_s += alphanum[std::rand() % (sizeof(alphanum) - 1)];
 
 	return tmp_s;

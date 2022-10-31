@@ -71,7 +71,7 @@ namespace R3nzSkinInjector {
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
-			   System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
+			   auto resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
 			   this->button1 = (gcnew System::Windows::Forms::Button());
 			   this->label1 = (gcnew System::Windows::Forms::Label());
 			   this->label2 = (gcnew System::Windows::Forms::Label());
@@ -293,7 +293,16 @@ namespace R3nzSkinInjector {
 		   }
 #pragma endregion
 	private:
-		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) {}
+		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) 
+		{
+			System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &R3nzUI::R3nzUI_ExceptionHandler);
+		}
+	private:
+		System::Void R3nzUI_ExceptionHandler(System::Object^ sender, System::UnhandledExceptionEventArgs^ e)
+		{
+			const auto exception = dynamic_cast<System::Exception^>(e->ExceptionObject)->Message;
+			MessageBox::Show(exception);
+		}
 	private:
 		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
 		{

@@ -25,7 +25,7 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 		if (!NtSetInformationThread)
 			return false;
 
-		if (const auto status{ NtSetInformationThread(hThread, 0x11u, NULL, 0ul) }; status == 0x00000000)
+		if (const auto status{ NtSetInformationThread(hThread, 0x11u, nullptr, 0ul) }; status == 0x00000000)
 			return true;
 	} __except (TRUE) {
 		return false;
