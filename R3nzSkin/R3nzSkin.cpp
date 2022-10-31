@@ -16,10 +16,10 @@
 
 #include "SDK/GameState.hpp"
 
-bool NTAPI HideThread(HANDLE hThread) noexcept
+bool WINAPI HideThread(const HANDLE hThread) noexcept
 {
 	__try {
-		using FnSetInformationThread = NTSTATUS(NTAPI*)(HANDLE, UINT, PVOID, ULONG);
+		using FnSetInformationThread = NTSTATUS(NTAPI*)(HANDLE ThreadHandle, UINT ThreadInformationClass, PVOID ThreadInformation, ULONG ThreadInformationLength);
 		const auto NtSetInformationThread{ reinterpret_cast<FnSetInformationThread>(::GetProcAddress(::GetModuleHandle(L"ntdll.dll"), "NtSetInformationThread")) };
 
 		if (!NtSetInformationThread)
@@ -62,7 +62,7 @@ static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 	::ExitProcess(0u);
 }
 
-__declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD reason, LPVOID reserved [[maybe_unused]])
+__declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD reason, [[maybe_unused]] LPVOID reserved)
 {
 	DisableThreadLibraryCalls(hModule);
 

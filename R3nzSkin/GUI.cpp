@@ -233,8 +233,7 @@ void GUI::render() noexcept
 					}
 				} ImGui::hoverInfo("Randomly changes the skin of all champions.");
 
-				ImGui::Text("Font Scale");
-				ImGui::SliderFloat("##fontScale", &cheatManager.config->fontScale, 1.0f, 3.0f, "%.3g:1", 1.f);
+				ImGui::SliderFloat("Font Scale", &cheatManager.config->fontScale, 1.0f, 2.0f, "%.3f");
 				if (ImGui::GetIO().FontGlobalScale != cheatManager.config->fontScale) {
 					ImGui::GetIO().FontGlobalScale = cheatManager.config->fontScale;
 				} ImGui::hoverInfo("Changes the menu font scale.");
