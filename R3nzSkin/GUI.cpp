@@ -81,7 +81,7 @@ void GUI::render() noexcept
 		ImGui::rainbowText();
 		if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip)) {
 			if (player) {
-				if (ImGui::BeginTabItem("LocalPlayer")) {
+				if (ImGui::BeginTabItem("Local Player")) {
 					auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 					ImGui::Text("Player Skins Settings:");
 
@@ -233,6 +233,11 @@ void GUI::render() noexcept
 					}
 				} ImGui::hoverInfo("Randomly changes the skin of all champions.");
 
+				ImGui::SliderFloat("Font Scale", &cheatManager.config->fontScale, 1.0f, 2.0f, "%.3f");
+				if (ImGui::GetIO().FontGlobalScale != cheatManager.config->fontScale) {
+					ImGui::GetIO().FontGlobalScale = cheatManager.config->fontScale;
+				} ImGui::hoverInfo("Changes the menu font scale.");
+				
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
 				ImGui::hoverInfo("You will be returned to the reconnect screen.");

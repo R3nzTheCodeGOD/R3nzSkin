@@ -11,7 +11,7 @@ using namespace System::Windows::Forms;
 using namespace System::Threading;
 
 [STAThread]
-int main(array<String^>^ args)
+int main([[maybe_unused]] array<String^>^ args)
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	Injector::renameExe();

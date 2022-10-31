@@ -16,13 +16,13 @@
 
 #include "SDK/GameState.hpp"
 
-bool NTAPI HideThread(HANDLE hThread) noexcept
+bool WINAPI HideThread(const HANDLE hThread) noexcept
 {
 	__try {
-		using FnSetInformationThread = NTSTATUS(NTAPI*)(HANDLE, UINT, PVOID, ULONG);
+		using FnSetInformationThread = NTSTATUS(NTAPI*)(HANDLE ThreadHandle, UINT ThreadInformationClass, PVOID ThreadInformation, ULONG ThreadInformationLength);
 		const auto NtSetInformationThread{ reinterpret_cast<FnSetInformationThread>(::GetProcAddress(::GetModuleHandle(L"ntdll.dll"), "NtSetInformationThread")) };
 
-		if (NtSetInformationThread == NULL)
+		if (!NtSetInformationThread)
 			return false;
 
 		if (const auto status{ NtSetInformationThread(hThread, 0x11u, NULL, 0ul) }; status == 0x00000000)
@@ -62,16 +62,17 @@ static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 	::ExitProcess(0u);
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
+__declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD reason, [[maybe_unused]] LPVOID reserved)
 {
+	DisableThreadLibraryCalls(hModule);
+
+	if (reason != DLL_PROCESS_ATTACH)
+		return FALSE;
+
 	HideThread(hModule);
+	std::setlocale(LC_ALL, ".utf8");
 
-	if (reason == DLL_PROCESS_ATTACH) {
-		std::setlocale(LC_ALL, ".utf8");
-		::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
-		::CloseHandle(hModule);
-		return TRUE;
-	}
-
-	return FALSE;
+	::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
+	::CloseHandle(hModule);
+	return TRUE;
 }
