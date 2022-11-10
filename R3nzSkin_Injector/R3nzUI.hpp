@@ -71,7 +71,7 @@ namespace R3nzSkinInjector {
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
-			   auto resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
+			   System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
 			   this->button1 = (gcnew System::Windows::Forms::Button());
 			   this->label1 = (gcnew System::Windows::Forms::Label());
 			   this->label2 = (gcnew System::Windows::Forms::Label());
@@ -237,7 +237,8 @@ namespace R3nzSkinInjector {
 			   //
 			   // contextMenu
 			   //
-			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem, this->menuItem2 });
+			   this->contextMenu->MenuItems->Add(this->menuItem);
+			   this->contextMenu->MenuItems->Add(this->menuItem2);
 			   //
 			   // menuItem
 			   //
