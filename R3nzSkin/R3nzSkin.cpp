@@ -32,7 +32,7 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 	}
 }
 
-static void WINAPI StartThread(LPVOID thread, DWORD address) noexcept
+static void WINAPI StartThread(LPVOID thread, unsigned long long address) noexcept
 {
 	VirtualProtect(reinterpret_cast<LPVOID>(address), 0x1000, PAGE_EXECUTE_READWRITE, nullptr);
 
@@ -90,7 +90,7 @@ __declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD
 	HideThread(hModule);
 	std::setlocale(LC_ALL, ".utf8");
 
-	::StartThread(DllAttach, 0xFFFF920C205F6000);
+	::StartThread(DllAttach, random(0xFFDC0B19B09E5F28, 0xFFFF920C205F6000));
 	::CloseHandle(hModule);
 	return TRUE;
 }
