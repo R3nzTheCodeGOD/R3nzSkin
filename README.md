@@ -12,28 +12,30 @@
 </div>
 
 `R3nzSkin` is internal skin changer for League of Legends.
-- Change the skin of your champion and other champions in the game.
+- Change the skin of your champion, your ward, other champions, towers, minions and jungle monsters in the game.
 - Automatic skins database update.
 - Support for spectator mode.
 - Change skins anytime and unlimited times in single game.
 - Supports all Popular languages ​​in the world.
 - In-game configuration with <a href="https://github.com/ocornut/imgui">ImGui</a>.
 - <a href="https://github.com/nlohmann/json">JSON</a> based configuration saving & loading
+- Using <a href="https://github.com/danielkrupinski/x86RetSpoof">x86RetSpoof</a>, League functions are called with spoofed return address
 
 # Building
 1. Clone the source with `git clone --recursive https://github.com/R3nzTheCodeGOD/R3nzSkin.git`
 2. Build in Visual Studio 2017/19 with configuration "Your Region"
 
 # Usage
-1. Use `R3nzSkin_Injector` or inject the resulting DLL into the game yourself.
+1. Compile source or <a href="https://github.com/R3nzTheCodeGOD/R3nzSkin/releases/latest">download</a> compiled version.
+2. Use `R3nzSkin_Injector` or inject the resulting DLL into the game yourself.
    - *Administrator* privilege may be needed if failed to inject.
    - League client can crash if injected before going into arena.
       - A workaround is to not inject until you are in the arena (you will need to be fast to not disrupt the game).
-2. Press <kbd>Insert</kbd> to bring up the menu.
-3. Select skin for you, your teammates, enemies, wards.
+3. Press <kbd>Insert</kbd> to bring up the menu.
+4. Select skin for you, your teammates, enemies, wards.
 
 # Further optimizations
-If your CPU supports AVX / AVX2 / AVX-512 instruction set, you can enable it in project settings. This should result in more performant code, optimized for your CPU.
+If your CPU supports AVX / AVX2 / AVX-512 instruction set, you can enable it in project settings. This should result in more performant code, optimized for your CPU. Currently SSE2 instructions are selected in project settings.
 
 # Credits
 This program is an improved and updated version of the <a href="https://github.com/B3akers">B3akers</a>/<a href="https://github.com/B3akers/LeagueSkinChanger">LeagueSkinChanger</a> project.
