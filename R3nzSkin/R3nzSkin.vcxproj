@@ -169,7 +169,7 @@
     <ClInclude Include="SDK\ManagerTemplate.hpp" />
     <ClInclude Include="SDK\Pad.hpp" />
     <ClInclude Include="SDK\Skin.hpp" />
-    <ClInclude Include="SDK\SkinArray.hpp" />
+    <ClInclude Include="SDK\RiotArray.hpp" />
     <ClInclude Include="SkinDatabase.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="vmt_smart_hook.hpp" />

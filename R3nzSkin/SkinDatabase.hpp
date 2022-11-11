@@ -11,7 +11,7 @@ class SkinDatabase {
 public:
 	class skin_info {
 	public:
-		std::string model_name;
+		const char* model_name;
 		std::string skin_name;
 		std::int32_t skin_id;
 	};

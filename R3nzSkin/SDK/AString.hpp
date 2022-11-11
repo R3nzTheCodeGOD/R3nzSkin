@@ -8,4 +8,3 @@ public:
 	std::size_t length;
 	std::size_t capacity;
 };
-

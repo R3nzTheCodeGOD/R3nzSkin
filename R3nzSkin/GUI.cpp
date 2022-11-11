@@ -10,7 +10,7 @@
 #include "fnv_hash.hpp"
 #include "imgui/imgui.h"
 
-inline void footer() noexcept
+inline static void footer() noexcept
 {
 	using namespace std::string_literals;
 	static const auto buildText{ "Last Build: "s + __DATE__ + " - " + __TIME__ };
@@ -43,8 +43,8 @@ static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team)
 
 void GUI::render() noexcept
 {
-	static const auto player{ cheatManager.memory->localPlayer };
-	static const auto heroes{ cheatManager.memory->heroList };
+	const auto player{ cheatManager.memory->localPlayer };
+	const auto heroes{ cheatManager.memory->heroList };
 	static const auto my_team{ player ? player->get_team() : 100 };
 	static int gear{ player ? player->get_character_data_stack()->base_skin.gear : 0 };
 

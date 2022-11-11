@@ -23,7 +23,7 @@ void Config::init() noexcept
 
 void Config::save() noexcept
 {
-	static const auto player{ cheatManager.memory->localPlayer };
+	const auto player{ cheatManager.memory->localPlayer };
 	std::error_code ec;
 	std::filesystem::create_directory(this->path, ec);
 	auto out{ std::ofstream(this->path / u8"R3nzSkin")};

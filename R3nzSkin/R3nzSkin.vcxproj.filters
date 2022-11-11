@@ -195,7 +195,7 @@
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
     <ClInclude Include="CheatManager.hpp" />
-    <ClInclude Include="SDK\SkinArray.hpp">
+    <ClInclude Include="SDK\RiotArray.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\AITurret.hpp">

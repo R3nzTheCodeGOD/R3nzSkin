@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 template <class T>
-class SkinArray {
+class RiotArray {
 public:
 	T* list;
 	std::size_t size;

@@ -222,7 +222,7 @@ namespace d3d_vtable {
 
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
-		static const auto client{ cheatManager.memory->client };
+		const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
@@ -304,9 +304,9 @@ namespace d3d_vtable {
 
 void Hooks::init() const noexcept
 {
-	static const auto player{ cheatManager.memory->localPlayer };
-	static const auto heroes{ cheatManager.memory->heroList };
-	static const auto minions{ cheatManager.memory->minionList };
+	const auto player{ cheatManager.memory->localPlayer };
+	const auto heroes{ cheatManager.memory->heroList };
+	const auto minions{ cheatManager.memory->minionList };
 	static const auto playerHash{ player ? fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) : 0u };
 
 	std::call_once(change_skins, [&]() noexcept -> void {

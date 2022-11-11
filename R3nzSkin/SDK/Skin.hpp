@@ -9,4 +9,3 @@ public:
 	std::int32_t skin_id;
 	AString skin_name;
 };
-
