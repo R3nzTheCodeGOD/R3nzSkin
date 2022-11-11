@@ -55,14 +55,14 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 				if (++cheatManager.config->current_combo_skin_index > static_cast<std::int32_t>(values.size()))
 					cheatManager.config->current_combo_skin_index = static_cast<std::int32_t>(values.size());
 				if (cheatManager.config->current_combo_skin_index > 0)
-					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 				cheatManager.config->save();
 			}
 		} else if (wParam == cheatManager.config->previousSkinKey.getKey() && cheatManager.config->quickSkinChange) {
 			if (const auto player{ cheatManager.memory->localPlayer }; player) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 				if (--cheatManager.config->current_combo_skin_index > 0)
-					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 				else
 					cheatManager.config->current_combo_skin_index = 1;
 				cheatManager.config->save();
@@ -313,7 +313,7 @@ void Hooks::init() const noexcept
 		if (player) {
 			if (cheatManager.config->current_combo_skin_index > 0) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-				player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+				player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 			}
 		}
 
@@ -335,7 +335,7 @@ void Hooks::init() const noexcept
 
 			if (config_entry->second > 0) {
 				const auto& values = cheatManager.database->champions_skins[champion_name_hash];
-				hero->change_skin(values[config_entry->second - 1].model_name.c_str(), values[config_entry->second - 1].skin_id);
+				hero->change_skin(values[config_entry->second - 1].model_name, values[config_entry->second - 1].skin_id);
 			}
 		}
 	});

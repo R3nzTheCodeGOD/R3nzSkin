@@ -10,6 +10,6 @@ public:
 	std::vector<CharacterStackData> stack;
 	CharacterStackData base_skin;
 
-	void update(const bool change) noexcept;
+	void update(const bool change) const noexcept;
 	void push(const char* model, const std::int32_t skin) const noexcept;
 };
