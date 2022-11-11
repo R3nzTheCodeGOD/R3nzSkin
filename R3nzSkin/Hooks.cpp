@@ -376,7 +376,7 @@ void Hooks::init() const noexcept
 
 	for (auto i{ 0u }; i < minions->length; ++i) {
 		const auto minion{ minions->list[i] };
-		const auto owner{ minion->get_gold_redirect_target() };
+		const auto owner{ minion->getGoldRedirectTarget() };
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
 
 		// TODO: if the selected tower model has a shield, replace it
@@ -410,7 +410,7 @@ void Hooks::init() const noexcept
 				continue;
 			}
 
-			if (minion->is_lane_minion()) {
+			if (minion->isLaneMinion()) {
 				if (player && player->get_team() == 200)
 					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 				else

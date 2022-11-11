@@ -2,15 +2,14 @@
 
 #include "../CheatManager.hpp"
 #include "../Encryption.hpp"
+#include "../RetSpoofInvoker.hpp"
 
-AIBaseCommon* AIMinionClient::get_gold_redirect_target() noexcept
+AIBaseCommon* AIMinionClient::getGoldRedirectTarget() noexcept
 {
-	using FnGetGoldRedirectTarget = AIBaseCommon*(__thiscall*)(void*);
-	static const auto GetGoldRedirectTarget{ reinterpret_cast<FnGetGoldRedirectTarget>(cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget) };
-	return GetGoldRedirectTarget(this);
+	return invoker.invokeThiscall<AIBaseCommon*>(std::uintptr_t(this), cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget);
 }
 
-bool AIMinionClient::is_lane_minion() noexcept
+bool AIMinionClient::isLaneMinion() noexcept
 {
 	return reinterpret_cast<xor_value<bool>*>(std::uintptr_t(this) + offsets::AIMinionClient::IsLaneMinion)->decrypt();
 }
