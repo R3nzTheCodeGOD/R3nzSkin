@@ -32,7 +32,7 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 	}
 }
 
-static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
+__declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 {
 	using namespace std::chrono_literals;
 
