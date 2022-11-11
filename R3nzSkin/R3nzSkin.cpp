@@ -32,6 +32,24 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 	}
 }
 
+static void WINAPI StartThread(LPVOID thread, DWORD address) noexcept
+{
+	VirtualProtect(reinterpret_cast<LPVOID>(address), 0x1000, PAGE_EXECUTE_READWRITE, nullptr);
+
+	CONTEXT ctx{};
+	if (auto handle = _beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(address), nullptr, CREATE_SUSPENDED, nullptr); handle)
+	{
+		ctx.ContextFlags = CONTEXT_ALL;
+		GetThreadContext(reinterpret_cast<HANDLE>(handle), &ctx);
+		ctx.Eax = reinterpret_cast<DWORD>(thread);
+		SetThreadContext(reinterpret_cast<HANDLE>(handle), &ctx);
+
+		ResumeThread(reinterpret_cast<HANDLE>(handle));
+		CloseHandle(reinterpret_cast<HANDLE>(handle));
+	}
+	return;
+}
+
 static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 {
 	using namespace std::chrono_literals;
@@ -72,7 +90,7 @@ __declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD
 	HideThread(hModule);
 	std::setlocale(LC_ALL, ".utf8");
 
-	::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
+	::StartThread(DllAttach, 0xFFFF920C205F6000);
 	::CloseHandle(hModule);
 	return TRUE;
 }
