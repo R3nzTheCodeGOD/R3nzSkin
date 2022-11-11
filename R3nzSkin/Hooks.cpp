@@ -21,39 +21,35 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (::ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
-		return true;
+	if (cheatManager.gui->is_open)
+		ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
 
-	if (msg == WM_KEYDOWN && wParam == cheatManager.config->menuKey.getKey()) {
-		cheatManager.gui->is_open = !cheatManager.gui->is_open;
-		if (!cheatManager.gui->is_open)
-			cheatManager.config->save();
-	}
-
-	if (msg == WM_KEYDOWN && wParam == 0x35) {
-		const auto player{ cheatManager.memory->localPlayer };
-		if (const auto player{ cheatManager.memory->localPlayer }; (::GetAsyncKeyState(VK_LCONTROL) & 0x8000) && player) {
-			const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
-			if (const auto it{ std::find_if(cheatManager.database->specialSkins.begin(), cheatManager.database->specialSkins.end(),
-				[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
+	if (msg == WM_KEYDOWN) {
+		if (wParam == cheatManager.config->menuKey.getKey()) {
+			cheatManager.gui->is_open = !cheatManager.gui->is_open;
+			if (!cheatManager.gui->is_open)
+				cheatManager.config->save();
+		} else if (wParam == 0x35) {
+			const auto player{ cheatManager.memory->localPlayer };
+			if (const auto player{ cheatManager.memory->localPlayer }; (::GetAsyncKeyState(VK_LCONTROL) & 0x8000) && player) {
+				const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
+				if (const auto it{ std::find_if(cheatManager.database->specialSkins.begin(), cheatManager.database->specialSkins.end(),
+					[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
+					{
+						return x.champHash == ph && (x.skinIdStart <= skin && x.skinIdEnd >= skin);
+					}) };
+					it != cheatManager.database->specialSkins.end())
 				{
-					return x.champHash == ph && (x.skinIdStart <= skin && x.skinIdEnd >= skin);
-				}) };
-				it != cheatManager.database->specialSkins.end())
-			{
-				const auto stack{ player->get_character_data_stack() };
-				if (stack->base_skin.gear < static_cast<std::int8_t>(it->gears.size()) - 1)
-					++stack->base_skin.gear;
-				else
-					stack->base_skin.gear = static_cast<std::int8_t>(0);
+					const auto stack{ player->get_character_data_stack() };
+					if (stack->base_skin.gear < static_cast<std::int8_t>(it->gears.size()) - 1)
+						++stack->base_skin.gear;
+					else
+						stack->base_skin.gear = static_cast<std::int8_t>(0);
 
-				stack->update(true);
+					stack->update(true);
+				}
 			}
-		}
-	}
-
-	if (cheatManager.config->quickSkinChange) {
-		if (msg == WM_KEYDOWN && wParam == cheatManager.config->nextSkinKey.getKey()) {
+		} else if (wParam == cheatManager.config->nextSkinKey.getKey() && cheatManager.config->quickSkinChange) {
 			if (const auto player{ cheatManager.memory->localPlayer }; player) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 				if (++cheatManager.config->current_combo_skin_index > static_cast<std::int32_t>(values.size()))
@@ -62,7 +58,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name.c_str(), values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 				cheatManager.config->save();
 			}
-		} else if (msg == WM_KEYDOWN && wParam == cheatManager.config->previousSkinKey.getKey()) {
+		} else if (wParam == cheatManager.config->previousSkinKey.getKey() && cheatManager.config->quickSkinChange) {
 			if (const auto player{ cheatManager.memory->localPlayer }; player) {
 				const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
 				if (--cheatManager.config->current_combo_skin_index > 0)
@@ -149,6 +145,9 @@ namespace d3d_vtable {
 		style.TabRounding = 0.0f;
 		style.PopupRounding = 0.0f;
 
+		style.AntiAliasedFill = true;
+		style.AntiAliasedLines = true;
+
 		auto colors{ style.Colors };
 
 		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -200,7 +199,7 @@ namespace d3d_vtable {
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
-		auto& io{ ImGui::GetIO() };
+		auto& io{ ImGui::GetIO() }; (void)io;
 		io.IniFilename = nullptr;
 		io.LogFilename = nullptr;
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
