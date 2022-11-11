@@ -6,6 +6,8 @@
 #include <d3d11.h>
 
 #include "Offsets.hpp"
+#include "RetSpoofInvoker.hpp"
+
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
 #include "SDK/AITurret.hpp"
@@ -29,19 +31,22 @@ public:
 
 	std::uintptr_t base;
 	HWND window;
+
 	GameClient* client;
 	AIBaseCommon* localPlayer;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
 	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
+	
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
 
-	using FnTranlateString = const char*(__cdecl*)(const char*);
-	
-	FnTranlateString translateString;
+	const char* translateString(const char* string) const noexcept
+	{
+		return invoker.invokeCdecl<const char*>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE, string);
+	}
 private:
 	void update(bool gameClient = true) noexcept;
 

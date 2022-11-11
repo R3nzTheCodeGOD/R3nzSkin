@@ -9,7 +9,6 @@
 
 #include "Memory.hpp"
 #include "Offsets.hpp"
-#include "RetSpoofInvoker.hpp"
 
 [[nodiscard]] static std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) noexcept
 {
@@ -96,7 +95,7 @@ void Memory::update(bool gameClient) noexcept
 		this->materialRegistry = invoker.invokeStdcall<std::uintptr_t>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr);
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
-		this->translateString = reinterpret_cast<FnTranlateString>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE);
+		this->window = *reinterpret_cast<HWND*>(this->base + offsets::global::Riot__g_window);
 	}
 }
 

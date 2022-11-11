@@ -11,8 +11,6 @@
 
 void SkinDatabase::load() noexcept
 {
-	const auto translateString{ cheatManager.memory->translateString };
-
 	for (const auto& champion : cheatManager.memory->championManager->champions) {
 		std::vector<std::int32_t> skins_ids;
 		
@@ -24,7 +22,7 @@ void SkinDatabase::load() noexcept
 		std::map<std::string, std::int32_t> temp_skin_list;
 		for (const auto& i : skins_ids) {
 			const auto skin_display_name{ std::string("game_character_skin_displayname_") + champion->champion_name.str + "_" + std::to_string(i) };
-			auto skin_display_name_translated{ i > 0 ? std::string(translateString(skin_display_name.c_str())) : std::string(champion->champion_name.str) };
+			auto skin_display_name_translated{ i > 0 ? std::string(cheatManager.memory->translateString(skin_display_name.c_str())) : std::string(champion->champion_name.str) };
 
 			if (skin_display_name_translated == skin_display_name)
 				continue;
@@ -58,7 +56,7 @@ void SkinDatabase::load() noexcept
 
 	for (auto ward_skin_id{ 1u };; ++ward_skin_id) {
 		const auto ward_display_name{ "game_character_skin_displayname_SightWard_" + std::to_string(ward_skin_id) };
-		const auto ward_display_name_translated{ translateString(ward_display_name.c_str()) };
+		const auto ward_display_name_translated{ cheatManager.memory->translateString(ward_display_name.c_str()) };
 		
 		if (ward_display_name == ward_display_name_translated)
 			break;
