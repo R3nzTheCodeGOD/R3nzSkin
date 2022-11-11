@@ -205,7 +205,7 @@ namespace d3d_vtable {
 			cfg.MergeMode = false;
 		}
 
-		ImGui_ImplWin32_Init(cheatManager.memory->getRiotWindow());
+		ImGui_ImplWin32_Init(cheatManager.memory->window);
 
 		if (is_d3d11) {
 			p_swap_chain = reinterpret_cast<IDXGISwapChain*>(device);
@@ -217,7 +217,7 @@ namespace d3d_vtable {
 		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
 	}
 
 	static void render(void* device, bool is_d3d11 = false) noexcept
@@ -440,7 +440,7 @@ void Hooks::install() const noexcept
 
 void Hooks::uninstall() const noexcept
 {
-	::SetWindowLongW(cheatManager.memory->getRiotWindow(), GWLP_WNDPROC, LONG_PTR(originalWndProc));
+	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(originalWndProc));
 
 	if (d3d_device_vmt)
 		d3d_device_vmt->unhook();

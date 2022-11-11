@@ -49,7 +49,7 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 				break;
 	}
 
-	invoker.init(cheatManager.memory->getLeagueModule() + offsets::global::retSpoofGadget);
+	invoker.init(cheatManager.memory->base + offsets::global::retSpoofGadget);
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);
 	std::this_thread::sleep_for(500ms);

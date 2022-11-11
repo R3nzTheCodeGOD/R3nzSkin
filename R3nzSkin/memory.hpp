@@ -25,10 +25,10 @@ public:
 
 class Memory {
 public:
-	void Search(bool gameClient = true) noexcept;
-	[[nodiscard]] inline auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
-	[[nodiscard]] inline auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(this->getLeagueModule() + offsets::global::Riot__g_window); }
+	void Search(bool gameClient = true);
 
+	std::uintptr_t base;
+	HWND window;
 	GameClient* client;
 	AIBaseCommon* localPlayer;
 	ManagerTemplate<AIHero>* heroList;

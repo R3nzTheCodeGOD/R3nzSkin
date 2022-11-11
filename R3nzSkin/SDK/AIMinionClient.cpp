@@ -6,7 +6,7 @@
 AIBaseCommon* AIMinionClient::get_gold_redirect_target() noexcept
 {
 	using FnGetGoldRedirectTarget = AIBaseCommon*(__thiscall*)(void*);
-	static const auto GetGoldRedirectTarget{ reinterpret_cast<FnGetGoldRedirectTarget>(cheatManager.memory->getLeagueModule() + offsets::functions::GetGoldRedirectTarget) };
+	static const auto GetGoldRedirectTarget{ reinterpret_cast<FnGetGoldRedirectTarget>(cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget) };
 	return GetGoldRedirectTarget(this);
 }
 

@@ -85,26 +85,26 @@
 void Memory::update(bool gameClient) noexcept
 {
 	if (gameClient) {
-		this->client = *reinterpret_cast<GameClient**>(this->getLeagueModule() + offsets::global::GameClient);
+		this->client = *reinterpret_cast<GameClient**>(this->base + offsets::global::GameClient);
 	} else {
-		this->localPlayer = *reinterpret_cast<AIBaseCommon**>(this->getLeagueModule() + offsets::global::Player);
-		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIHero_);
-		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AIMinionClient_);
-		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->getLeagueModule() + offsets::global::ManagerTemplate_AITurret_);
-		this->championManager = *reinterpret_cast<ChampionManager**>(this->getLeagueModule() + offsets::global::ChampionManager);
-		this->materialRegistry = reinterpret_cast<std::uintptr_t(__stdcall*)()>(this->getLeagueModule() + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
+		this->localPlayer = *reinterpret_cast<AIBaseCommon**>(this->base + offsets::global::Player);
+		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->base + offsets::global::ManagerTemplate_AIHero_);
+		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->base + offsets::global::ManagerTemplate_AIMinionClient_);
+		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->base + offsets::global::ManagerTemplate_AITurret_);
+		this->championManager = *reinterpret_cast<ChampionManager**>(this->base + offsets::global::ChampionManager);
+		this->materialRegistry = reinterpret_cast<std::uintptr_t(__stdcall*)()>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
-		this->translateString = reinterpret_cast<FnTranlateString>(this->getLeagueModule() + offsets::functions::translateString_UNSAFE_DONOTUSE);
+		this->translateString = reinterpret_cast<FnTranlateString>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE);
 	}
 }
 
-void Memory::Search(bool gameClient) noexcept
+void Memory::Search(bool gameClient)
 {
 	using namespace std::chrono_literals;
 
 	try {
-		const auto base{ this->getLeagueModule() };
+		this->base = reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr));
 		const auto& signatureToSearch{ (gameClient ? this->gameClientSig : this->sigs) };
 
 		for (const auto& sig : signatureToSearch)
@@ -131,7 +131,7 @@ void Memory::Search(bool gameClient) noexcept
 						address = address + *reinterpret_cast<uint32_t*>(address + 1) + 5;
 
 					if (sig.sub_base)
-						address -= base;
+						address -= this->base;
 
 					address += sig.additional;
 
