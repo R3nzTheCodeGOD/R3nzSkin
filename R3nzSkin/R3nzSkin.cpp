@@ -13,6 +13,7 @@
 #include "GUI.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
+#include "RetSpoofInvoker.hpp"
 
 #include "SDK/GameState.hpp"
 
@@ -44,11 +45,11 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 		
 		if (!cheatManager.memory->client)
 			cheatManager.memory->Search(true);
-		else
-			if (cheatManager.memory->client->game_state == GGameState_s::Running)
+		if (cheatManager.memory->client->game_state == GGameState_s::Running)
 				break;
 	}
 
+	invoker.init(cheatManager.memory->getLeagueModule() + offsets::global::retSpoofGadget);
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);
 	std::this_thread::sleep_for(500ms);

@@ -18,6 +18,7 @@ namespace offsets {
 		inline std::uint32_t ManagerTemplate_AIHero_{ 0 };
 		inline std::uint32_t ManagerTemplate_AITurret_{ 0 };
 		inline std::uint32_t GameClient{ 0 };
+		inline std::uint32_t retSpoofGadget{ 0 };
 	};
 
 	namespace AIBaseCommon {

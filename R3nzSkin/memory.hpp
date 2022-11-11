@@ -52,6 +52,11 @@ private:
 				"A1 ? ? ? ? 68 ? ? ? ? 8B 70 08 E8 ? ? ? ?",
 				"A1 ? ? ? ? 56 83 78 08 00 75 ?"
 			}, true, true, 0, &offsets::global::GameClient
+		},
+		{
+			{
+				"FF 23 80 7A ? ? 75 ? 66 8B 9D ? ? ? ?"
+			}, true, false, 0, &offsets::global::retSpoofGadget
 		}
 	};
 
