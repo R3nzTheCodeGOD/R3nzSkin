@@ -14,7 +14,7 @@ using namespace System::Threading;
 int main([[maybe_unused]] array<String^>^ args)
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-	//Injector::renameExe();
+	Injector::renameExe();
 
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
