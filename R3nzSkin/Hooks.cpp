@@ -77,30 +77,19 @@ std::once_flag init_device;
 std::unique_ptr<::vmt_smart_hook> d3d_device_vmt{ nullptr };
 std::unique_ptr<::vmt_smart_hook> swap_chain_vmt{ nullptr };
 
-static const ImWchar ranges[] = {
+static const ImWchar tahomaRanges[] = {
 	0x0020, 0x00FF, // Basic Latin + Latin Supplement
 	0x0100, 0x024F, // Latin Extended-A + Latin Extended-B
+	0x0250, 0x02FF, // IPA Extensions + Spacing Modifier Letters
 	0x0300, 0x03FF, // Combining Diacritical Marks + Greek/Coptic
-	0x0400, 0x044F, // Cyrillic
-	0x0600, 0x06FF, // Arabic
+	0x0400, 0x052F, // Cyrillic + Cyrillic Supplement
+	0x0530, 0x06FF, // Armenian + Hebrew + Arabic
 	0x0E00, 0x0E7F, // Thai
+	0x1E00, 0x1FFF, // Latin Extended Additional + Greek Extended
+	0x2000, 0x20CF, // General Punctuation + Superscripts and Subscripts + Currency Symbols
+	0x2100, 0x218F, // Letterlike Symbols + Number Forms
 	0,
 };
-
-inline ImWchar* getFontGlyphRangesKr() noexcept
-{
-	static ImVector<ImWchar> rangesKR;
-	if (rangesKR.empty()) {
-		ImFontGlyphRangesBuilder builder;
-		auto& io{ ImGui::GetIO() };
-		builder.AddRanges(io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-		builder.AddRanges(io.Fonts->GetGlyphRangesChineseFull());
-		builder.AddRanges(io.Fonts->GetGlyphRangesKorean());
-		builder.AddRanges(io.Fonts->GetGlyphRangesJapanese());
-		builder.BuildRanges(&rangesKR);
-	}
-	return rangesKR.Data;
-}
 
 namespace d3d_vtable {
 	ID3D11Device* d3d11_device{ nullptr };
@@ -209,10 +198,10 @@ namespace d3d_vtable {
 			::CoTaskMemFree(pathToFonts);
 			ImFontConfig cfg;
 			cfg.SizePixels = 15.0f;
-			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
+			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), cfg.SizePixels, &cfg, tahomaRanges);
 			cfg.MergeMode = true;
-			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
-			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 12.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
+			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), cfg.SizePixels, &cfg, io.Fonts->GetGlyphRangesKorean());
+			io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), cfg.SizePixels, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
 		}
 
