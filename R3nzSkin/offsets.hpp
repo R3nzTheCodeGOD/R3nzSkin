@@ -4,6 +4,11 @@
 
 namespace offsets {
 	namespace GameObject {
+		namespace VTable {
+			enum {
+				IsLaneMinion = 216
+			};
+		};
 		enum {
 			Team = 0x34,
 			Name = 0x54

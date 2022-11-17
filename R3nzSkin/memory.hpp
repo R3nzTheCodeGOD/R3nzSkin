@@ -134,7 +134,8 @@ private:
 		{
 			{
 				"83 EC 74 53 55 56 57 8B F9 8B 47 04 39 07"
-			}, true, false, 0, &offsets::functions::CharacterDataStack__Push },
+			}, true, false, 0, &offsets::functions::CharacterDataStack__Push
+		},
 		{
 			{
 				"83 EC 1C 56 57 8D 44 24 ? 8B F1 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50 8D 44 24 ? 50",
