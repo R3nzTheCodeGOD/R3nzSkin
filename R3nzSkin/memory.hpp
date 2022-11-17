@@ -128,11 +128,6 @@ private:
 		},
 		{
 			{
-				"0F B6 96 ? ? ? ? 88 4C 24 ? 33 C9 85 D2 74 ? 0F 1F 44 00 00"
-			}, false, true, -1, &offsets::AIMinionClient::IsLaneMinion
-		},
-		{
-			{
 				"83 EC 74 53 55 56 57 8B F9 8B 47 04 39 07"
 			}, true, false, 0, &offsets::functions::CharacterDataStack__Push
 		},
