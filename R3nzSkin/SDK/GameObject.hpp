@@ -13,13 +13,7 @@ public:
 	CLASS_GETTER(std::int32_t, get_team, offsets::GameObject::Team)
 
 
-	bool isLaneMinion() const noexcept
-	{
-		return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsLaneMinion>(std::uintptr_t(this));
-	}
-
-	bool isEliteMinion() const noexcept
-	{
-		return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEliteMinion>(std::uintptr_t(this));
-	}
+	[[nodiscard]] bool isLaneMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsLaneMinion>(std::uintptr_t(this)); }
+	[[nodiscard]] bool isEliteMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEliteMinion>(std::uintptr_t(this)); }
+	[[nodiscard]] bool isEpicMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEpicMinion>(std::uintptr_t(this)); }
 };

@@ -7,7 +7,8 @@ namespace offsets {
 		namespace VTable {
 			enum {
 				IsLaneMinion = 216,
-				IsEliteMinion = 217
+				IsEliteMinion = 217,
+				IsEpicMinion = 218
 			};
 		};
 		enum {
