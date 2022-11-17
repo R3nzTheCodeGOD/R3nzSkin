@@ -8,7 +8,8 @@ namespace offsets {
 			enum {
 				IsLaneMinion = 216,
 				IsEliteMinion = 217,
-				IsEpicMinion = 218
+				IsEpicMinion = 218,
+				IsMinion = 222
 			};
 		};
 		enum {

@@ -16,4 +16,5 @@ public:
 	[[nodiscard]] bool isLaneMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsLaneMinion>(std::uintptr_t(this)); }
 	[[nodiscard]] bool isEliteMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEliteMinion>(std::uintptr_t(this)); }
 	[[nodiscard]] bool isEpicMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEpicMinion>(std::uintptr_t(this)); }
+	[[nodiscard]] bool isMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEpicMinion>(std::uintptr_t(this)); }
 };
