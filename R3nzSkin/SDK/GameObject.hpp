@@ -17,4 +17,9 @@ public:
 	{
 		return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsLaneMinion>(std::uintptr_t(this));
 	}
+
+	bool isEliteMinion() const noexcept
+	{
+		return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsEliteMinion>(std::uintptr_t(this));
+	}
 };

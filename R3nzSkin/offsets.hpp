@@ -6,7 +6,8 @@ namespace offsets {
 	namespace GameObject {
 		namespace VTable {
 			enum {
-				IsLaneMinion = 216
+				IsLaneMinion = 216,
+				IsEliteMinion = 217
 			};
 		};
 		enum {
