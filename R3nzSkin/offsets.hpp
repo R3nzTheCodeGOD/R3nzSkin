@@ -9,7 +9,8 @@ namespace offsets {
 				IsLaneMinion = 216,
 				IsEliteMinion = 217,
 				IsEpicMinion = 218,
-				IsMinion = 222
+				IsMinion = 222,
+				IsJungle = 223
 			};
 		};
 		enum {
