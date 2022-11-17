@@ -106,7 +106,7 @@ private:
 		{
 			{
 				"8D 8E ? ? ? ? FF 74 24 4C",
-				"8D 8E ? ? ? ? FF 74 24 ? FF 74 24 ? E8 ? ? ? ? 8B 74 ? ? 85 F6 74 ? 8B C7 F0 0F C1 46 04"
+				"8D 8E ? ? 00 00 89 44 24 ? C7 44 24 ? 00 01 00 00"
 			}, false, true, 0, &offsets::AIBaseCommon::CharacterDataStack
 		},
 		{
@@ -149,7 +149,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 8B 0D ? ? ? ? 83 C4 04 8B F0 6A 0B E8 ? ? ? ? 56 50 55 57",
+				"E8 ? ? ? ? 0F B6 0B 83 C4 04",
 				"E8 ? ? ? ? 83 C4 04 8D 4E 0C 8B D0 80 38 00 5E 74 0C"
 			}, true, false, 0, &offsets::functions::translateString_UNSAFE_DONOTUSE
 		},
