@@ -1,7 +1,7 @@
-#pragma warning(disable : 6387)
-#pragma warning(disable : 4715)
+#pragma warning(disable : 6387 4715)
 
 #include <Windows.h>
+#include <array>
 #include <clocale>
 #include <chrono>
 #include <cstdint>
@@ -37,24 +37,37 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 {
 	using namespace std::chrono_literals;
 
-	HideThread(::GetCurrentThread());
 	cheatManager.start();
+	if (HideThread(::GetCurrentThread()))
+		cheatManager.logger->addLog("Thread Hided!\n");
+
 	cheatManager.memory->Search(true);
 	while (true) {
 		std::this_thread::sleep_for(1s);
 		
 		if (!cheatManager.memory->client)
 			cheatManager.memory->Search(true);
-		if (cheatManager.memory->client->game_state == GGameState_s::Running)
-				break;
+		else if (cheatManager.memory->client->game_state == GGameState_s::Running)
+			break;
 	}
 
+	cheatManager.logger->addLog("GameClient found!\n");
+
+	const auto gadget{ *reinterpret_cast<std::array<std::uint8_t, 2>*>(cheatManager.memory->base + offsets::global::retSpoofGadget) };
+	cheatManager.logger->addLog("Gadget: 0x%X 0x%X\n", gadget.at(0), gadget.at(1));
+
 	invoker.init(cheatManager.memory->base + offsets::global::retSpoofGadget);
+	cheatManager.logger->addLog("Invoker initialized!\n");
+	
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);
+	cheatManager.logger->addLog("All offsets found!\n");
 	std::this_thread::sleep_for(500ms);
+	
 	cheatManager.config->init();
 	cheatManager.config->load();
+	cheatManager.logger->addLog("CFG loaded!\n");
+	
 	cheatManager.hooks->install();
 		
 	while (cheatManager.cheatState)

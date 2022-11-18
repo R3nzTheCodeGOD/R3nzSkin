@@ -7,6 +7,7 @@
 #include <thread>
 #include <vector>
 
+#include "CheatManager.hpp"
 #include "Memory.hpp"
 #include "Offsets.hpp"
 
@@ -122,20 +123,22 @@ void Memory::Search(bool gameClient)
 
 					if (!address) {
 						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+						// cheatManager.logger->addLog("Not found: %s\n", pattern.c_str());
 						continue;
 					}
 
 					if (sig.read)
-						address = *reinterpret_cast<uint8_t**>(address + (pattern.find_first_of("?") / 3));
+						address = *reinterpret_cast<std::uint8_t**>(address + (pattern.find_first_of("?") / 3));
 					else if (address[0] == 0xE8)
-						address = address + *reinterpret_cast<uint32_t*>(address + 1) + 5;
+						address = address + *reinterpret_cast<std::uint32_t*>(address + 1) + 5;
 
 					if (sig.sub_base)
 						address -= this->base;
 
 					address += sig.additional;
 
-					*sig.offset = reinterpret_cast<uint32_t>(address);
+					*sig.offset = reinterpret_cast<std::uint32_t>(address);
+					// cheatManager.logger->addLog("Found: %s\n\tAddress: 0x%X\n", pattern.c_str(), *sig.offset);
 					break;
 				}
 

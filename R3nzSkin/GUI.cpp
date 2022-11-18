@@ -177,8 +177,10 @@ void GUI::render() noexcept
 				ImGui::EndTabItem();
 			}
 
-			if (ImGui::BeginTabItem("Logger"))
+			if (ImGui::BeginTabItem("Logger")) {
 				cheatManager.logger->draw();
+				ImGui::EndTabItem();
+			}
 
 			if (ImGui::BeginTabItem("Extras")) {
 				ImGui::hotkey("Menu Key", cheatManager.config->menuKey);

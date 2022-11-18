@@ -113,6 +113,7 @@ namespace d3d_vtable {
 	static void init_imgui(void* device, bool is_d3d11 = false) noexcept
 	{
 		cheatManager.database->load();
+		cheatManager.logger->addLog("All skins loaded from memory!\n");
 		ImGui::CreateContext();
 		auto& style{ ImGui::GetStyle() };
 
@@ -205,6 +206,7 @@ namespace d3d_vtable {
 			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), cfg.SizePixels, &cfg, io.Fonts->GetGlyphRangesKorean());
 			io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), cfg.SizePixels, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
+			cheatManager.logger->addLog("Fonts loaded!\n");
 		}
 
 		ImGui_ImplWin32_Init(cheatManager.memory->window);
@@ -220,6 +222,7 @@ namespace d3d_vtable {
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		cheatManager.logger->addLog("WndProc hooked!\n\tOriginal: 0x%X\n\tNew: 0x%X\n", &originalWndProc, &wndProc);
 	}
 
 	static void render(void* device, bool is_d3d11 = false) noexcept
@@ -327,7 +330,7 @@ static void changeSkinForObject(const AIBaseCommon* obj, const std::int32_t skin
 	}
 }
 
-void Hooks::init() const noexcept
+void Hooks::init() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	const auto heroes{ cheatManager.memory->heroList };
@@ -419,20 +422,22 @@ void Hooks::init() const noexcept
 	}
 }
 
-void Hooks::install() const noexcept
+void Hooks::install() noexcept
 {
 	if (cheatManager.memory->d3dDevice) {
 		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->d3dDevice);
 		d3d_device_vmt->apply_hook<d3d_vtable::end_scene>(42);
 		d3d_device_vmt->apply_hook<d3d_vtable::reset>(16);
+		cheatManager.logger->addLog("DX9 Hooked!\n");
 	} else if (cheatManager.memory->swapChain) {
 		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->swapChain);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_present>(8);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_resize_buffers>(13);
+		cheatManager.logger->addLog("DX11 Hooked!\n");
 	}
 }
 
-void Hooks::uninstall() const noexcept
+void Hooks::uninstall() noexcept
 {
 	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(originalWndProc));
 

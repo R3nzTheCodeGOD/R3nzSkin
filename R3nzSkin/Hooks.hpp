@@ -8,7 +8,7 @@ inline WNDPROC originalWndProc;
 
 class Hooks {
 public:
-	void init() const noexcept;
-	void install() const noexcept;
-	void uninstall() const noexcept;
+	void init() noexcept;
+	void install() noexcept;
+	void uninstall() noexcept;
 };
