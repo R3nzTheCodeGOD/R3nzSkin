@@ -21,6 +21,26 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+static inline void testFunc() noexcept
+{
+	// The codes you write here are executed when you press the F7 key in the game.
+	
+	// Example Func
+	const auto minions{ cheatManager.memory->minionList };
+	for (auto i{ 0u }; i < minions->length; ++i) {
+		const auto minion{ minions->list[i] };
+		const auto owner{ minion->getGoldRedirectTarget() };
+		cheatManager.logger->addLog("Minion: %s\n\tModelName: %s\n\t", minion->get_name()->c_str(), minion->get_character_data_stack()->base_skin.model.str);
+		if (owner)
+			cheatManager.logger->addLog("OwnerName: %s\n\t\tModelName: %s\n\t", owner->get_name()->c_str(), owner->get_character_data_stack()->base_skin.model.str);
+		cheatManager.logger->addLog("IsLaneMinion: %d\n\t", minion->isLaneMinion());
+		cheatManager.logger->addLog("IsEliteMinion: %d\n\t", minion->isEliteMinion());
+		cheatManager.logger->addLog("IsEpicMinion: %d\n\t", minion->isEpicMinion());
+		cheatManager.logger->addLog("IsMinion: %d\n\t", minion->isMinion());
+		cheatManager.logger->addLog("IsJungle: %d\n\n", minion->isJungle());
+	}
+}
+
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
@@ -69,6 +89,8 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 					cheatManager.config->current_combo_skin_index = 1;
 				cheatManager.config->save();
 			}
+		} else if (wParam == VK_F7) {
+			testFunc();
 		}
 	}
 
