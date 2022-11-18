@@ -433,8 +433,9 @@ void Hooks::init() noexcept
 					else
 						changeSkinForObject(minion, cheatManager.config->current_ward_skin_index);
 				}
-			} else if (hash != FNV("DominationScout"))
-				changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
+			} else if (hash == FNV("SRU_Jungle_Companions") || hash == FNV("DominationScout"))
+				continue;
+			changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
 			continue;
 		}
 
