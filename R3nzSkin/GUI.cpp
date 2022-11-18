@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -143,7 +144,7 @@ void GUI::render() noexcept
 					auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 					const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
+					std::snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 					auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
@@ -166,7 +167,7 @@ void GUI::render() noexcept
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
 				for (auto& it : cheatManager.database->jungle_mobs_skins) {
-					snprintf(str_buffer, 256, "Current %s skin", it.name);
+					std::snprintf(str_buffer, 256, "Current %s skin", it.name);
 					const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(), 0 }) };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
 						for (const auto& hash : it.name_hashes)
@@ -175,6 +176,9 @@ void GUI::render() noexcept
 				footer();
 				ImGui::EndTabItem();
 			}
+
+			if (ImGui::BeginTabItem("Logger"))
+				cheatManager.logger->draw();
 
 			if (ImGui::BeginTabItem("Extras")) {
 				ImGui::hotkey("Menu Key", cheatManager.config->menuKey);

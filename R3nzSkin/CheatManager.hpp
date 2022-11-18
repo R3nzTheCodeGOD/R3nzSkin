@@ -3,8 +3,9 @@
 #include <memory>
 
 #include "Config.hpp"
-#include "Hooks.hpp"
 #include "GUI.hpp"
+#include "Hooks.hpp"
+#include "Logger.hpp"
 #include "Memory.hpp"
 #include "SkinDatabase.hpp"
 
@@ -17,6 +18,7 @@ public:
 		this->gui = std::make_unique<GUI>();
 		this->memory = std::make_unique<Memory>();
 		this->database = std::make_unique<SkinDatabase>();
+		this->logger = std::make_unique<R3nzSkinLogger>();
 	}
 
 	bool cheatState{ true };
@@ -25,6 +27,7 @@ public:
 	std::unique_ptr<GUI> gui;
 	std::unique_ptr<Memory> memory;
 	std::unique_ptr<SkinDatabase> database;
+	std::unique_ptr<R3nzSkinLogger> logger;
 };
 
 inline CheatManager cheatManager;

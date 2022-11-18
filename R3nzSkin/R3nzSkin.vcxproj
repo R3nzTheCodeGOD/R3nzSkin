@@ -146,6 +146,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="json\json.hpp" />
+    <ClInclude Include="Logger.hpp" />
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="Encryption.hpp" />
     <ClInclude Include="fnv_hash.hpp" />
