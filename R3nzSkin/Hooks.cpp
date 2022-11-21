@@ -424,7 +424,7 @@ void Hooks::init() noexcept
 		}
 
 		if (const auto owner{ minion->getGoldRedirectTarget() }; owner) {
-			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("TestCubeRender10Vision")) {
+			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("BlueTrinket") || hash == FNV("TestCubeRender10Vision")) {
 				if (!player || owner == player) {
 					if (hash == FNV("TestCubeRender10Vision") && playerHash == FNV("Yone"))
 						changeModelForObject(minion, "Yone", owner->get_character_data_stack()->base_skin.skin);
@@ -433,9 +433,8 @@ void Hooks::init() noexcept
 					else
 						changeSkinForObject(minion, cheatManager.config->current_ward_skin_index);
 				}
-			} else if (hash == FNV("SRU_Jungle_Companions") || hash == FNV("DominationScout"))
-				continue;
-			changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
+			} else if (hash != FNV("SRU_Jungle_Companions") && hash != FNV("DominationScout"))
+				changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
 			continue;
 		}
 
