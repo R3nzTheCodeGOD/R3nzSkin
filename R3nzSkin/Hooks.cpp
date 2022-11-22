@@ -416,13 +416,6 @@ void Hooks::init() noexcept
 
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
 
-		if (minion->isJungle()) {
-			const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.find(hash) };
-			if (config_entry != cheatManager.config->current_combo_jungle_mob_skin_index.end() && config_entry->second != 0)
-				changeSkinForObject(minion, config_entry->second - 1);
-			continue;
-		}
-
 		if (const auto owner{ minion->getGoldRedirectTarget() }; owner) {
 			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("BlueTrinket") || hash == FNV("TestCubeRender10Vision")) {
 				if (!player || owner == player) {
@@ -435,6 +428,11 @@ void Hooks::init() noexcept
 				}
 			} else if (hash != FNV("SRU_Jungle_Companions") && hash != FNV("DominationScout"))
 				changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
+			continue;
+		}
+
+		if (const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.find(hash) }; config_entry != cheatManager.config->current_combo_jungle_mob_skin_index.end() && config_entry->second != 0) {
+			changeSkinForObject(minion, config_entry->second - 1);
 			continue;
 		}
 
