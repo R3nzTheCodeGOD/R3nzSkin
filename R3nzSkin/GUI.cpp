@@ -199,12 +199,7 @@ void GUI::render() noexcept
 				if (player)
 					ImGui::InputText("Change Nick", player->get_name());
 
-				if (ImGui::Button("No Skins")) {
-					if (player) {
-						cheatManager.config->current_combo_skin_index = 1;
-						player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
-					}
-
+				if (ImGui::Button("No skins except local player")) {
 					for (auto& enemy : cheatManager.config->current_combo_enemy_skin_index)
 						enemy.second = 1;
 
@@ -213,20 +208,22 @@ void GUI::render() noexcept
 
 					for (auto i{ 0u }; i < heroes->length; ++i) {
 						const auto hero{ heroes->list[i] };
-						hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
+						if (hero != player)
+							hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
 					}
-				} ImGui::hoverInfo("Defaults the skin of all champions.");
+				} ImGui::hoverInfo("Sets the skins of all champions except the local player to the default skin.");
 
 				if (ImGui::Button("Random Skins")) {
 					for (auto i{ 0u }; i < heroes->length; ++i) {
 						const auto hero{ heroes->list[i] };
 						const auto championHash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+						
+						if (championHash == FNV("PracticeTool_TargetDummy"))
+							continue;
+						
 						const auto skinCount{ cheatManager.database->champions_skins[championHash].size() };
 						auto& skinDatabase{ cheatManager.database->champions_skins[championHash] };
 						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
-
-						if (championHash == FNV("PracticeTool_TargetDummy"))
-							continue;
 
 						if (hero == player) {
 							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
