@@ -49,7 +49,7 @@ public:
 		"Snow Order Turret", "Snow Chaos Turret",
 		"Twisted Treeline Order Turret", "Twisted Treeline Chaos Turret",
 		"URF Order Turret", "URF Chaos Turret",
-		"[Broken] Arcade Turret", // crash
+		"Arcade Turret",
 		"Temple of Lily and Lotus Turret",
 		"Arcane Order Turret", "Arcane Chaos Turret",
 		"Butcher's Bridge Order Turret", "Butcher's Bridge Chaos Turret",

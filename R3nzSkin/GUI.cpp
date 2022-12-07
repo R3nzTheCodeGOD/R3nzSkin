@@ -22,7 +22,7 @@ inline static void footer() noexcept
 
 static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team) noexcept
 {
-	if (skinId == -1 || skinId == 8) // ignore broken arcade turret skin
+	if (skinId == -1)
 		return;
 
 	const auto turrets{ cheatManager.memory->turretList };
