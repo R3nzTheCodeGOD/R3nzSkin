@@ -6,7 +6,7 @@ namespace offsets {
 	namespace GameObject {
 		namespace VTable {
 			enum {
-				IsLaneMinion = 0xD9,
+				IsLaneMinion = 0xDA,
 				IsEliteMinion = IsLaneMinion + 0x1,
 				IsEpicMinion = IsEliteMinion + 0x1,
 				IsMinion = IsEpicMinion + 0x4,

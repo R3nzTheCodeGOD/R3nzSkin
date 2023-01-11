@@ -20,15 +20,13 @@ bool AIBaseCommon::checkSpecialSkins(const char* model, const std::int32_t skin)
 		stack->base_skin.gear = static_cast<std::int8_t>(0);
 	} else if (champ_name == FNV("MissFortune") && skin == 16) {
 		stack->base_skin.gear = static_cast<std::int8_t>(0);
-	} else if (champ_name == FNV("Ezreal") && skin == 5) {
-		stack->base_skin.gear = static_cast<std::int8_t>(0);
 	} else if (champ_name == FNV("Lux") || champ_name == FNV("Sona")) {
 		if ((skin == 7 && champ_name == FNV("Lux")) || (skin == 6 && champ_name == FNV("Sona"))) {
 			stack->stack.clear();
 			stack->push(model, skin);
 			return true;
 		} else stack->stack.clear();
-	} else if (stack->base_skin.gear != static_cast<std::int8_t>(-1) && champ_name != FNV("Kayn")) { // Kayn has 3 forms, normal, shadow and darkin, so we need to set the gear variable to -1.
+	} else if (stack->base_skin.gear != static_cast<std::int8_t>(-1) && champ_name != FNV("Kayn")) {
 		stack->base_skin.gear = static_cast<std::int8_t>(-1);
 	}
 	
