@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Injector.hpp" />
+    <ClInclude Include="lazy_importer.hpp" />
     <ClInclude Include="R3nzUI.hpp">
       <FileType>CppForm</FileType>
     </ClInclude>
