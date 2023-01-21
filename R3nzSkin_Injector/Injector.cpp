@@ -8,10 +8,11 @@
 
 #include "Injector.hpp"
 #include "R3nzUI.hpp"
+#include "lazy_importer.hpp"
 
 proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
 {
-	auto process_snap{ ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) };
+	auto process_snap{ LI_FN(CreateToolhelp32Snapshot)(TH32CS_SNAPPROCESS, 0) };
 	proclist_t list;
 
 	if (process_snap == INVALID_HANDLE_VALUE)
@@ -20,23 +21,23 @@ proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
 	PROCESSENTRY32W pe32;
 	pe32.dwSize = sizeof(PROCESSENTRY32W);
 
-	if (::Process32First(process_snap, &pe32)) {
+	if (LI_FN(Process32FirstW).get()(process_snap, &pe32)) {
 		if (pe32.szExeFile == name)
 			list.push_back(pe32.th32ProcessID);
 
-		while (::Process32Next(process_snap, &pe32)) {
+		while (LI_FN(Process32NextW).get()(process_snap, &pe32)) {
 			if (pe32.szExeFile == name)
 				list.push_back(pe32.th32ProcessID);
 		}
 	}
 
-	::CloseHandle(process_snap);
+	LI_FN(CloseHandle)(process_snap);
 	return list;
 }
 
 bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 {
-	auto hProcess{ ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid) };
+	auto hProcess{ LI_FN(OpenProcess)(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid) };
 
 	if (NULL == hProcess)
 		return false;
@@ -44,18 +45,18 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 	HMODULE hMods[1024];
 	DWORD cbNeeded;
 
-	if (::K32EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
+	if (LI_FN(K32EnumProcessModules)(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
 		for (auto i{ 0u }; i < (cbNeeded / sizeof(HMODULE)); ++i) {
 			TCHAR szModName[MAX_PATH];
-			if (::K32GetModuleBaseNameW(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR))) {
-				if (::wcscmp(szModName, L"R3nzSkin.dll") == 0) {
-					::CloseHandle(hProcess);
+			if (LI_FN(K32GetModuleBaseNameW)(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR))) {
+				if (std::wcscmp(szModName, L"R3nzSkin.dll") == 0) {
+					LI_FN(CloseHandle)(hProcess);
 					return true;
 				}
 			}
 		}
 	}
-	::CloseHandle(hProcess);
+	LI_FN(CloseHandle)(hProcess);
 	return false;
 }
 
@@ -63,7 +64,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 {
 	NtCreateThreadExBuffer ntbuffer;
 
-	::memset(&ntbuffer, 0, sizeof(NtCreateThreadExBuffer));
+	std::memset(&ntbuffer, 0, sizeof(NtCreateThreadExBuffer));
 	DWORD temp1{ 0 };
 	DWORD temp2{ 0 };
 
@@ -78,18 +79,18 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	ntbuffer.Unknown8 = 0;
 
 	TCHAR current_dir[MAX_PATH];
-	::GetCurrentDirectoryW(MAX_PATH, current_dir);
-	const auto handle{ ::OpenProcess(PROCESS_ALL_ACCESS, false, pid) };
+	LI_FN(GetCurrentDirectoryW)(MAX_PATH, current_dir);
+	const auto handle{ LI_FN(OpenProcess)(PROCESS_ALL_ACCESS, false, pid) };
 
 	if (!handle || handle == INVALID_HANDLE_VALUE)
 		return false;
 
 	FILETIME ft;
 	SYSTEMTIME st;
-	::GetSystemTime(&st);
-	::SystemTimeToFileTime(&st, &ft);
+	LI_FN(GetSystemTime)(&st);
+	LI_FN(SystemTimeToFileTime)(&st, &ft);
 	FILETIME create, exit, kernel, user;
-	::GetProcessTimes(handle, &create, &exit, &kernel, &user);
+	LI_FN(GetProcessTimes)(handle, &create, &exit, &kernel, &user);
 
 	const auto delta{ 10 - static_cast<std::int32_t>((*reinterpret_cast<std::uint64_t*>(&ft) - *reinterpret_cast<std::uint64_t*>(&create.dwLowDateTime)) / 10000000U) };
 
@@ -99,37 +100,37 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	const auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
 
 	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
-		MessageBox(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
-		::CloseHandle(handle);
+		LI_FN(MessageBox)(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
+		LI_FN(CloseHandle)(handle);
 		return false;
 	}
 
-	const auto dll_path_remote{ ::VirtualAllocEx(handle, nullptr, (dll_path.size() + 1) * sizeof(wchar_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
+	const auto dll_path_remote{ LI_FN(VirtualAllocEx).get()(handle, nullptr, (dll_path.size() + 1) * sizeof(wchar_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
 
 	if (!dll_path_remote) {
-		::CloseHandle(handle);
+		LI_FN(CloseHandle)(handle);
 		return false;
 	}
 
-	if (!::WriteProcessMemory(handle, dll_path_remote, dll_path.data(), (dll_path.size() + 1) * sizeof(wchar_t), nullptr)) {
-		::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
-		::CloseHandle(handle);
+	if (!LI_FN(WriteProcessMemory).get()(handle, dll_path_remote, dll_path.data(), (dll_path.size() + 1) * sizeof(wchar_t), nullptr)) {
+		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
+		LI_FN(CloseHandle)(handle);
 		return false;
 	}
 
 	HANDLE thread;
-	NtCreateThreadEx(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, &ntbuffer);
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, &ntbuffer);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
-		::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
-		::CloseHandle(handle);
+		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
+		LI_FN(CloseHandle)(handle);
 		return false;
 	}
 
-	::WaitForSingleObject(thread, INFINITE);
-	::CloseHandle(thread);
-	::VirtualFreeEx(handle, dll_path_remote, 0u, MEM_RELEASE);
-	::CloseHandle(handle);
+	LI_FN(WaitForSingleObject)(thread, INFINITE);
+	LI_FN(CloseHandle)(thread);
+	LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
+	LI_FN(CloseHandle)(handle);
 	return true;
 }
 
@@ -137,15 +138,15 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 {
 	HANDLE token;
 
-	if (::OpenProcessToken(::GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
 		LUID value;
-		if (::LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
+		if (LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
 			TOKEN_PRIVILEGES tp{};
 			tp.PrivilegeCount = 1;
 			tp.Privileges[0].Luid = value;
 			tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-			if (::AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), NULL, NULL))
-				::CloseHandle(token);
+			if (AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), NULL, NULL))
+				LI_FN(CloseHandle)(token);
 		}
 	}
 }
@@ -165,13 +166,13 @@ std::string Injector::randomString(std::uint32_t size) noexcept
 void Injector::renameExe() noexcept
 {
 	char szExeFileName[MAX_PATH];
-	GetModuleFileNameA(nullptr, szExeFileName, MAX_PATH);
+	LI_FN(GetModuleFileNameA)(nullptr, szExeFileName, MAX_PATH);
 
 	const auto path{ std::string(szExeFileName) };
 	const auto exe{ path.substr(path.find_last_of("\\") + 1, path.size()) };
 	const auto newName{ randomString(std::rand() % (10 - 7 + 1) + 7) + ".exe" };
 
-	rename(exe.c_str(), newName.c_str());
+	std::rename(exe.c_str(), newName.c_str());
 }
 
 void Injector::run() noexcept
