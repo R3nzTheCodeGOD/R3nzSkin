@@ -231,7 +231,7 @@ namespace R3nzSkinInjector {
 			   this->linkLabel1->Size = System::Drawing::Size(207, 14);
 			   this->linkLabel1->TabIndex = 11;
 			   this->linkLabel1->TabStop = true;
-			   this->linkLabel1->Text = L"Copyright (c) 2021-2022 R3nzTheCodeGOD";
+			   this->linkLabel1->Text = L"Copyright (c) 2021-2023 R3nzTheCodeGOD";
 			   this->linkLabel1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			   this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &R3nzUI::linkLabel1_LinkClicked);
 			   //
