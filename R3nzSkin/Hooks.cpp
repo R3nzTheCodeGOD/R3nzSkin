@@ -250,6 +250,33 @@ namespace d3d_vtable {
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
 		const auto client{ cheatManager.memory->client };
+
+		// detect if hero rebirth
+		static bool notChanged[10] = { 1,1,1,1,1,1,1,1,1,1 };
+		for (int i = 0; i < cheatManager.memory->heroList->length; i++) {
+			auto& hero = cheatManager.memory->heroList->list[i];
+			const auto player{ cheatManager.memory->localPlayer };
+			static const auto my_team{ player ? player->get_team() : 100 };
+			if (hero->get_health() == hero->get_maxhealth() && notChanged[i]) {
+				std::this_thread::sleep_for(std::chrono::microseconds(100));
+				const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+				const auto hero_team{ hero->get_team() };
+				const auto is_enemy{ hero_team != my_team };
+				auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
+				const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
+				auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
+				if (hero == player)
+					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+				else
+					hero->change_skin(values[config_entry.first->second - 1].model_name, values[config_entry.first->second - 1].skin_id);
+
+				notChanged[i] = 0;
+			}
+			if (hero->get_health() == 0) {
+				notChanged[i] = 1;
+			}
+		}
+
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
