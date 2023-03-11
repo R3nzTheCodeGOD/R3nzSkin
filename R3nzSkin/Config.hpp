@@ -24,6 +24,7 @@ public:
 	float fontScale{ 1.0f };
 	bool heroName{ true };
 	bool quickSkinChange{ false };
+	bool shouldReassignSkin{ false };
 	// player
 	std::int32_t current_combo_skin_index{ 0 };
 

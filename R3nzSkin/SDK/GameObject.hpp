@@ -11,6 +11,8 @@ class GameObject {
 public:
 	CLASS_GETTER_P(std::string, get_name, offsets::GameObject::Name)
 	CLASS_GETTER(std::int32_t, get_team, offsets::GameObject::Team)
+	CLASS_GETTER(std::int32_t, get_health, offsets::GameObject::Health)
+	CLASS_GETTER(std::int32_t, get_max_health, offsets::GameObject::MaxHealth)
 
 	// Returns true for lane minions.
 	[[nodiscard]] bool isLaneMinion() const noexcept { return invoker.invokeThiscall<bool, offsets::GameObject::VTable::IsLaneMinion>(std::uintptr_t(this)); }
