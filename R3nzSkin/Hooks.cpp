@@ -265,12 +265,14 @@ namespace d3d_vtable {
 				auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 				const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 				auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
-				if (hero == player)
+				if (hero == player && cheatManager.config->current_combo_skin_index > 0){
 					player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-				else
+					notChanged[i] = 0;
+				}
+				else if(config_entry.first->second > 0){
 					hero->change_skin(values[config_entry.first->second - 1].model_name, values[config_entry.first->second - 1].skin_id);
-
-				notChanged[i] = 0;
+					notChanged[i] = 0;
+				}
 			}
 			if (hero->get_health() == 0) {
 				notChanged[i] = 1;
