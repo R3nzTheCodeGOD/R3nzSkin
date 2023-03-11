@@ -258,7 +258,6 @@ namespace d3d_vtable {
 			const auto player{ cheatManager.memory->localPlayer };
 			static const auto my_team{ player ? player->get_team() : 100 };
 			if (hero->get_health() == hero->get_maxhealth() && notChanged[i]) {
-				std::this_thread::sleep_for(std::chrono::microseconds(100));
 				const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
 				const auto hero_team{ hero->get_team() };
 				const auto is_enemy{ hero_team != my_team };
