@@ -88,7 +88,7 @@ void Memory::update(bool gameClient) noexcept
 	if (gameClient) {
 		this->client = *reinterpret_cast<GameClient**>(this->base + offsets::global::GameClient);
 	} else {
-		this->localPlayer = *reinterpret_cast<AIBaseCommon**>(this->base + offsets::global::Player);
+		this->localPlayer = *reinterpret_cast<AIHero**>(this->base + offsets::global::Player);
 		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->base + offsets::global::ManagerTemplate_AIHero_);
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->base + offsets::global::ManagerTemplate_AIMinionClient_);
 		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->base + offsets::global::ManagerTemplate_AITurret_);

@@ -33,7 +33,7 @@ public:
 	HWND window;
 
 	GameClient* client;
-	AIBaseCommon* localPlayer;
+	AIHero* localPlayer;
 	ManagerTemplate<AIHero>* heroList;
 	ManagerTemplate<AIMinionClient>* minionList;
 	ManagerTemplate<AITurret>* turretList;

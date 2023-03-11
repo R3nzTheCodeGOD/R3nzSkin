@@ -250,6 +250,17 @@ namespace d3d_vtable {
 	static void render(void* device, bool is_d3d11 = false) noexcept
 	{
 		const auto client{ cheatManager.memory->client };
+
+		const auto player{ cheatManager.memory->localPlayer };
+		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
+		if (player->get_health() == player->get_maxhealth() && cheatManager.config->is_player_rebirth) {
+			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
+			cheatManager.config->is_player_rebirth = false;
+		}
+		else {
+			cheatManager.config->is_player_rebirth = true;
+		}
+
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {

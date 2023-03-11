@@ -45,6 +45,8 @@ public:
 
 	// jungle mobs
 	std::map<std::uint32_t, std::int32_t> current_combo_jungle_mob_skin_index;
+
+	bool is_player_rebirth = true;
 private:
 	std::filesystem::path path;
 	json config_json{ json() };
