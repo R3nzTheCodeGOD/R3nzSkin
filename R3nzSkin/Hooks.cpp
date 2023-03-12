@@ -251,16 +251,6 @@ namespace d3d_vtable {
 	{
 		const auto client{ cheatManager.memory->client };
 
-		const auto player{ cheatManager.memory->localPlayer };
-		const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-		if (player->get_health() == player->get_maxhealth() && cheatManager.config->is_player_rebirth) {
-			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-			cheatManager.config->is_player_rebirth = false;
-		}
-		else {
-			cheatManager.config->is_player_rebirth = true;
-		}
-
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
@@ -402,7 +392,8 @@ void Hooks::init() noexcept
 	});
 
 	for (auto i{ 0u }; i < heroes->length; ++i) {
-		if (const auto hero{ heroes->list[i] }; hero->get_character_data_stack()->stack.size() > 0) {
+		const auto hero{ heroes->list[i] };
+		if (hero->get_character_data_stack()->stack.size() > 0) {
 			// Viego transforms into another champion as 2nd form, our own skin's id may not match for every champion. (same problem exists in sylas) 
 			if (const auto championName{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) }; championName == FNV("Viego") || championName == FNV("Sylas"))
 				continue;
@@ -411,6 +402,13 @@ void Hooks::init() noexcept
 				stack.skin = hero->get_character_data_stack()->base_skin.skin;
 				hero->get_character_data_stack()->update(true);
 			}
+		}
+		else if (hero == player) {
+			if (const auto championName{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) }; championName == FNV("Kaisa"))
+				continue;
+
+			const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str)] };
+			player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
 		}
 	}
 

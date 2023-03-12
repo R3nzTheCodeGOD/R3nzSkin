@@ -69,7 +69,7 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 	cheatManager.logger->addLog("CFG loaded!\n");
 	
 	cheatManager.hooks->install();
-		
+
 	while (cheatManager.cheatState)
 		std::this_thread::sleep_for(250ms);
 

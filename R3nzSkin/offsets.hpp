@@ -16,8 +16,6 @@ namespace offsets {
 		enum {
 			Team = 0x34,
 			Name = 0x54,
-			Health = 0xE7C,
-			MaxHealth = 0xE8C
 		};
 	};
 
