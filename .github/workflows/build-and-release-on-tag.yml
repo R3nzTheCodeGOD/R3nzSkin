@@ -1,0 +1,41 @@
+
+name: Build for windows on tag
+
+on:
+  push:
+    tags:
+      - "**"
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build
+        id: build
+        shell: cmd
+        run: msbuild R3nzSkin.sln /p:Platform=x86 /p:Configuration=RiotGamesServers && msbuild R3nzSkin.sln /p:Platform=x86 /p:Configuration=ChinaServer
+      - name: Zip RiotGamesServers build
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: Release/RiotGamesServers
+          dest: RiotGamesServers.zip
+      - name: Zip ChinaServer build
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: Release/ChinaServer
+          dest: ChinaServer.zip
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          artifacts: "RiotGamesServers.zip,ChinaServer.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
