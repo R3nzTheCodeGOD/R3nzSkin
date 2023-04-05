@@ -11,7 +11,7 @@
    # **R3nzSkin**
 
    ## Announcement
-
+   The project is outdated due to the <a href="https://www.leagueoflegends.com/en-us/news/game-updates/patch-13-7-notes/">deprecation of x86 architecture</a> of the game.<p>
    I will be leaving on February 4th to fulfill my mandatory military service in my country, and may not be able to continue developing this project for a minimum of 3 months to a maximum of 1 year. If you possess the expertise to keep the project updated on a regular basis, please reach out to me before February 3rd.
 
    <img src="https://user-images.githubusercontent.com/58574988/134170370-c827d712-fcc7-432f-b9f8-96678b0c9bf6.gif">
