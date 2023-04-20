@@ -71,6 +71,7 @@ namespace R3nzSkinInjector {
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
+			   CheckForIllegalCrossThreadCalls = false;
 			   System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
 			   this->button1 = (gcnew System::Windows::Forms::Button());
 			   this->label1 = (gcnew System::Windows::Forms::Label());
@@ -294,7 +295,7 @@ namespace R3nzSkinInjector {
 		   }
 #pragma endregion
 	private:
-		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) 
+		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e)
 		{
 			System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &R3nzUI::R3nzUI_ExceptionHandler);
 		}
@@ -314,7 +315,8 @@ namespace R3nzSkinInjector {
 				this->button1->Text = L"Stop";
 				this->label1->Text = L"Working";
 				this->menuItem2->Text = L"Stop";
-			} else {
+			}
+			else {
 				this->button1->BackColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
 				this->label1->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
 				this->button1->Text = L"Start";
