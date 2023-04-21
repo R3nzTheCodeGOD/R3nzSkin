@@ -38,14 +38,14 @@ public:
 	ManagerTemplate<AIMinionClient>* minionList;
 	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
-	
+
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
 
 	const char* translateString(const char* string) const noexcept
 	{
-		return invoker.invokeCdecl<const char*>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE, string);
+		return invoker.invokeFastcall<const char*>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE, string);
 	}
 private:
 	void update(bool gameClient = true) noexcept;

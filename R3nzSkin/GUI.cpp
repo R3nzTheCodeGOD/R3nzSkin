@@ -34,7 +34,8 @@ static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team)
 			if (playerTeam == team) {
 				turret->get_character_data_stack()->base_skin.skin = skinId * 2;
 				turret->get_character_data_stack()->update(true);
-			} else {
+			}
+			else {
 				turret->get_character_data_stack()->base_skin.skin = skinId * 2 + 1;
 				turret->get_character_data_stack()->update(true);
 			}
@@ -89,7 +90,7 @@ void GUI::render() noexcept
 					if (ImGui::Combo("Current Skin", &cheatManager.config->current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
 						if (cheatManager.config->current_combo_skin_index > 0)
 							player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-					
+
 					const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 					if (const auto it{ std::find_if(cheatManager.database->specialSkins.begin(), cheatManager.database->specialSkins.end(),
 						[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
@@ -108,10 +109,10 @@ void GUI::render() noexcept
 						ImGui::Separator();
 					}
 
-					if (ImGui::Combo("Current Ward Skin", &cheatManager.config->current_combo_ward_index, vector_getter_ward_skin, static_cast<void*>(&cheatManager.database->wards_skins), cheatManager.database->wards_skins.size() + 1))
-						cheatManager.config->current_ward_skin_index = cheatManager.config->current_combo_ward_index == 0 ? -1 : cheatManager.database->wards_skins.at(cheatManager.config->current_combo_ward_index - 1).first;
-					footer();
-					ImGui::EndTabItem();
+						if (ImGui::Combo("Current Ward Skin", &cheatManager.config->current_combo_ward_index, vector_getter_ward_skin, static_cast<void*>(&cheatManager.database->wards_skins), cheatManager.database->wards_skins.size() + 1))
+							cheatManager.config->current_ward_skin_index = cheatManager.config->current_combo_ward_index == 0 ? -1 : cheatManager.database->wards_skins.at(cheatManager.config->current_combo_ward_index - 1).first;
+						footer();
+						ImGui::EndTabItem();
 				}
 			}
 
@@ -217,20 +218,21 @@ void GUI::render() noexcept
 					for (auto i{ 0u }; i < heroes->length; ++i) {
 						const auto hero{ heroes->list[i] };
 						const auto championHash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
-						
+
 						if (championHash == FNV("PracticeTool_TargetDummy"))
 							continue;
-						
+
 						const auto skinCount{ cheatManager.database->champions_skins[championHash].size() };
 						auto& skinDatabase{ cheatManager.database->champions_skins[championHash] };
 						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 
 						if (hero == player) {
-							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
+							cheatManager.config->current_combo_skin_index = random(1ull, skinCount);
 							hero->change_skin(skinDatabase[cheatManager.config->current_combo_skin_index - 1].model_name, skinDatabase[cheatManager.config->current_combo_skin_index - 1].skin_id);
-						} else {
+						}
+						else {
 							auto& data{ config[championHash] };
-							data = random(1u, skinCount);
+							data = random(1ull, skinCount);
 							hero->change_skin(skinDatabase[data - 1].model_name, skinDatabase[data - 1].skin_id);
 						}
 					}
@@ -240,7 +242,7 @@ void GUI::render() noexcept
 				if (ImGui::GetIO().FontGlobalScale != cheatManager.config->fontScale) {
 					ImGui::GetIO().FontGlobalScale = cheatManager.config->fontScale;
 				} ImGui::hoverInfo("Changes the menu font scale.");
-				
+
 				if (ImGui::Button("Force Close"))
 					cheatManager.hooks->uninstall();
 				ImGui::hoverInfo("You will be returned to the reconnect screen.");

@@ -29,7 +29,8 @@
 				if (*current == '?')
 					++current;
 				bytes.push_back(-1);
-			} else {
+			}
+			else {
 				bytes.push_back(strtoul(current, &current, 16));
 			}
 		}
@@ -64,7 +65,8 @@
 					i--;
 					found = false;
 					break;
-				} else {
+				}
+				else {
 					next_check_address = reinterpret_cast<std::uint8_t*>(mbi.BaseAddress) + mbi.RegionSize;
 				}
 			}
@@ -87,13 +89,14 @@ void Memory::update(bool gameClient) noexcept
 {
 	if (gameClient) {
 		this->client = *reinterpret_cast<GameClient**>(this->base + offsets::global::GameClient);
-	} else {
+	}
+	else {
 		this->localPlayer = *reinterpret_cast<AIBaseCommon**>(this->base + offsets::global::Player);
 		this->heroList = *reinterpret_cast<ManagerTemplate<AIHero>**>(this->base + offsets::global::ManagerTemplate_AIHero_);
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->base + offsets::global::ManagerTemplate_AIMinionClient_);
 		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->base + offsets::global::ManagerTemplate_AITurret_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->base + offsets::global::ChampionManager);
-		this->materialRegistry = invoker.invokeStdcall<std::uintptr_t>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr);
+		this->materialRegistry = invoker.invokeFastcall<std::uintptr_t>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr);
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
 		this->window = *reinterpret_cast<HWND*>(this->base + offsets::global::Riot__g_window);
@@ -154,7 +157,8 @@ void Memory::Search(bool gameClient)
 			std::this_thread::sleep_for(2s);
 		}
 		this->update(gameClient);
-	} catch (const std::exception& e) {
+	}
+	catch (const std::exception& e) {
 		::MessageBoxA(nullptr, e.what(), "R3nzSkin", MB_OK | MB_ICONWARNING);
 	}
 }

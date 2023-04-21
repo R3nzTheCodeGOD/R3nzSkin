@@ -210,8 +210,16 @@
     <ClInclude Include="Logger.hpp">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="x64RetSpoof.hpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="shellcode.asm">
+      <Filter>Source Files\Utils</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

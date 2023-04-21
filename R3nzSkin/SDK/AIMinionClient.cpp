@@ -7,5 +7,5 @@
 
 AIBaseCommon* AIMinionClient::getGoldRedirectTarget() const noexcept
 {
-	return invoker.invokeThiscall<AIBaseCommon*>(std::uintptr_t(this), cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget);
+	return invoker.invokeFastcall<AIBaseCommon*>(std::uintptr_t(this), cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget);
 }

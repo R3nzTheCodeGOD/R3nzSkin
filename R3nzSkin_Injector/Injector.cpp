@@ -62,22 +62,6 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 
 bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 {
-	NtCreateThreadExBuffer ntbuffer;
-
-	std::memset(&ntbuffer, 0, sizeof(NtCreateThreadExBuffer));
-	DWORD temp1{ 0 };
-	DWORD temp2{ 0 };
-
-	ntbuffer.Size = sizeof(NtCreateThreadExBuffer);
-	ntbuffer.Unknown1 = 0x10003;
-	ntbuffer.Unknown2 = 0x8;
-	ntbuffer.Unknown3 = static_cast<PULONG>(&temp1);
-	ntbuffer.Unknown4 = 0;
-	ntbuffer.Unknown5 = 0x10004;
-	ntbuffer.Unknown6 = 4;
-	ntbuffer.Unknown7 = static_cast<PULONG>(&temp2);
-	ntbuffer.Unknown8 = 0;
-
 	TCHAR current_dir[MAX_PATH];
 	LI_FN(GetCurrentDirectoryW)(MAX_PATH, current_dir);
 	const auto handle{ LI_FN(OpenProcess)(PROCESS_ALL_ACCESS, false, pid) };
@@ -119,7 +103,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	}
 
 	HANDLE thread;
-	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, &ntbuffer);
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
@@ -127,7 +111,13 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 		return false;
 	}
 
-	LI_FN(WaitForSingleObject)(thread, INFINITE);
+	if (LI_FN(WaitForSingleObject).get()(thread, INFINITE) == WAIT_FAILED)
+	{
+		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
+		LI_FN(CloseHandle)(handle);
+		return FALSE;
+	}
+
 	LI_FN(CloseHandle)(thread);
 	LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
 	LI_FN(CloseHandle)(handle);
@@ -157,7 +147,7 @@ std::string Injector::randomString(std::uint32_t size) noexcept
 	std::string tmp_s;
 	tmp_s.reserve(size);
 
-	while(size--)
+	while (size--)
 		tmp_s += alphanum[std::rand() % (sizeof(alphanum) - 1)];
 
 	return tmp_s;
@@ -197,7 +187,8 @@ void Injector::run() noexcept
 						R3nzSkinInjector::cheatState = false;
 				}
 				std::this_thread::sleep_for(1s);
-			} else {
+			}
+			else {
 				R3nzSkinInjector::cheatState = true;
 			}
 		}
