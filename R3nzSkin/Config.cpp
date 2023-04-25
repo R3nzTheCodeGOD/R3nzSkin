@@ -26,7 +26,7 @@ void Config::save() noexcept
 	const auto player{ cheatManager.memory->localPlayer };
 	std::error_code ec;
 	std::filesystem::create_directory(this->path, ec);
-	auto out{ std::ofstream(this->path / u8"R3nzSkin")};
+	auto out{ std::ofstream(this->path / u8"R3nzSkin64")};
 
 	if (!out.good())
 		return;
@@ -61,7 +61,7 @@ void Config::save() noexcept
 void Config::load() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
-	auto in{ std::ifstream(this->path / u8"R3nzSkin") };
+	auto in{ std::ifstream(this->path / u8"R3nzSkin64") };
 
 	if (!in.good())
 		return;
