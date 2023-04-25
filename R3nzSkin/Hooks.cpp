@@ -252,26 +252,6 @@ namespace d3d_vtable {
 		const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
-
-			/* 13.5 reset fix */
-			const auto player{ cheatManager.memory->localPlayer };
-			if (!cheatManager.config->shouldReassignSkin && player->get_health() == player->get_max_health())
-			{
-				if (player)
-				{
-					if (cheatManager.config->current_combo_skin_index > 0)
-					{
-						const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-						player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-						cheatManager.config->shouldReassignSkin = true;
-					}
-				}
-			}
-			else
-			{
-				cheatManager.config->shouldReassignSkin = false;
-			}
-
 			if (cheatManager.gui->is_open) {
 				if (is_d3d11)
 					::ImGui_ImplDX11_NewFrame();
