@@ -14,10 +14,8 @@ namespace offsets {
 			};
 		};
 		enum {
-			Team = 0x34,
-			Name = 0x54,
-			Health = 0xE7C,
-			MaxHealth = Health + 0x10
+			Team = 0x3C,
+			Name = 0x60
 		};
 	};
 
@@ -29,7 +27,6 @@ namespace offsets {
 		inline std::uint64_t ManagerTemplate_AIHero_{ 0 };
 		inline std::uint64_t ManagerTemplate_AITurret_{ 0 };
 		inline std::uint64_t GameClient{ 0 };
-		inline std::uint64_t retSpoofGadget{ 0 };
 	};
 
 	namespace AIBaseCommon {
