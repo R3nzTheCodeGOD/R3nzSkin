@@ -37,8 +37,8 @@
 		return bytes;
 	};
 
-	const auto dosHeader{ (PIMAGE_DOS_HEADER)module };
-	const auto ntHeaders{ (PIMAGE_NT_HEADERS)((std::uint8_t*)module + dosHeader->e_lfanew) };
+	const auto dosHeader{ reinterpret_cast<PIMAGE_DOS_HEADER>(module) };
+	const auto ntHeaders{ reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module) + dosHeader->e_lfanew) };
 	const auto textSection{ IMAGE_FIRST_SECTION(ntHeaders) };
 
 	const auto sizeOfImage{ textSection->SizeOfRawData };

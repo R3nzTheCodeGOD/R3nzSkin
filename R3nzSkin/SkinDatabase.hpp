@@ -19,13 +19,13 @@ public:
 	class jungle_mob_skin_info {
 	public:
 		const char* name;
-		std::vector<std::uint32_t> name_hashes;
+		std::vector<std::uint64_t> name_hashes;
 		std::vector<const char*> skins;
 	};
 
 	class specialSkin {
 	public:
-		std::uint32_t champHash;
+		std::uint64_t champHash;
 		std::int32_t skinIdStart;
 		std::int32_t skinIdEnd;
 		std::vector<const char*> gears;
@@ -33,7 +33,7 @@ public:
 
 	void load() noexcept;
 
-	std::map<std::uint32_t, std::vector<skin_info>> champions_skins;
+	std::map<std::uint64_t, std::vector<skin_info>> champions_skins;
 	std::vector<std::pair<std::uint32_t, const char*>> wards_skins;
 	
 	std::vector<const char*> minions_skins{

@@ -22,16 +22,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PythonScripts", "PythonScri
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		ChinaServer|x64 = ChinaServer|x64
 		ChinaServer|x86 = ChinaServer|x86
+		RiotGamesServers|x64 = RiotGamesServers|x64
 		RiotGamesServers|x86 = RiotGamesServers|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.ChinaServer|x64.ActiveCfg = ChinaServer|x64
+		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.ChinaServer|x64.Build.0 = ChinaServer|x64
 		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.ChinaServer|x86.ActiveCfg = ChinaServer|Win32
 		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.ChinaServer|x86.Build.0 = ChinaServer|Win32
+		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.RiotGamesServers|x64.ActiveCfg = RiotGamesServers|x64
+		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.RiotGamesServers|x64.Build.0 = RiotGamesServers|x64
 		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.RiotGamesServers|x86.ActiveCfg = RiotGamesServers|Win32
 		{17B6E7A6-AA76-4C09-B2AA-E2055EF748D2}.RiotGamesServers|x86.Build.0 = RiotGamesServers|Win32
+		{40F6875E-C1E5-4C10-A129-6E84CE034801}.ChinaServer|x64.ActiveCfg = ChinaServer|x64
+		{40F6875E-C1E5-4C10-A129-6E84CE034801}.ChinaServer|x64.Build.0 = ChinaServer|x64
 		{40F6875E-C1E5-4C10-A129-6E84CE034801}.ChinaServer|x86.ActiveCfg = ChinaServer|Win32
 		{40F6875E-C1E5-4C10-A129-6E84CE034801}.ChinaServer|x86.Build.0 = ChinaServer|Win32
+		{40F6875E-C1E5-4C10-A129-6E84CE034801}.RiotGamesServers|x64.ActiveCfg = RiotGamesServers|x64
+		{40F6875E-C1E5-4C10-A129-6E84CE034801}.RiotGamesServers|x64.Build.0 = RiotGamesServers|x64
 		{40F6875E-C1E5-4C10-A129-6E84CE034801}.RiotGamesServers|x86.ActiveCfg = RiotGamesServers|Win32
 		{40F6875E-C1E5-4C10-A129-6E84CE034801}.RiotGamesServers|x86.Build.0 = RiotGamesServers|Win32
 	EndGlobalSection

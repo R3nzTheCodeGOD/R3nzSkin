@@ -41,7 +41,7 @@ static inline void testFunc() noexcept
 	}
 }
 
-static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+static LRESULT WINAPI wndProc(const HWND window, const UINT msg, const WPARAM wParam, const LPARAM lParam) noexcept
 {
 	if (ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
@@ -94,7 +94,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 		}
 	}
 
-	return ::CallWindowProcW(originalWndProc, window, msg, wParam, lParam);
+	return ::CallWindowProc(originalWndProc, window, msg, wParam, lParam);
 }
 
 std::once_flag init_device;
@@ -243,7 +243,7 @@ namespace d3d_vtable {
 		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongPtr(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
 		cheatManager.logger->addLog("WndProc hooked!\n\tOriginal: 0x%X\n\tNew: 0x%X\n", &originalWndProc, &wndProc);
 	}
 

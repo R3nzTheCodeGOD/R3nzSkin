@@ -226,11 +226,11 @@ void GUI::render() noexcept
 						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 
 						if (hero == player) {
-							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
+							cheatManager.config->current_combo_skin_index = random(1ull, skinCount);
 							hero->change_skin(skinDatabase[cheatManager.config->current_combo_skin_index - 1].model_name, skinDatabase[cheatManager.config->current_combo_skin_index - 1].skin_id);
 						} else {
 							auto& data{ config[championHash] };
-							data = random(1u, skinCount);
+							data = random(1ull, skinCount);
 							hero->change_skin(skinDatabase[data - 1].model_name, skinDatabase[data - 1].skin_id);
 						}
 					}

@@ -22,7 +22,7 @@ public:
 	bool sub_base;
 	bool read;
 	std::int32_t additional;
-	std::uint32_t* offset;
+	std::uint64_t* offset;
 };
 
 class Memory {
