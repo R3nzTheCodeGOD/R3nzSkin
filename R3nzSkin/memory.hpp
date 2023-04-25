@@ -6,7 +6,6 @@
 #include <d3d11.h>
 
 #include "Offsets.hpp"
-#include "RetSpoofInvoker.hpp"
 
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
@@ -44,10 +43,9 @@ public:
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
 
-	const char* translateString(const char* string) const noexcept
-	{
-		return invoker.invokeCdecl<const char*>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE, string);
-	}
+	using translateString_t = const char* (__fastcall*)(const char*);
+
+	translateString_t translateString;
 private:
 	void update(bool gameClient = true) noexcept;
 

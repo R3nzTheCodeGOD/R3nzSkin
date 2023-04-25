@@ -245,7 +245,6 @@
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Offsets.hpp" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="RetSpoofInvoker.hpp" />
     <ClInclude Include="SDK\AIBaseCommon.hpp" />
     <ClInclude Include="SDK\AIHero.hpp" />
     <ClInclude Include="SDK\AIMinionClient.hpp" />
@@ -265,7 +264,6 @@
     <ClInclude Include="SkinDatabase.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="vmt_smart_hook.hpp" />
-    <ClInclude Include="x86RetSpoof.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="R3nzSkin.rc" />
