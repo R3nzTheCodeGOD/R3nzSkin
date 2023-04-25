@@ -3,9 +3,9 @@
 #include <cstdint>
 
 #include "../CheatManager.hpp"
-#include "../RetSpoofInvoker.hpp"
 
 AIBaseCommon* AIMinionClient::getGoldRedirectTarget() const noexcept
 {
-	return invoker.invokeThiscall<AIBaseCommon*>(std::uintptr_t(this), cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget);
+	static const auto getOwner{ reinterpret_cast<AIBaseCommon*(__fastcall*)(std::uintptr_t)>(cheatManager.memory->base + offsets::functions::GetGoldRedirectTarget) };
+	return getOwner(std::uintptr_t(this));
 }
