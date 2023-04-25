@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cstdlib>
+#include <cstdint>
 
 template <class T>
 class RiotArray {
 public:
 	T* list;
-	std::size_t size;
-	std::size_t cap;
+	std::int32_t size;
+	std::int32_t cap;
 };
