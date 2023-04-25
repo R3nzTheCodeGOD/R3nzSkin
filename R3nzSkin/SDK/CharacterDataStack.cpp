@@ -2,7 +2,6 @@
 
 #include "../CheatManager.hpp"
 #include "../Offsets.hpp"
-#include "../RetSpoofInvoker.hpp"
 
 #include "CharacterDataStack.hpp"
 
