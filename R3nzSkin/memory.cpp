@@ -129,6 +129,8 @@ void Memory::Search(bool gameClient)
 
 					if (sig.read)
 						address = *reinterpret_cast<std::uint8_t**>(address + (pattern.find_first_of("?") / 3));
+					else if (sig.relative)
+						address = address + *reinterpret_cast<std::uint32_t*>(address + 3) + 7;
 					else if (address[0] == 0xE8)
 						address = address + *reinterpret_cast<std::uint32_t*>(address + 1) + 5;
 
