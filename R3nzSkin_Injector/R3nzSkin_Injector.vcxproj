@@ -44,7 +44,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PreferredToolArchitecture>x86</PreferredToolArchitecture>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ChinaServer|Win32'">
     <PlatformToolset>v142</PlatformToolset>

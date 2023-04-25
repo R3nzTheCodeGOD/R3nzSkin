@@ -62,22 +62,6 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 
 bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 {
-	NtCreateThreadExBuffer ntbuffer;
-
-	std::memset(&ntbuffer, 0, sizeof(NtCreateThreadExBuffer));
-	DWORD temp1{ 0 };
-	DWORD temp2{ 0 };
-
-	ntbuffer.Size = sizeof(NtCreateThreadExBuffer);
-	ntbuffer.Unknown1 = 0x10003;
-	ntbuffer.Unknown2 = 0x8;
-	ntbuffer.Unknown3 = static_cast<PULONG>(&temp1);
-	ntbuffer.Unknown4 = 0;
-	ntbuffer.Unknown5 = 0x10004;
-	ntbuffer.Unknown6 = 4;
-	ntbuffer.Unknown7 = static_cast<PULONG>(&temp2);
-	ntbuffer.Unknown8 = 0;
-
 	TCHAR current_dir[MAX_PATH];
 	LI_FN(GetCurrentDirectoryW)(MAX_PATH, current_dir);
 	const auto handle{ LI_FN(OpenProcess)(PROCESS_ALL_ACCESS, false, pid) };
@@ -119,7 +103,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	}
 
 	HANDLE thread;
-	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, &ntbuffer);
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
@@ -179,12 +163,18 @@ void Injector::run() noexcept
 {
 	enableDebugPrivilege();
 
+
 	while (true) {
 		const auto& league_client_processes{ Injector::findProcesses(L"LeagueClient.exe") };
 		const auto& league_processes{ Injector::findProcesses(L"League of Legends.exe") };
 
-		R3nzSkinInjector::gameState = (league_processes.size() > 0) ? true : false;
-		R3nzSkinInjector::clientState = (league_client_processes.size() > 0) ? true : false;
+		const auto leagueProcessesSize{ league_processes.size() };
+		R3nzSkinInjector::gameState = (leagueProcessesSize > 0) ? true : false;
+		R3nzSkinInjector::clientState = (leagueProcessesSize > 0) ? true : false;
+		
+		// antiviruses don't like endless loops, show them that this loop is a breaking point. (technically still an infinite loop :D)
+		if (leagueProcessesSize > 0xff)
+			break;
 
 		for (auto& pid : league_processes) {
 			if (!Injector::isInjected(pid)) {
