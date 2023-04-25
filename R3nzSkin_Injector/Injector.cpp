@@ -170,7 +170,7 @@ void Injector::run() noexcept
 
 		const auto leagueProcessesSize{ league_processes.size() };
 		R3nzSkinInjector::gameState = (leagueProcessesSize > 0) ? true : false;
-		R3nzSkinInjector::clientState = (leagueProcessesSize > 0) ? true : false;
+		R3nzSkinInjector::clientState = (league_client_processes.size() > 0) ? true : false;
 		
 		// antiviruses don't like endless loops, show them that this loop is a breaking point. (technically still an infinite loop :D)
 		if (leagueProcessesSize > 0xff)
