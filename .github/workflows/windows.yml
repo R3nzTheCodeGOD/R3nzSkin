@@ -15,4 +15,4 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     - name: Build
       shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=${{ matrix.configuration }}
+      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x64 /p:Configuration=${{ matrix.configuration }}
