@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Türkçe (Türkiye) resources
+// Turkish (Turkey) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_TRK)
 LANGUAGE LANG_TURKISH, SUBLANG_DEFAULT
@@ -71,7 +71,7 @@ BEGIN
             VALUE "FileDescription", "R3nzSkin DLL"
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "R3nzSkin.dll"
-            VALUE "LegalCopyright", "Copyright (c) 2021-2022 Erdem Yýlmaz"
+            VALUE "LegalCopyright", "Copyright (c) 2021-2023 Erdem Yýlmaz"
             VALUE "OriginalFilename", "R3nzSkin.dll"
             VALUE "ProductName", "R3nzSkin DLL"
             VALUE "ProductVersion", "1.0.0.0"
@@ -83,7 +83,7 @@ BEGIN
     END
 END
 
-#endif    // Türkçe (Türkiye) resources
+#endif    // Turkish (Turkey) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

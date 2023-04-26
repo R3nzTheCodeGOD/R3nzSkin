@@ -10,7 +10,6 @@ using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::Threading;
 
-[STAThread]
 int main([[maybe_unused]] array<String^>^ args)
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -21,7 +20,7 @@ int main([[maybe_unused]] array<String^>^ args)
 	R3nzSkinInjector::R3nzUI form;
 
 	auto thread{ std::thread(Injector::run) };
-	Thread^ screenThread{ gcnew Thread(gcnew ThreadStart(% form, &R3nzSkinInjector::R3nzUI::updateScreen)) };
+	auto screenThread{ gcnew Thread(gcnew ThreadStart(% form, &R3nzSkinInjector::R3nzUI::updateScreen)) };
 	screenThread->Start();
 
 	Application::Run(%form);

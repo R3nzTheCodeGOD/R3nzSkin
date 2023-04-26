@@ -71,7 +71,7 @@ namespace R3nzSkinInjector {
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
-			   System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
+			   auto resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
 			   this->button1 = (gcnew System::Windows::Forms::Button());
 			   this->label1 = (gcnew System::Windows::Forms::Label());
 			   this->label2 = (gcnew System::Windows::Forms::Label());

@@ -18,7 +18,7 @@ proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
 	if (process_snap == INVALID_HANDLE_VALUE)
 		return list;
 
-	PROCESSENTRY32W pe32;
+	PROCESSENTRY32W pe32{};
 	pe32.dwSize = sizeof(PROCESSENTRY32W);
 
 	if (LI_FN(Process32FirstW).get()(process_snap, &pe32)) {
@@ -43,7 +43,7 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 		return false;
 
 	HMODULE hMods[1024];
-	DWORD cbNeeded;
+	DWORD cbNeeded{};
 
 	if (LI_FN(K32EnumProcessModules)(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
 		for (auto i{ 0u }; i < (cbNeeded / sizeof(HMODULE)); ++i) {
@@ -69,11 +69,11 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	if (!handle || handle == INVALID_HANDLE_VALUE)
 		return false;
 
-	FILETIME ft;
-	SYSTEMTIME st;
+	FILETIME ft{};
+	SYSTEMTIME st{};
 	LI_FN(GetSystemTime)(&st);
 	LI_FN(SystemTimeToFileTime)(&st, &ft);
-	FILETIME create, exit, kernel, user;
+	FILETIME create{}, exit{}, kernel{}, user{};
 	LI_FN(GetProcessTimes)(handle, &create, &exit, &kernel, &user);
 
 	const auto delta{ 10 - static_cast<std::int32_t>((*reinterpret_cast<std::uint64_t*>(&ft) - *reinterpret_cast<std::uint64_t*>(&create.dwLowDateTime)) / 10000000U) };
@@ -102,8 +102,8 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 		return false;
 	}
 
-	HANDLE thread;
-	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(::GetProcAddress(::GetModuleHandle(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
+	HANDLE thread{};
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(LI_FN(GetProcAddress).get()(LI_FN(GetModuleHandleW).get()(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
@@ -120,9 +120,8 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 
 void WINAPI Injector::enableDebugPrivilege() noexcept
 {
-	HANDLE token;
-
-	if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
+	HANDLE token{};
+	if (OpenProcessToken(LI_FN(GetCurrentProcess).get()(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
 		LUID value;
 		if (LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
 			TOKEN_PRIVILEGES tp{};
@@ -162,18 +161,15 @@ void Injector::renameExe() noexcept
 void Injector::run() noexcept
 {
 	enableDebugPrivilege();
-
-
 	while (true) {
 		const auto& league_client_processes{ Injector::findProcesses(L"LeagueClient.exe") };
 		const auto& league_processes{ Injector::findProcesses(L"League of Legends.exe") };
 
-		const auto leagueProcessesSize{ league_processes.size() };
-		R3nzSkinInjector::gameState = (leagueProcessesSize > 0) ? true : false;
+		R3nzSkinInjector::gameState = (league_processes.size() > 0) ? true : false;
 		R3nzSkinInjector::clientState = (league_client_processes.size() > 0) ? true : false;
 		
 		// antiviruses don't like endless loops, show them that this loop is a breaking point. (technically still an infinite loop :D)
-		if (leagueProcessesSize > 0xff)
+		if (league_processes.size() > 0xff)
 			break;
 
 		for (auto& pid : league_processes) {
