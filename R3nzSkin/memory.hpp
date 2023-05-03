@@ -102,7 +102,7 @@ private:
 		},
 		{
 			{
-				"48 8D 8D ? ? ? ? 48 03 CB E8"
+				"48 8B 8F ? ? ? ? BA 37 00 00"
 			}, false, true, false, 0, &offsets::MaterialRegistry::D3DDevice
 		},
 		{
