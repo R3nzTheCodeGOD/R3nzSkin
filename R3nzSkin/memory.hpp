@@ -67,7 +67,7 @@ private:
 		},
 		{
 			{
-				"48 8B 05 ? ? ? ? 45 33 E4 0F 57 C0"
+				"48 8B 05 ? ? ? ? 48 8B 78 08 8B 40 10 4C 8D 3C C7 49 3B FF"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AIHero_
 		},
 		{
