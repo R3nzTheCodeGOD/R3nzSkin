@@ -112,7 +112,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 48 8D 8D B0 11 00 00 E8 ? ? ? ? 48 85 C0"
+				"E8 ? ? ? ? 48 8D 8D ? ? ? ? E8 ? ? ? ? 48 85 C0"
 			}, true, false, false, 0, &offsets::functions::CharacterDataStack__Push
 		},
 		{
