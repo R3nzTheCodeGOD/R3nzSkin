@@ -9,6 +9,7 @@ namespace R3nzSkinInjector {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Threading;
+	using namespace System::IO;
 
 	static auto btnState{ false };
 	static auto gameState{ false };
@@ -17,7 +18,7 @@ namespace R3nzSkinInjector {
 
 	public ref class R3nzUI : public System::Windows::Forms::Form {
 	public:
-		R3nzUI(void) { InitializeComponent(); }
+		R3nzUI(void) { InitializeComponent(); loadSettings(); }
 	public:
 		void updateScreen() {
 			while (true) {
@@ -51,6 +52,30 @@ namespace R3nzSkinInjector {
 				Thread::Sleep(1000);
 			}
 		}
+		void saveSettings() {
+			auto appDataPath = Environment::GetFolderPath(Environment::SpecialFolder::MyDocuments);
+			auto settingsFolder = Path::Combine(appDataPath, L"R3nzSkin");
+			auto settingsFilePath = Path::Combine(settingsFolder, L"R3nzSkinInjector");
+
+			if (!Directory::Exists(settingsFolder)) {
+				Directory::CreateDirectory(settingsFolder);
+			}
+			
+			File::WriteAllText(settingsFilePath, System::Convert::ToString(this->toolstripmenuItem2->Checked));
+		}
+		void loadSettings() {
+			auto appDataPath = Environment::GetFolderPath(Environment::SpecialFolder::MyDocuments);
+			auto settingsFolder = Path::Combine(appDataPath, L"R3nzSkin");
+			auto settingsFilePath = Path::Combine(settingsFolder, L"R3nzSkinInjector");
+
+			if (!Directory::Exists(settingsFolder)) {
+				Directory::CreateDirectory(settingsFolder);
+			}
+
+			if (File::Exists(settingsFilePath)) {
+				this->toolstripmenuItem2->Checked = System::Boolean::Parse(File::ReadAllText(settingsFilePath));
+			}
+		}
 	protected:
 		~R3nzUI() { if (components) delete components; }
 	private: System::Windows::Forms::Button^ button1;
@@ -68,6 +93,9 @@ namespace R3nzSkinInjector {
 	private: System::Windows::Forms::ContextMenu^ contextMenu;
 	private: System::Windows::Forms::MenuItem^ menuItem;
 	private: System::Windows::Forms::MenuItem^ menuItem2;
+	private: System::Windows::Forms::MenuStrip^ menuStrip;
+	private: System::Windows::Forms::ToolStripMenuItem^ toolstripmenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ toolstripmenuItem2;
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
@@ -86,6 +114,9 @@ namespace R3nzSkinInjector {
 			   this->contextMenu = (gcnew System::Windows::Forms::ContextMenu());
 			   this->menuItem = (gcnew System::Windows::Forms::MenuItem());
 			   this->menuItem2 = (gcnew System::Windows::Forms::MenuItem());
+			   this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
+			   this->toolstripmenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->toolstripmenuItem2 = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->groupBox1->SuspendLayout();
 			   this->groupBox2->SuspendLayout();
 			   this->groupBox3->SuspendLayout();
@@ -94,13 +125,11 @@ namespace R3nzSkinInjector {
 			   // 
 			   // button1
 			   // 
-			   this->button1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(83)));
+			   this->button1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
 			   this->button1->Cursor = System::Windows::Forms::Cursors::Hand;
 			   this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->button1->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
-			   this->button1->Location = System::Drawing::Point(12, 13);
+			   this->button1->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
+			   this->button1->Location = System::Drawing::Point(12, 28);
 			   this->button1->Name = L"button1";
 			   this->button1->Size = System::Drawing::Size(250, 50);
 			   this->button1->TabIndex = 0;
@@ -112,10 +141,8 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->label1->AutoSize = true;
 			   this->label1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label1->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
-			   this->label1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(83)));
+			   this->label1->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
+			   this->label1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
 			   this->label1->Location = System::Drawing::Point(6, 16);
 			   this->label1->Name = L"label1";
 			   this->label1->Size = System::Drawing::Size(68, 18);
@@ -126,11 +153,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->label2->AutoSize = true;
 			   this->label2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label2->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
-			   this->label2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label2->Location = System::Drawing::Point(6, 14);
+			   this->label2->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
+			   this->label2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
+			   this->label2->Location = System::Drawing::Point(6, 16);
 			   this->label2->Name = L"label2";
 			   this->label2->Size = System::Drawing::Size(94, 18);
 			   this->label2->TabIndex = 2;
@@ -140,11 +165,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->label3->AutoSize = true;
 			   this->label3->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label3->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
-			   this->label3->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label3->Location = System::Drawing::Point(6, 14);
+			   this->label3->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
+			   this->label3->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
+			   this->label3->Location = System::Drawing::Point(6, 16);
 			   this->label3->Name = L"label3";
 			   this->label3->Size = System::Drawing::Size(82, 18);
 			   this->label3->TabIndex = 3;
@@ -154,10 +177,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->groupBox1->Controls->Add(this->label1);
 			   this->groupBox1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox1->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
+			   this->groupBox1->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
 			   this->groupBox1->ForeColor = System::Drawing::Color::White;
-			   this->groupBox1->Location = System::Drawing::Point(12, 69);
+			   this->groupBox1->Location = System::Drawing::Point(12, 79);
 			   this->groupBox1->Name = L"groupBox1";
 			   this->groupBox1->Size = System::Drawing::Size(250, 45);
 			   this->groupBox1->TabIndex = 5;
@@ -168,10 +190,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->groupBox2->Controls->Add(this->label4);
 			   this->groupBox2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox2->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
+			   this->groupBox2->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
 			   this->groupBox2->ForeColor = System::Drawing::Color::White;
-			   this->groupBox2->Location = System::Drawing::Point(12, 120);
+			   this->groupBox2->Location = System::Drawing::Point(12, 130);
 			   this->groupBox2->Name = L"groupBox2";
 			   this->groupBox2->Size = System::Drawing::Size(250, 45);
 			   this->groupBox2->TabIndex = 7;
@@ -182,11 +203,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->label4->AutoSize = true;
 			   this->label4->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label4->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
-			   this->label4->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label4->Location = System::Drawing::Point(6, 14);
+			   this->label4->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
+			   this->label4->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
+			   this->label4->Location = System::Drawing::Point(6, 16);
 			   this->label4->Name = L"label4";
 			   this->label4->Size = System::Drawing::Size(82, 18);
 			   this->label4->TabIndex = 0;
@@ -196,10 +215,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->groupBox3->Controls->Add(this->label3);
 			   this->groupBox3->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox3->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
+			   this->groupBox3->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
 			   this->groupBox3->ForeColor = System::Drawing::Color::White;
-			   this->groupBox3->Location = System::Drawing::Point(12, 171);
+			   this->groupBox3->Location = System::Drawing::Point(12, 181);
 			   this->groupBox3->Name = L"groupBox3";
 			   this->groupBox3->Size = System::Drawing::Size(250, 45);
 			   this->groupBox3->TabIndex = 8;
@@ -210,10 +228,9 @@ namespace R3nzSkinInjector {
 			   // 
 			   this->groupBox4->Controls->Add(this->label2);
 			   this->groupBox4->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox4->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
+			   this->groupBox4->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
 			   this->groupBox4->ForeColor = System::Drawing::Color::White;
-			   this->groupBox4->Location = System::Drawing::Point(12, 222);
+			   this->groupBox4->Location = System::Drawing::Point(12, 232);
 			   this->groupBox4->Name = L"groupBox4";
 			   this->groupBox4->Size = System::Drawing::Size(250, 45);
 			   this->groupBox4->TabIndex = 9;
@@ -226,7 +243,7 @@ namespace R3nzSkinInjector {
 			   this->linkLabel1->Cursor = System::Windows::Forms::Cursors::Hand;
 			   this->linkLabel1->LinkBehavior = System::Windows::Forms::LinkBehavior::NeverUnderline;
 			   this->linkLabel1->LinkColor = System::Drawing::Color::Silver;
-			   this->linkLabel1->Location = System::Drawing::Point(20, 274);
+			   this->linkLabel1->Location = System::Drawing::Point(20, 284);
 			   this->linkLabel1->Name = L"linkLabel1";
 			   this->linkLabel1->Size = System::Drawing::Size(207, 14);
 			   this->linkLabel1->TabIndex = 11;
@@ -256,14 +273,22 @@ namespace R3nzSkinInjector {
 			   this->notifyIcon->Visible = false;
 			   this->notifyIcon->ContextMenu = this->contextMenu;
 			   this->notifyIcon->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &R3nzUI::notifyIcon_MouseDoubleClick);
+			   //
+			   // menuStrip
+			   //
+			   this->toolstripmenuItem->Text = L"Preferences";
+			   this->toolstripmenuItem2->Text = L"Hide to tray";
+			   this->toolstripmenuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::toolstripmenuItem2_OnClick);
+			   this->toolstripmenuItem->DropDownItems->Add(this->toolstripmenuItem2);
+			   this->menuStrip->Items->Add(this->toolstripmenuItem);
+			   this->Controls->Add(this->menuStrip);
 			   // 
 			   // R3nzUI
 			   // 
 			   this->AutoScaleDimensions = System::Drawing::SizeF(7, 14);
 			   this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			   this->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(32)), static_cast<System::Int32>(static_cast<System::Byte>(30)),
-				   static_cast<System::Int32>(static_cast<System::Byte>(30)));
-			   this->ClientSize = System::Drawing::Size(273, 297);
+			   this->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(32)), static_cast<System::Int32>(static_cast<System::Byte>(30)), static_cast<System::Int32>(static_cast<System::Byte>(30)));
+			   this->ClientSize = System::Drawing::Size(273, 307);
 			   this->Controls->Add(this->linkLabel1);
 			   this->Controls->Add(this->groupBox4);
 			   this->Controls->Add(this->groupBox3);
@@ -271,8 +296,7 @@ namespace R3nzSkinInjector {
 			   this->Controls->Add(this->groupBox1);
 			   this->Controls->Add(this->button1);
 			   this->Cursor = System::Windows::Forms::Cursors::Arrow;
-			   this->Font = (gcnew System::Drawing::Font(L"Arial", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				   static_cast<System::Byte>(162)));
+			   this->Font = (gcnew System::Drawing::Font(L"Arial", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
 			   this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
 			   this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			   this->MaximizeBox = false;
@@ -330,17 +354,24 @@ namespace R3nzSkinInjector {
 	private:
 		System::Void R3nzUI_Resize(System::Object^ sender, System::EventArgs^ e)
 		{
-			if (this->WindowState == FormWindowState::Minimized) {
-				this->Hide();
-				this->notifyIcon->Visible = true;
+			if (this->WindowState == FormWindowState::Minimized) 
+			{
+				if (this->toolstripmenuItem2->Checked) 
+				{
+					this->Hide();
+					this->notifyIcon->Visible = true;
+				}
 			}
 		}
 	private:
 		System::Void notifyIcon_MouseDoubleClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
 		{
-			this->Show();
-			this->WindowState = FormWindowState::Normal;
-			this->notifyIcon->Visible = false;
+			if (this->toolstripmenuItem2->Checked)
+			{
+				this->Show();
+				this->WindowState = FormWindowState::Normal;
+				this->notifyIcon->Visible = false;
+			}
 		}
 	private:
 		System::Void menuItem_OnClick(System::Object^ sender, System::EventArgs^ e)
@@ -351,6 +382,12 @@ namespace R3nzSkinInjector {
 		System::Void menuItem2_OnClick(System::Object^ sender, System::EventArgs^ e)
 		{
 			this->button1_Click(nullptr, nullptr);
+		}
+	private:
+		System::Void toolstripmenuItem2_OnClick(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->toolstripmenuItem2->Checked = !this->toolstripmenuItem2->Checked;
+			this->saveSettings();
 		}
 	};
 }

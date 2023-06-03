@@ -41,4 +41,9 @@
       <Filter>Resource</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="settings.settings">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
