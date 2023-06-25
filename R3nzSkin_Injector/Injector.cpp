@@ -5,10 +5,18 @@
 #include <string>
 #include <thread>
 #include <tlhelp32.h>
+#include <regex>
+#include <msclr/marshal_cppstd.h>
 
 #include "Injector.hpp"
 #include "R3nzUI.hpp"
 #include "lazy_importer.hpp"
+
+using namespace System;
+using namespace System::Windows::Forms;
+using namespace System::Threading;
+using namespace System::Globalization;
+using namespace System::Net;
 
 proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
 {
@@ -84,7 +92,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	const auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
 
 	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
-		LI_FN(MessageBox)(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
+		LI_FN(MessageBoxW)(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
 		LI_FN(CloseHandle)(handle);
 		return false;
 	}
@@ -144,6 +152,49 @@ std::string Injector::randomString(std::uint32_t size) noexcept
 		tmp_s += alphanum[std::rand() % (sizeof(alphanum) - 1)];
 
 	return tmp_s;
+}
+
+void Injector::autoUpdate()
+{
+	WebClient^ client = gcnew WebClient();
+	client->Headers->Add(L"User-Agent", L"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0");
+
+	try
+	{
+		std::string json = msclr::interop::marshal_as<std::string>(client->DownloadString(L"https://api.github.com/repos/R3nzTheCodeGOD/R3nzSkin/releases/latest"));
+		std::regex tagnameRegex("\"tag_name\"\\s*:\\s*\"([^\"]+)");
+		std::regex urlRegex("\"browser_download_url\"\\s*:\\s*\"([^\"]+)");
+		std::regex dateRegex("\"created_at\"\\s*:\\s*\"([^\"]+)");
+
+		std::smatch tagnameMatch, urlMatch, dateMatch;
+		if (std::regex_search(json, tagnameMatch, tagnameRegex))
+		{
+			auto version = gcnew String(tagnameMatch[1].str().c_str());
+			if (std::regex_search(json, dateMatch, dateRegex))
+			{
+				auto date_of_new_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy");
+				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy");
+				if (date_of_current_release != date_of_new_release)
+				{
+					auto result = MessageBox::Show(L"New version is available on GitHub\nWould you like to download it now?", L"R3nzSkin", MessageBoxButtons::YesNo, MessageBoxIcon::Information);
+					if (result == DialogResult::Yes)
+					{
+						if (std::regex_search(json, urlMatch, urlRegex))
+						{
+							auto url = gcnew String(urlMatch[1].str().c_str());
+							auto file = String::Format(L"R3nzSkin_{0}.zip", version);
+							client->DownloadFile(url, file);
+							Environment::Exit(0);
+						}
+					}
+				}
+			}
+		}
+	}
+	catch (Exception^ e)
+	{
+		MessageBox::Show(e->Message, L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
+	}
 }
 
 void Injector::renameExe() noexcept
