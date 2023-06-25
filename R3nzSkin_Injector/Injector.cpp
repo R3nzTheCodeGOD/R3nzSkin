@@ -172,10 +172,17 @@ void Injector::autoUpdate()
 			auto version = gcnew String(tagnameMatch[1].str().c_str());
 			if (std::regex_search(json, dateMatch, dateRegex))
 			{
-				auto date_of_new_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy");
-				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy");
-				if (date_of_current_release != date_of_new_release)
+				auto date_of_github_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy HH:mm:ss");
+				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:mm:ss");
+				if (date_of_current_release != date_of_github_release)
 				{
+					auto date_of_github_release_class = DateTime::Parse(date_of_github_release);
+					auto date_of_current_release_class = DateTime::Parse(date_of_current_release);
+					if (date_of_current_release_class > date_of_github_release_class)
+					{
+						return;
+					}
+
 					auto result = MessageBox::Show(L"New version is available on GitHub\nWould you like to download it now?", L"R3nzSkin", MessageBoxButtons::YesNo, MessageBoxIcon::Information);
 					if (result == DialogResult::Yes)
 					{
@@ -184,6 +191,22 @@ void Injector::autoUpdate()
 							auto url = gcnew String(urlMatch[1].str().c_str());
 							auto file = String::Format(L"R3nzSkin_{0}.zip", version);
 							client->DownloadFile(url, file);
+
+							System::IO::Compression::ZipFile::ExtractToDirectory(file, L"R3nzSkin");
+							System::IO::File::Delete(file);
+							System::IO::File::Delete(L"R3nzSkin.dll");
+							System::IO::File::Move(L"R3nzSkin\\R3nzSkin_Injector.exe", String::Format(L"R3nzSkin_Injector_{0}.exe", version));
+							System::IO::File::Move(L"R3nzSkin\\R3nzSkin.dll", L"R3nzSkin.dll");
+							System::IO::Directory::Delete(L"R3nzSkin");
+							
+							auto process_info = gcnew System::Diagnostics::ProcessStartInfo();
+							process_info->Arguments = L"/C choice /C Y /N /D Y /T 1 & del \"" + System::Diagnostics::Process::GetCurrentProcess()->MainModule->FileName + L"\"";
+							process_info->CreateNoWindow = true;
+							process_info->FileName = L"cmd.exe";
+							process_info->WindowStyle = System::Diagnostics::ProcessWindowStyle::Hidden;
+							System::Diagnostics::Process::Start(process_info);
+							System::Diagnostics::Process::Start(String::Format(L"R3nzSkin_Injector_{0}.exe", version));
+			
 							Environment::Exit(0);
 						}
 					}
