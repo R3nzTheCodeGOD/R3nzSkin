@@ -172,8 +172,8 @@ void Injector::autoUpdate()
 			auto version = gcnew String(tagnameMatch[1].str().c_str());
 			if (std::regex_search(json, dateMatch, dateRegex))
 			{
-				auto date_of_github_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy HH:mm:ss");
-				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:mm:ss");
+				auto date_of_github_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy HH:00");
+				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:00");
 				if (date_of_current_release != date_of_github_release)
 				{
 					auto date_of_github_release_class = DateTime::Parse(date_of_github_release);
