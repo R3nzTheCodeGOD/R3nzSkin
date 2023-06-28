@@ -97,7 +97,7 @@ private:
 		},
 		{
 			{
-				"40 38 BB ? ? 00 00 0F 85 ? 00 00 00 66 C7 83 ? ? 00 00 00 04 0F 31 48 C1 E2 ? 4C 8D 83 ? ? 00 00 48 0B C2 44 8B CF 48 89 45 ? 8B D7 41 BA ? 00 00 00 0F 1F 40 00"
+				"40 38 BB ? ? ? ? 0F 85 ? ? ? ? 66 C7 83 ? ? ? ? ? ? 0F 31 48 C1 E2 20 4C 8D 83 ? ? ? ? 48 0B C2 44 8B CF 48 89 44 24 ? 8B D7 41 BA ? ? ? ?"
 			}, false, true, false, 0, &offsets::AIBaseCommon::SkinId
 		},
 		{
