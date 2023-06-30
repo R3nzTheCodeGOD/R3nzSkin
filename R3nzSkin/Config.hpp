@@ -24,7 +24,6 @@ public:
 	float fontScale{ 1.0f };
 	bool heroName{ true };
 	bool quickSkinChange{ false };
-	bool shouldReassignSkin{ false };
 	// player
 	std::int32_t current_combo_skin_index{ 0 };
 
@@ -41,11 +40,11 @@ public:
 	std::int32_t current_combo_chaos_turret_index{ 0 };
 
 	// other champions
-	std::map<std::uint32_t, std::int32_t> current_combo_ally_skin_index;
-	std::map<std::uint32_t, std::int32_t> current_combo_enemy_skin_index;
+	std::map<std::uint64_t, std::int32_t> current_combo_ally_skin_index;
+	std::map<std::uint64_t, std::int32_t> current_combo_enemy_skin_index;
 
 	// jungle mobs
-	std::map<std::uint32_t, std::int32_t> current_combo_jungle_mob_skin_index;
+	std::map<std::uint64_t, std::int32_t> current_combo_jungle_mob_skin_index;
 private:
 	std::filesystem::path path;
 	json config_json{ json() };

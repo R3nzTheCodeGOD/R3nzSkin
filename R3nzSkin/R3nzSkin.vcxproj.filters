@@ -201,12 +201,6 @@
     <ClInclude Include="SDK\AITurret.hpp">
       <Filter>Source Files\SDK</Filter>
     </ClInclude>
-    <ClInclude Include="x86RetSpoof.hpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="RetSpoofInvoker.hpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Logger.hpp">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>

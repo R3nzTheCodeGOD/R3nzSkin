@@ -13,7 +13,6 @@
 #include "GUI.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
-#include "RetSpoofInvoker.hpp"
 
 #include "SDK/GameState.hpp"
 
@@ -50,14 +49,7 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 		else if (cheatManager.memory->client->game_state == GGameState_s::Running)
 			break;
 	}
-
 	cheatManager.logger->addLog("GameClient found!\n");
-
-	const auto gadget{ *reinterpret_cast<std::array<std::uint8_t, 2>*>(cheatManager.memory->base + offsets::global::retSpoofGadget) };
-	cheatManager.logger->addLog("Gadget: 0x%X 0x%X\n", gadget.at(0), gadget.at(1));
-
-	invoker.init(cheatManager.memory->base + offsets::global::retSpoofGadget);
-	cheatManager.logger->addLog("Invoker initialized!\n");
 	
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);

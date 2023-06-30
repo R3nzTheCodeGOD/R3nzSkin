@@ -3,7 +3,7 @@
    [![C++](https://img.shields.io/badge/Language-C%2B%2B-%23f34b7d.svg?style=plastic)](https://en.wikipedia.org/wiki/C%2B%2B)
    [![LOL](https://img.shields.io/badge/Game-League%20of%20Legends-445fa5.svg?style=plastic)](https://na.leagueoflegends.com)
    [![Windows](https://img.shields.io/badge/Platform-Windows-0078d7.svg?style=plastic)](https://en.wikipedia.org/wiki/Microsoft_Windows)
-   [![x86](https://img.shields.io/badge/Arch-x86-red.svg?style=plastic)](https://en.wikipedia.org/wiki/X86)
+   [![x64](https://img.shields.io/badge/Arch-x64-red.svg?style=plastic)](https://en.wikipedia.org/wiki/X86-64)
    [![License](https://img.shields.io/github/license/R3nzTheCodeGOD/R3nzSkin.svg?style=plastic)](LICENSE)
    [![Issues](https://img.shields.io/github/issues/R3nzTheCodeGOD/R3nzSkin.svg?style=plastic)](https://github.com/R3nzTheCodeGOD/R3nzSkin/issues)
    ![Windows](https://github.com/R3nzTheCodeGOD/R3nzSkin/workflows/Windows/badge.svg?branch=main&event=push)
@@ -11,8 +11,7 @@
    # **R3nzSkin**
 
    ## Announcement
-
-   I will be leaving on February 4th to fulfill my mandatory military service in my country, and may not be able to continue developing this project for a minimum of 3 months to a maximum of 1 year. If you possess the expertise to keep the project updated on a regular basis, please reach out to me before February 3rd.
+   I am currently continuing my military service, and as the place where I am serving is a border region, updates may be delayed or may not arrive.
 
    <img src="https://user-images.githubusercontent.com/58574988/134170370-c827d712-fcc7-432f-b9f8-96678b0c9bf6.gif">
 
@@ -27,11 +26,10 @@
 - Supports all Popular languages ​​in the world.
 - In-game configuration with <a href="https://github.com/ocornut/imgui">ImGui</a>.
 - <a href="https://github.com/nlohmann/json">JSON</a> based configuration saving & loading
-- Using <a href="https://github.com/danielkrupinski/x86RetSpoof">x86RetSpoof</a>, League functions are called with spoofed return address
 
 # Building
    1. Clone the source with `git clone --recursive https://github.com/R3nzTheCodeGOD/R3nzSkin.git`
-   2. Build in Visual Studio 2017/19 with configuration "Your Region"
+   2. Build in Visual Studio 2017/19 with configuration "Your Region - x64"
 
 # Usage
    1. Compile source or <a href="https://github.com/R3nzTheCodeGOD/R3nzSkin/releases/latest">download</a> compiled version.

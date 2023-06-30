@@ -37,8 +37,8 @@
 		return bytes;
 	};
 
-	const auto dosHeader{ (PIMAGE_DOS_HEADER)module };
-	const auto ntHeaders{ (PIMAGE_NT_HEADERS)((std::uint8_t*)module + dosHeader->e_lfanew) };
+	const auto dosHeader{ reinterpret_cast<PIMAGE_DOS_HEADER>(module) };
+	const auto ntHeaders{ reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module) + dosHeader->e_lfanew) };
 	const auto textSection{ IMAGE_FIRST_SECTION(ntHeaders) };
 
 	const auto sizeOfImage{ textSection->SizeOfRawData };
@@ -93,10 +93,11 @@ void Memory::update(bool gameClient) noexcept
 		this->minionList = *reinterpret_cast<ManagerTemplate<AIMinionClient>**>(this->base + offsets::global::ManagerTemplate_AIMinionClient_);
 		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->base + offsets::global::ManagerTemplate_AITurret_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->base + offsets::global::ChampionManager);
-		this->materialRegistry = invoker.invokeStdcall<std::uintptr_t>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr);
+		this->materialRegistry = reinterpret_cast<std::uintptr_t(__fastcall*)()>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
 		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
 		this->window = *reinterpret_cast<HWND*>(this->base + offsets::global::Riot__g_window);
+		this->translateString = reinterpret_cast<translateString_t>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE);
 	}
 }
 
@@ -129,6 +130,8 @@ void Memory::Search(bool gameClient)
 
 					if (sig.read)
 						address = *reinterpret_cast<std::uint8_t**>(address + (pattern.find_first_of("?") / 3));
+					else if (sig.relative)
+						address = address + *reinterpret_cast<std::uint32_t*>(address + 3) + 7;
 					else if (address[0] == 0xE8)
 						address = address + *reinterpret_cast<std::uint32_t*>(address + 1) + 5;
 

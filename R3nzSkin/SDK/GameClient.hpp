@@ -4,6 +4,6 @@
 #include "Pad.hpp"
 
 class GameClient {
-	PAD(0x8)
+	PAD(0xC)
 	GGameState_s game_state;
 };

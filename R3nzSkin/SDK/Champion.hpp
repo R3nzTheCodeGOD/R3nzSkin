@@ -6,8 +6,8 @@
 #include "RiotArray.hpp"
 
 class Champion {
-	PAD(0x4)
+	PAD(0x8)
 	AString champion_name;
-	PAD(0x78)
+	PAD(0xD0)
 	RiotArray<Skin> skins;
 };

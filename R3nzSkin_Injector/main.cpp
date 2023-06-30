@@ -2,26 +2,31 @@
 #include <ctime>
 #include <cstdlib>
 #include <thread>
+#include <regex>
+#include <msclr/marshal_cppstd.h>
 
 #include "R3nzUI.hpp"
 #include "Injector.hpp"
+#include "lazy_importer.hpp"
 
 using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::Threading;
+using namespace System::Globalization;
+using namespace System::Net;
 
-[STAThread]
 int main([[maybe_unused]] array<String^>^ args)
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+	Injector::autoUpdate();
 	Injector::renameExe();
-
+	
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	R3nzSkinInjector::R3nzUI form;
 
 	auto thread{ std::thread(Injector::run) };
-	Thread^ screenThread{ gcnew Thread(gcnew ThreadStart(% form, &R3nzSkinInjector::R3nzUI::updateScreen)) };
+	auto screenThread{ gcnew Thread(gcnew ThreadStart(%form, &R3nzSkinInjector::R3nzUI::updateScreen)) };
 	screenThread->Start();
 
 	Application::Run(%form);

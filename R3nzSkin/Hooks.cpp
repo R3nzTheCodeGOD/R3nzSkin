@@ -41,7 +41,7 @@ static inline void testFunc() noexcept
 	}
 }
 
-static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+static LRESULT WINAPI wndProc(const HWND window, const UINT msg, const WPARAM wParam, const LPARAM lParam) noexcept
 {
 	if (ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 		return true;
@@ -94,7 +94,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 		}
 	}
 
-	return ::CallWindowProcW(originalWndProc, window, msg, wParam, lParam);
+	return ::CallWindowProc(originalWndProc, window, msg, wParam, lParam);
 }
 
 std::once_flag init_device;
@@ -243,7 +243,7 @@ namespace d3d_vtable {
 		} else
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongPtr(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
 		cheatManager.logger->addLog("WndProc hooked!\n\tOriginal: 0x%X\n\tNew: 0x%X\n", &originalWndProc, &wndProc);
 	}
 
@@ -252,26 +252,6 @@ namespace d3d_vtable {
 		const auto client{ cheatManager.memory->client };
 		if (client && client->game_state == GGameState_s::Running) {
 			cheatManager.hooks->init();
-
-			/* 13.5 reset fix */
-			const auto player{ cheatManager.memory->localPlayer };
-			if (!cheatManager.config->shouldReassignSkin && player->get_health() == player->get_max_health())
-			{
-				if (player)
-				{
-					if (cheatManager.config->current_combo_skin_index > 0)
-					{
-						const auto& values{ cheatManager.database->champions_skins[fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str)] };
-						player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-						cheatManager.config->shouldReassignSkin = true;
-					}
-				}
-			}
-			else
-			{
-				cheatManager.config->shouldReassignSkin = false;
-			}
-
 			if (cheatManager.gui->is_open) {
 				if (is_d3d11)
 					::ImGui_ImplDX11_NewFrame();

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cstddef>
+#include <cstdint>
 
 class AString {
 public:
 	const char* str;
-	std::size_t length;
-	std::size_t capacity;
+	std::int32_t length;
+	std::int32_t capacity;
 };

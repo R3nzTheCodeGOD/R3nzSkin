@@ -26,7 +26,7 @@ void Config::save() noexcept
 	const auto player{ cheatManager.memory->localPlayer };
 	std::error_code ec;
 	std::filesystem::create_directory(this->path, ec);
-	auto out{ std::ofstream(this->path / u8"R3nzSkin")};
+	auto out{ std::ofstream(this->path / u8"R3nzSkin64")};
 
 	if (!out.good())
 		return;
@@ -61,7 +61,7 @@ void Config::save() noexcept
 void Config::load() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
-	auto in{ std::ifstream(this->path / u8"R3nzSkin") };
+	auto in{ std::ifstream(this->path / u8"R3nzSkin64") };
 
 	if (!in.good())
 		return;
@@ -88,17 +88,17 @@ void Config::load() noexcept
 	const auto ally_skins{ config_json.find("current_combo_ally_skin_index") };
 	if (ally_skins != config_json.end())
 		for (const auto& it : ally_skins.value().items())
-			this->current_combo_ally_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
+			this->current_combo_ally_skin_index[std::stoull(it.key())] = it.value().get<std::int32_t>();
 
 	const auto enemy_skins{ config_json.find("current_combo_enemy_skin_index") };
 	if (enemy_skins != config_json.end())
 		for (const auto& it : enemy_skins.value().items())
-			this->current_combo_enemy_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
+			this->current_combo_enemy_skin_index[std::stoull(it.key())] = it.value().get<std::int32_t>();
 
 	const auto jungle_mobs_skins{ config_json.find("current_combo_jungle_mob_skin_index") };
 	if (jungle_mobs_skins != config_json.end())
 		for (const auto& it : jungle_mobs_skins.value().items())
-			this->current_combo_jungle_mob_skin_index[std::stoul(it.key())] = it.value().get<std::int32_t>();
+			this->current_combo_jungle_mob_skin_index[std::stoull(it.key())] = it.value().get<std::int32_t>();
 
 	in.close();
 }
