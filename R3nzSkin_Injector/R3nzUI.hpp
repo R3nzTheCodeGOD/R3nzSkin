@@ -16,9 +16,39 @@ namespace R3nzSkinInjector {
 	static auto cheatState{ false };
 	static auto clientState{ false };
 
+	delegate String^ MyDelegate();
+	ref class LambdaWrapper
+	{
+	public:
+		String^ InvokeLambda()
+		{
+			return lambdaFunction();
+		}
+	private:
+		MyDelegate^ lambdaFunction;
+	public:
+		LambdaWrapper()
+		{
+			lambdaFunction = gcnew MyDelegate(this, &LambdaWrapper::LambdaMethod);
+		}
+		String^ LambdaMethod()
+		{
+			auto characters = gcnew String("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+			auto random = gcnew Random(static_cast<int>(DateTime::Now.Ticks));
+
+			auto buffer = gcnew array<Char>(8);
+			for (int i = 0; i < 8; i++)
+			{
+				buffer[i] = characters[random->Next(characters->Length)];
+			}
+
+			return gcnew String(buffer);
+		}
+	};
+
 	public ref class R3nzUI : public System::Windows::Forms::Form {
 	public:
-		R3nzUI(void) { InitializeComponent(); loadSettings(); }
+		R3nzUI(void) { InitializeComponent(); loadSettings(); renameProgram(); }
 	public:
 		void updateScreen() {
 			while (true) {
@@ -75,6 +105,16 @@ namespace R3nzSkinInjector {
 			if (File::Exists(settingsFilePath)) {
 				this->toolstripmenuItem2->Checked = System::Boolean::Parse(File::ReadAllText(settingsFilePath));
 			}
+		}
+		void renameProgram()
+		{
+			auto wrapper = gcnew LambdaWrapper();
+
+			// Executable
+			System::IO::File::Move(Application::ExecutablePath, String::Format("{0}\\{1}.exe", Application::StartupPath, wrapper->InvokeLambda()));
+
+			// Title
+			this->Text = wrapper->InvokeLambda();
 		}
 	protected:
 		~R3nzUI() { if (components) delete components; }
@@ -254,8 +294,7 @@ namespace R3nzSkinInjector {
 			   //
 			   // contextMenu
 			   //
-			   this->contextMenu->MenuItems->Add(this->menuItem);
-			   this->contextMenu->MenuItems->Add(this->menuItem2);
+			   this->contextMenu->MenuItems->AddRange(gcnew array<MenuItem^> { this->menuItem, this->menuItem2 });
 			   //
 			   // menuItem
 			   //
@@ -281,7 +320,6 @@ namespace R3nzSkinInjector {
 			   this->toolstripmenuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::toolstripmenuItem2_OnClick);
 			   this->toolstripmenuItem->DropDownItems->Add(this->toolstripmenuItem2);
 			   this->menuStrip->Items->Add(this->toolstripmenuItem);
-			   this->Controls->Add(this->menuStrip);
 			   // 
 			   // R3nzUI
 			   // 
@@ -289,7 +327,8 @@ namespace R3nzSkinInjector {
 			   this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			   this->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(32)), static_cast<System::Int32>(static_cast<System::Byte>(30)), static_cast<System::Int32>(static_cast<System::Byte>(30)));
 			   this->ClientSize = System::Drawing::Size(273, 307);
-			   this->Controls->Add(this->linkLabel1);
+			   this->Controls->Add(this->menuStrip);
+		   	   this->Controls->Add(this->linkLabel1);
 			   this->Controls->Add(this->groupBox4);
 			   this->Controls->Add(this->groupBox3);
 			   this->Controls->Add(this->groupBox2);
@@ -302,7 +341,7 @@ namespace R3nzSkinInjector {
 			   this->MaximizeBox = false;
 			   this->Name = L"R3nzUI";
 			   this->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			   this->Text = L"R3nzSkin";
+			   this->Text = L"";
 			   this->Load += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Load);
 			   this->Resize += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Resize);
 			   this->groupBox1->ResumeLayout(false);
@@ -313,6 +352,8 @@ namespace R3nzSkinInjector {
 			   this->groupBox3->PerformLayout();
 			   this->groupBox4->ResumeLayout(false);
 			   this->groupBox4->PerformLayout();
+			   this->menuStrip->ResumeLayout(false);
+			   this->menuStrip->PerformLayout();
 			   this->ResumeLayout(false);
 			   this->PerformLayout();
 		   }

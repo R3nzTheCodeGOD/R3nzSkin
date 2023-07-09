@@ -17,8 +17,6 @@ public:
 	static bool WINAPI isInjected(const std::uint32_t pid) noexcept;
 	static bool WINAPI inject(const std::uint32_t pid) noexcept;
 	static void WINAPI enableDebugPrivilege() noexcept;
-    static std::string randomString(std::uint32_t size) noexcept;
 	static void autoUpdate();
-    static void renameExe() noexcept;
 	static void run() noexcept;
 };
