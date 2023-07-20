@@ -18,7 +18,7 @@ using namespace System::Threading;
 using namespace System::Globalization;
 using namespace System::Net;
 
-proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
+proclist_t WINAPI Injector::findProcesses(const std::wstring& name) noexcept
 {
 	auto process_snap{ LI_FN(CreateToolhelp32Snapshot)(TH32CS_SNAPPROCESS, 0) };
 	proclist_t list;
@@ -47,7 +47,7 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 {
 	auto hProcess{ LI_FN(OpenProcess)(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid) };
 
-	if (NULL == hProcess)
+	if (nullptr == hProcess)
 		return false;
 
 	HMODULE hMods[1024];
@@ -91,7 +91,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 
 	const auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
 
-	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
+	if (const auto f{ std::ifstream(dll_path) }; !f.is_open()) {
 		LI_FN(MessageBoxW)(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
 		LI_FN(CloseHandle)(handle);
 		return false;
@@ -111,7 +111,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	}
 
 	HANDLE thread{};
-	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(LI_FN(GetProcAddress).get()(LI_FN(GetModuleHandleW).get()(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, nullptr, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(LI_FN(GetProcAddress).get()(LI_FN(GetModuleHandleW).get()(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
@@ -131,12 +131,12 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 	HANDLE token{};
 	if (OpenProcessToken(LI_FN(GetCurrentProcess).get()(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
 		LUID value;
-		if (LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
+		if (LookupPrivilegeValueW(nullptr, SE_DEBUG_NAME, &value)) {
 			TOKEN_PRIVILEGES tp{};
 			tp.PrivilegeCount = 1;
 			tp.Privileges[0].Luid = value;
 			tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-			if (AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), NULL, NULL))
+			if (AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), nullptr, nullptr))
 				LI_FN(CloseHandle)(token);
 		}
 	}
@@ -160,6 +160,10 @@ void Injector::autoUpdate()
 			auto version = gcnew String(tagnameMatch[1].str().c_str());
 			if (std::regex_search(json, dateMatch, dateRegex))
 			{
+				if (!System::IO::File::Exists(L"R3nzSkin.dll"))
+				{
+					throw gcnew Exception(L"Failed to find R3nzSkin.dll in the current directory");
+				}
 				auto date_of_github_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy HH:00");
 				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:00");
 				if (date_of_current_release != date_of_github_release)
@@ -205,6 +209,7 @@ void Injector::autoUpdate()
 	catch (Exception^ e)
 	{
 		MessageBox::Show(e->Message, L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		Environment::Exit(0);
 	}
 }
 
