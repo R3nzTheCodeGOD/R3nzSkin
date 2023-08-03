@@ -13,7 +13,7 @@
 
 [[nodiscard]] static std::uint8_t* find_signature(const wchar_t* szModule, const char* szSignature) noexcept
 {
-	const auto module{ ::GetModuleHandle(szModule) };
+	const auto module{ ::GetModuleHandleW(szModule) };
 
 	using bytes_t = std::vector<std::int32_t>;
 
@@ -48,24 +48,24 @@
 	const auto s{ patternBytes.size() };
 	const auto d{ patternBytes.data() };
 
-	MEMORY_BASIC_INFORMATION mbi{ 0 };
-	std::uint8_t* next_check_address{ 0 };
+	MEMORY_BASIC_INFORMATION mbi{ nullptr };
+	const std::uint8_t* next_check_address{ nullptr };
 
 	for (auto i{ 0ul }; i < sizeOfImage - s; ++i) {
 		bool found{ true };
 		for (auto j{ 0ul }; j < s; ++j) {
 			const auto current_address{ scanBytes + i + j };
 			if (current_address >= next_check_address) {
-				if (!::VirtualQuery(reinterpret_cast<void*>(current_address), &mbi, sizeof(mbi)))
+				if (!::VirtualQuery(current_address, &mbi, sizeof(mbi)))
 					break;
 
 				if (mbi.Protect == PAGE_NOACCESS) {
-					i += ((std::uintptr_t(mbi.BaseAddress) + mbi.RegionSize) - (std::uintptr_t(scanBytes) + i));
+					i += reinterpret_cast<std::uintptr_t>(mbi.BaseAddress) + mbi.RegionSize - (reinterpret_cast<std::uintptr_t>(scanBytes) + i);
 					i--;
 					found = false;
 					break;
 				} else {
-					next_check_address = reinterpret_cast<std::uint8_t*>(mbi.BaseAddress) + mbi.RegionSize;
+					next_check_address = static_cast<std::uint8_t*>(mbi.BaseAddress) + mbi.RegionSize;
 				}
 			}
 
@@ -129,7 +129,7 @@ void Memory::Search(bool gameClient)
 					}
 
 					if (sig.read)
-						address = *reinterpret_cast<std::uint8_t**>(address + (pattern.find_first_of("?") / 3));
+						address = *reinterpret_cast<std::uint8_t**>(address + (pattern.find_first_of('?') / 3));
 					else if (sig.relative)
 						address = address + *reinterpret_cast<std::uint32_t*>(address + 3) + 7;
 					else if (address[0] == 0xE8)

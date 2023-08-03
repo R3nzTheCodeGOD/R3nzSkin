@@ -168,8 +168,8 @@ void Injector::autoUpdate()
 				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:00");
 				if (date_of_current_release != date_of_github_release)
 				{
-					auto date_of_github_release_class = DateTime::Parse(date_of_github_release);
-					auto date_of_current_release_class = DateTime::Parse(date_of_current_release);
+					auto date_of_github_release_class = DateTime::ParseExact(date_of_github_release, L"dd.MM.yyyy HH:00", CultureInfo::InvariantCulture);
+					auto date_of_current_release_class = DateTime::ParseExact(date_of_current_release, L"dd.MM.yyyy HH:00", CultureInfo::InvariantCulture);
 					if (date_of_current_release_class > date_of_github_release_class)
 					{
 						return;

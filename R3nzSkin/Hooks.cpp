@@ -55,12 +55,11 @@ static LRESULT WINAPI wndProc(const HWND window, const UINT msg, const WPARAM wP
 			const auto player{ cheatManager.memory->localPlayer };
 			if (const auto player{ cheatManager.memory->localPlayer }; (::GetAsyncKeyState(VK_LCONTROL) & 0x8000) && player) {
 				const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
-				if (const auto it{ std::find_if(cheatManager.database->specialSkins.begin(), cheatManager.database->specialSkins.end(),
-					[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
-					{
+				if (const auto it{ std::ranges::find_if(cheatManager.database->specialSkins,
+				    [&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
+				    {
 						return x.champHash == ph && (x.skinIdStart <= skin && x.skinIdEnd >= skin);
-					}) };
-					it != cheatManager.database->specialSkins.end())
+				    })}; it != cheatManager.database->specialSkins.end())
 				{
 					const auto stack{ player->get_character_data_stack() };
 					if (stack->base_skin.gear < static_cast<std::int8_t>(it->gears.size()) - 1)
@@ -127,7 +126,7 @@ namespace d3d_vtable {
 		p_swap_chain->GetBuffer(0u, IID_PPV_ARGS(&back_buffer));
 
 		if (back_buffer) {
-			d3d11_device->CreateRenderTargetView(back_buffer, NULL, &main_render_target_view);
+			d3d11_device->CreateRenderTargetView(back_buffer, nullptr, &main_render_target_view);
 			back_buffer->Release();
 		}
 	}
@@ -162,7 +161,7 @@ namespace d3d_vtable {
 		style.AntiAliasedFill = true;
 		style.AntiAliasedLines = true;
 
-		auto colors{ style.Colors };
+		const auto colors{ style.Colors };
 
 		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
@@ -234,16 +233,16 @@ namespace d3d_vtable {
 		ImGui_ImplWin32_Init(cheatManager.memory->window);
 
 		if (is_d3d11) {
-			p_swap_chain = reinterpret_cast<IDXGISwapChain*>(device);
+			p_swap_chain = static_cast<IDXGISwapChain*>(device);
 			p_swap_chain->GetDevice(__uuidof(d3d11_device), reinterpret_cast<void**>(&(d3d11_device)));
 			d3d11_device->GetImmediateContext(&d3d11_device_context);
 			create_render_target();
 			::ImGui_ImplDX11_Init(d3d11_device, d3d11_device_context);
 			::ImGui_ImplDX11_CreateDeviceObjects();
 		} else
-			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
+			::ImGui_ImplDX9_Init(static_cast<IDirect3DDevice9*>(device));
 
-		originalWndProc = WNDPROC(::SetWindowLongPtr(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		originalWndProc = WNDPROC(::SetWindowLongPtr(cheatManager.memory->window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&wndProc)));
 		cheatManager.logger->addLog("WndProc hooked!\n\tOriginal: 0x%X\n\tNew: 0x%X\n", &originalWndProc, &wndProc);
 	}
 
@@ -264,11 +263,11 @@ namespace d3d_vtable {
 				ImGui::Render();
 
 				if (is_d3d11) {
-					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, NULL);
+					d3d11_device_context->OMSetRenderTargets(1, &main_render_target_view, nullptr);
 					::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 				} else {
 					unsigned long colorwrite, srgbwrite;
-					const auto dvc{ reinterpret_cast<IDirect3DDevice9*>(device) };
+					const auto dvc{ static_cast<IDirect3DDevice9*>(device) };
 					dvc->GetRenderState(D3DRS_COLORWRITEENABLE, &colorwrite);
 					dvc->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
 					dvc->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
@@ -391,7 +390,7 @@ void Hooks::init() noexcept
 	});
 
 	for (auto i{ 0u }; i < heroes->length; ++i) {
-		if (const auto hero{ heroes->list[i] }; hero->get_character_data_stack()->stack.size() > 0) {
+		if (const auto hero{ heroes->list[i] }; !hero->get_character_data_stack()->stack.empty()) {
 			// Viego transforms into another champion as 2nd form, our own skin's id may not match for every champion. (same problem exists in sylas) 
 			if (const auto championName{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) }; championName == FNV("Viego") || championName == FNV("Sylas"))
 				continue;
@@ -459,7 +458,7 @@ void Hooks::install() noexcept
 
 void Hooks::uninstall() noexcept
 {
-	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(originalWndProc));
+	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWndProc));
 
 	if (d3d_device_vmt)
 		d3d_device_vmt->unhook();

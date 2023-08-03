@@ -14,7 +14,7 @@ void SkinDatabase::load() noexcept
 	for (const auto& champion : cheatManager.memory->championManager->champions) {
 		std::vector<std::int32_t> skins_ids;
 		
-		for (auto i{ 0u }; i < champion->skins.size; ++i)
+		for (auto i{ 0 }; i < champion->skins.size; ++i)
 			skins_ids.push_back(champion->skins.list[i].skin_id);
 		
 		std::ranges::sort(skins_ids);
@@ -61,6 +61,6 @@ void SkinDatabase::load() noexcept
 		if (ward_display_name == ward_display_name_translated)
 			break;
 
-		this->wards_skins.push_back({ ward_skin_id, ward_display_name_translated });
+		this->wards_skins.emplace_back(ward_skin_id, ward_display_name_translated);
 	}
 }

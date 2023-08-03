@@ -127,7 +127,7 @@ static constexpr auto keyMap = std::to_array<Key>({
 static_assert(keyMap.size() == KeyBind::MAX);
 static_assert(std::ranges::is_sorted(keyMap, {}, &Key::name));
 
-KeyBind::KeyBind(KeyCode keyCode) noexcept : keyCode{ static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE } {  }
+KeyBind::KeyBind(const KeyCode keyCode) noexcept : keyCode{ static_cast<std::size_t>(keyCode) < keyMap.size() ? keyCode : KeyCode::NONE } {  }
 
 KeyBind::KeyBind(const char* keyName) noexcept
 {
@@ -196,7 +196,7 @@ bool KeyBind::setToPressedKey() noexcept
 
     for (auto i{ 0u }; i < IM_ARRAYSIZE(ImGui::GetIO().MouseDown); ++i) {
         if (ImGui::IsMouseClicked(i)) {
-            keyCode = KeyCode(KeyCode::MOUSE1 + i);
+            keyCode = static_cast<KeyCode>(KeyCode::MOUSE1 + i);
             return true;
         }
     }
