@@ -144,21 +144,22 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 
 void Injector::autoUpdate()
 {
-	WebClient^ client = gcnew WebClient();
+	auto client = gcnew WebClient();
+	ServicePointManager::Expect100Continue = true;
+	ServicePointManager::SecurityProtocol = SecurityProtocolType::Tls12;
 	client->Headers->Add(L"User-Agent", L"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0");
 
 	try
 	{
-		std::string json = msclr::interop::marshal_as<std::string>(client->DownloadString(L"https://api.github.com/repos/R3nzTheCodeGOD/R3nzSkin/releases/latest"));
+		auto json = msclr::interop::marshal_as<std::string>(client->DownloadString(L"https://api.github.com/repos/R3nzTheCodeGOD/R3nzSkin/releases/latest"));
 		std::regex tagnameRegex("\"tag_name\"\\s*:\\s*\"([^\"]+)");
 		std::regex urlRegex("\"browser_download_url\"\\s*:\\s*\"([^\"]+)");
 		std::regex dateRegex("\"created_at\"\\s*:\\s*\"([^\"]+)");
 
-		std::smatch tagnameMatch, urlMatch, dateMatch;
-		if (std::regex_search(json, tagnameMatch, tagnameRegex))
+		if (std::smatch tagnameMatch; std::regex_search(json, tagnameMatch, tagnameRegex))
 		{
 			auto version = gcnew String(tagnameMatch[1].str().c_str());
-			if (std::regex_search(json, dateMatch, dateRegex))
+			if (std::smatch dateMatch; std::regex_search(json, dateMatch, dateRegex))
 			{
 				if (!System::IO::File::Exists(L"R3nzSkin.dll"))
 				{
@@ -178,7 +179,7 @@ void Injector::autoUpdate()
 					auto result = MessageBox::Show(L"New version is available on GitHub\nWould you like to download it now?", L"R3nzSkin", MessageBoxButtons::YesNo, MessageBoxIcon::Information);
 					if (result == DialogResult::Yes)
 					{
-						if (std::regex_search(json, urlMatch, urlRegex))
+						if (std::smatch urlMatch; std::regex_search(json, urlMatch, urlRegex))
 						{
 							auto url = gcnew String(urlMatch[1].str().c_str());
 							auto file = String::Format(L"R3nzSkin_{0}.zip", version);
@@ -208,7 +209,7 @@ void Injector::autoUpdate()
 	}
 	catch (Exception^ e)
 	{
-		MessageBox::Show(e->Message, L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		MessageBox::Show(String::Format(L"{0} - {1}", e->Message, e->StackTrace->Substring(5)), L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		Environment::Exit(0);
 	}
 }
