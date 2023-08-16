@@ -82,7 +82,7 @@ private:
 		},
 		{
 			{
-				"48 89 0D ? ? ? ? 33 C9 48 8D 05 ? ? ? ? 4C 8D 05"
+				"48 89 0D ? ? ? ? 33 C9 C7 44 24 ? ? ? ? ?"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AITurret_
 		},
 		{
