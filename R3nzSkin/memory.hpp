@@ -82,12 +82,12 @@ private:
 		},
 		{
 			{
-				"48 89 0D ? ? ? ? 33 C9 C7 44 24 ? ? ? ? ?"
+				"48 8B 35 ? ? ? ? 4C 8D 44 24 ? 48 8B CE"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AITurret_
 		},
 		{
 			{
-				"48 8B 0D ? ? ? ? FF 15 ? ? ? ? E8 ? ? ? ? 84 C0"
+				"48 8B 0D ? ? ? ? FF 15 ? ? ? ? 48 8B 05 ? ? ? ? 39 98 ? ? ? ?"
 			}, true, false, true, 0, &offsets::global::Riot__g_window
 		},
 		{
@@ -122,7 +122,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 8B 57 54"
+				"E8 ? ? ? ? 8B 57 44"
 			}, true, false, false, 0, &offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
 		},
 		{
