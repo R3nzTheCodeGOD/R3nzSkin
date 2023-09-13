@@ -72,7 +72,7 @@ private:
 		},
 		{
 			{
-				"48 8B 0D ? ? ? ? 48 69 D0 ? ? 00 00 48 8B 05"
+				"48 8B 35 ? ? ? ? 41 8B DF"
 			}, true, false, true, 0, &offsets::global::ChampionManager
 		},
 		{
@@ -82,12 +82,12 @@ private:
 		},
 		{
 			{
-				"48 89 0D ? ? ? ? 33 C9 C7 44 24 ? ? ? ? ?"
+				"48 89 0D ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 33 D2 48 89 01 48 8D 05"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AITurret_
 		},
 		{
 			{
-				"48 8B 0D ? ? ? ? FF 15 ? ? ? ? E8 ? ? ? ? 84 C0"
+				"48 8B 0D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 48 8B 05"
 			}, true, false, true, 0, &offsets::global::Riot__g_window
 		},
 		{
@@ -122,7 +122,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 8B 57 54"
+				"E8 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ?? 48 8B 08 4C 8B 81 C8 01 00 00 48 8B C8 41 FF D0 48 8B 7C 24 48"
 			}, true, false, false, 0, &offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
 		},
 		{
