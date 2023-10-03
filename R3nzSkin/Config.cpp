@@ -11,28 +11,30 @@
 #include "Memory.hpp"
 #include "Utils.hpp"
 
+constexpr auto filename = u8"R3nzSkin64";
+
 void Config::init() noexcept
 {
-	if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
-		this->path = pathToDocuments;
-		CoTaskMemFree(pathToDocuments);
-	}
+    if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
+        this->path = pathToDocuments;
+        CoTaskMemFree(pathToDocuments);
+    }
 
-	this->path /= "R3nzSkin";
+    this->path /= "R3nzSkin";
 }
+
 
 void Config::save() noexcept
 {
-	const auto player{ cheatManager.memory->localPlayer };
-	std::error_code ec;
-	std::filesystem::create_directory(this->path, ec);
-	auto out{ std::ofstream(this->path / u8"R3nzSkin64")};
+    const auto player{ cheatManager.memory->localPlayer };
+    std::filesystem::create_directory(this->path, std::error_code{}); // ignore error code
+    auto out{ std::ofstream(this->path / filename)};
 
-	if (!out.good())
-		return;
+    if (!out)
+        return;
 
-	if (player)
-		config_json[std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index"] = this->current_combo_skin_index;
+    if (player)
+        config_json[std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index"] = this->current_combo_skin_index;
 
 	config_json["menuKey"] = this->menuKey.toString();
 	config_json["nextSkinKey"] = this->nextSkinKey.toString();
@@ -54,22 +56,22 @@ void Config::save() noexcept
 	for (const auto& [fst, snd] : this->current_combo_jungle_mob_skin_index)
 		config_json["current_combo_jungle_mob_skin_index"][std::to_string(fst)] = snd;
 
-	out << config_json.dump();
+	out << config_json.dump(4); // pretty print JSON
 	out.close();
 }
 
 void Config::load() noexcept
 {
-	const auto player{ cheatManager.memory->localPlayer };
-	auto in{ std::ifstream(this->path / u8"R3nzSkin64") };
+    const auto player{ cheatManager.memory->localPlayer };
+    auto in{ std::ifstream(this->path / filename) };
 
-	if (!in.good())
-		return;
+    if (!in)
+        return;
 
-	if (json j{ json::parse(in, nullptr, false, true) }; j.is_discarded())
-		return;
-	else
-		config_json = j;
+    if (json j{ json::parse(in, nullptr, false, true) }; j.is_discarded())
+        return;
+    else
+        config_json = j;
 
 	if (player)
 		this->current_combo_skin_index = config_json.value(std::string(player->get_character_data_stack()->base_skin.model.str) + ".current_combo_skin_index", 0);
