@@ -7,7 +7,6 @@
 
 #include "R3nzUI.hpp"
 #include "Injector.hpp"
-#include "lazy_importer.hpp"
 
 using namespace System;
 using namespace System::Windows::Forms;

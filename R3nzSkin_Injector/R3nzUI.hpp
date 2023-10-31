@@ -1,5 +1,7 @@
 #pragma once
 
+#include "xorstr.hpp"
+
 namespace R3nzSkinInjector {
 
 	using namespace System;
@@ -17,7 +19,7 @@ namespace R3nzSkinInjector {
 	static auto clientState{ false };
 
 	delegate String^ MyDelegate();
-	ref class LambdaWrapper
+	ref class LambdaWrapper sealed
 	{
 	public:
 		String^ InvokeLambda()
@@ -46,43 +48,50 @@ namespace R3nzSkinInjector {
 		}
 	};
 
-	public ref class R3nzUI : public System::Windows::Forms::Form {
+	public ref class R3nzUI sealed : public Form
+	{
 	public:
-		R3nzUI(void) { InitializeComponent(); loadSettings(); renameProgram(); }
-	public:
-		void updateScreen() {
+		R3nzUI()
+		{
+			InitializeComponent(); loadSettings(); renameProgram();
+		}
+
+		void updateScreen()
+		{
 			while (true) {
 				if (clientState) {
-					this->label4->Text = L"Found";
-					this->label4->ForeColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
+					this->clientStatusLabel->Text = L"Found";
+					this->clientStatusLabel->ForeColor = Color::FromArgb(255, 252, 220, 107);
 				}
 				else {
-					this->label4->Text = L"Not Found";
-					this->label4->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
+					this->clientStatusLabel->Text = L"Not Found";
+					this->clientStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
 				}
 
 				if (gameState) {
-					this->label3->Text = L"Found";
-					this->label3->ForeColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
+					this->gameStatusLabel->Text = L"Found";
+					this->gameStatusLabel->ForeColor = Color::FromArgb(255, 252, 220, 107);
 					if (cheatState) {
-						this->label2->Text = L"Injected";
-						this->label2->ForeColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
+						this->dllStatusLabel->Text = L"Injected";
+						this->dllStatusLabel->ForeColor = Color::FromArgb(255, 252, 220, 107);
 					}
 					else {
-						this->label2->Text = L"Not Injected";
-						this->label2->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
+						this->dllStatusLabel->Text = L"Not Injected";
+						this->dllStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
 					}
 				}
 				else {
-					this->label3->Text = L"Not Found";
-					this->label3->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
-					this->label2->Text = L"Not Injected";
-					this->label2->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
+					this->gameStatusLabel->Text = L"Not Found";
+					this->gameStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
+					this->dllStatusLabel->Text = L"Not Injected";
+					this->dllStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
 				}
 				Thread::Sleep(1000);
 			}
 		}
-		void saveSettings() {
+
+		void saveSettings()
+		{
 			auto appDataPath = Environment::GetFolderPath(Environment::SpecialFolder::MyDocuments);
 			auto settingsFolder = Path::Combine(appDataPath, L"R3nzSkin");
 			auto settingsFilePath = Path::Combine(settingsFolder, L"R3nzSkinInjector");
@@ -91,9 +100,11 @@ namespace R3nzSkinInjector {
 				Directory::CreateDirectory(settingsFolder);
 			}
 			
-			File::WriteAllText(settingsFilePath, System::Convert::ToString(this->toolstripmenuItem2->Checked));
+			File::WriteAllText(settingsFilePath, Convert::ToString(this->toolstripmenuItem2->Checked));
 		}
-		void loadSettings() {
+
+		void loadSettings()
+		{
 			auto appDataPath = Environment::GetFolderPath(Environment::SpecialFolder::MyDocuments);
 			auto settingsFolder = Path::Combine(appDataPath, L"R3nzSkin");
 			auto settingsFilePath = Path::Combine(settingsFolder, L"R3nzSkinInjector");
@@ -103,194 +114,196 @@ namespace R3nzSkinInjector {
 			}
 
 			if (File::Exists(settingsFilePath)) {
-				this->toolstripmenuItem2->Checked = System::Boolean::Parse(File::ReadAllText(settingsFilePath));
+				this->toolstripmenuItem2->Checked = Boolean::Parse(File::ReadAllText(settingsFilePath));
 			}
 		}
+
 		void renameProgram()
 		{
 			auto wrapper = gcnew LambdaWrapper();
 
 			// Executable
-			System::IO::File::Move(Application::ExecutablePath, String::Format("{0}\\{1}.exe", Application::StartupPath, wrapper->InvokeLambda()));
+			File::Move(Application::ExecutablePath, String::Format("{0}\\{1}.exe", Application::StartupPath, wrapper->InvokeLambda()));
 
 			// Title
 			this->Text = wrapper->InvokeLambda();
 		}
 	protected:
 		~R3nzUI() { if (components) delete components; }
-	private: System::Windows::Forms::Button^ button1;
-	private: System::Windows::Forms::Label^ label1;
-	private: System::Windows::Forms::Label^ label2;
-	private: System::Windows::Forms::Label^ label3;
-	private: System::Windows::Forms::GroupBox^ groupBox1;
-	private: System::Windows::Forms::GroupBox^ groupBox2;
-	private: System::Windows::Forms::Label^ label4;
-	private: System::Windows::Forms::GroupBox^ groupBox3;
-	private: System::Windows::Forms::GroupBox^ groupBox4;
-	private: System::Windows::Forms::LinkLabel^ linkLabel1;
-	private: System::ComponentModel::Container^ components;
-	private: System::Windows::Forms::NotifyIcon^ notifyIcon;
-	private: System::Windows::Forms::ContextMenu^ contextMenu;
-	private: System::Windows::Forms::MenuItem^ menuItem;
-	private: System::Windows::Forms::MenuItem^ menuItem2;
-	private: System::Windows::Forms::MenuStrip^ menuStrip;
-	private: System::Windows::Forms::ToolStripMenuItem^ toolstripmenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^ toolstripmenuItem2;
+	private:
+		Button^ startButton;
+		Label^ injectorStatusLabel;
+		Label^ dllStatusLabel;
+		Label^ gameStatusLabel;
+		Label^ clientStatusLabel;
+		GroupBox^ injectorStatusGroupBox;
+		GroupBox^ leagueClientStatusGroupBox;
+		GroupBox^ leagueGameStatusGroupBox;
+		GroupBox^ dllStatusGroupBox;
+		LinkLabel^ copyrightLabel;
+		System::ComponentModel::Container^ components;
+		NotifyIcon^ notifyIcon;
+		Windows::Forms::ContextMenu^ contextMenu;
+		MenuItem^ menuItem;
+		MenuItem^ menuItem2;
+		MenuStrip^ menuStrip;
+		ToolStripMenuItem^ toolstripmenuItem;
+		ToolStripMenuItem^ toolstripmenuItem2;
 #pragma region Windows Form Designer generated code
-		   void InitializeComponent(void)
+		   void InitializeComponent()
 		   {
-			   auto resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
-			   this->button1 = (gcnew System::Windows::Forms::Button());
-			   this->label1 = (gcnew System::Windows::Forms::Label());
-			   this->label2 = (gcnew System::Windows::Forms::Label());
-			   this->label3 = (gcnew System::Windows::Forms::Label());
-			   this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			   this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			   this->label4 = (gcnew System::Windows::Forms::Label());
-			   this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
-			   this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
-			   this->linkLabel1 = (gcnew System::Windows::Forms::LinkLabel());
-			   this->notifyIcon = (gcnew System::Windows::Forms::NotifyIcon());
-			   this->contextMenu = (gcnew System::Windows::Forms::ContextMenu());
-			   this->menuItem = (gcnew System::Windows::Forms::MenuItem());
-			   this->menuItem2 = (gcnew System::Windows::Forms::MenuItem());
-			   this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
-			   this->toolstripmenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			   this->toolstripmenuItem2 = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			   this->groupBox1->SuspendLayout();
-			   this->groupBox2->SuspendLayout();
-			   this->groupBox3->SuspendLayout();
-			   this->groupBox4->SuspendLayout();
+			   auto resources = gcnew ComponentResourceManager(R3nzUI::typeid);
+			   this->startButton = gcnew Button();
+			   this->injectorStatusLabel = gcnew Label();
+			   this->dllStatusLabel = gcnew Label();
+			   this->gameStatusLabel = gcnew Label();
+			   this->injectorStatusGroupBox = gcnew GroupBox();
+			   this->leagueClientStatusGroupBox = gcnew GroupBox();
+			   this->clientStatusLabel = gcnew Label();
+			   this->leagueGameStatusGroupBox = gcnew GroupBox();
+			   this->dllStatusGroupBox = gcnew GroupBox();
+			   this->copyrightLabel = gcnew LinkLabel();
+			   this->notifyIcon = gcnew NotifyIcon();
+			   this->contextMenu = gcnew Windows::Forms::ContextMenu();
+			   this->menuItem = gcnew MenuItem();
+			   this->menuItem2 = gcnew MenuItem();
+			   this->menuStrip = gcnew MenuStrip();
+			   this->toolstripmenuItem = gcnew ToolStripMenuItem();
+			   this->toolstripmenuItem2 = gcnew ToolStripMenuItem();
+			   this->injectorStatusGroupBox->SuspendLayout();
+			   this->leagueClientStatusGroupBox->SuspendLayout();
+			   this->leagueGameStatusGroupBox->SuspendLayout();
+			   this->dllStatusGroupBox->SuspendLayout();
 			   this->SuspendLayout();
 			   // 
-			   // button1
+			   // startButton
 			   // 
-			   this->button1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->button1->Cursor = System::Windows::Forms::Cursors::Hand;
-			   this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->button1->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->button1->Location = System::Drawing::Point(12, 28);
-			   this->button1->Name = L"button1";
-			   this->button1->Size = System::Drawing::Size(250, 50);
-			   this->button1->TabIndex = 0;
-			   this->button1->Text = L"Start";
-			   this->button1->UseVisualStyleBackColor = false;
-			   this->button1->Click += gcnew System::EventHandler(this, &R3nzUI::button1_Click);
+			   this->startButton->BackColor = Color::FromArgb(245, 8, 83);
+			   this->startButton->Cursor = Cursors::Hand;
+			   this->startButton->FlatStyle = FlatStyle::Flat;
+			   this->startButton->Font = gcnew Drawing::Font(L"Arial", 12, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->startButton->Location = Point(12, 28);
+			   this->startButton->Name = L"startButton";
+			   this->startButton->Size = Drawing::Size(250, 50);
+			   this->startButton->TabIndex = 0;
+			   this->startButton->Text = L"Start";
+			   this->startButton->UseVisualStyleBackColor = false;
+			   this->startButton->Click += gcnew EventHandler(this, &R3nzUI::startButton_Click);
 			   // 
-			   // label1
+			   // injectorStatusLabel
 			   // 
-			   this->label1->AutoSize = true;
-			   this->label1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label1->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->label1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label1->Location = System::Drawing::Point(6, 16);
-			   this->label1->Name = L"label1";
-			   this->label1->Size = System::Drawing::Size(68, 18);
-			   this->label1->TabIndex = 1;
-			   this->label1->Text = L"Stopped";
+			   this->injectorStatusLabel->AutoSize = true;
+			   this->injectorStatusLabel->FlatStyle = FlatStyle::Flat;
+			   this->injectorStatusLabel->Font = gcnew Drawing::Font(L"Arial", 11.25F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->injectorStatusLabel->ForeColor = Color::FromArgb(245, 8, 83);
+			   this->injectorStatusLabel->Location = Point(6, 16);
+			   this->injectorStatusLabel->Name = L"injectorStatusLabel";
+			   this->injectorStatusLabel->Size = Drawing::Size(68, 18);
+			   this->injectorStatusLabel->TabIndex = 1;
+			   this->injectorStatusLabel->Text = L"Stopped";
 			   // 
-			   // label2
+			   // dllStatusLabel
 			   // 
-			   this->label2->AutoSize = true;
-			   this->label2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label2->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->label2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label2->Location = System::Drawing::Point(6, 16);
-			   this->label2->Name = L"label2";
-			   this->label2->Size = System::Drawing::Size(94, 18);
-			   this->label2->TabIndex = 2;
-			   this->label2->Text = L"Not Injected";
+			   this->dllStatusLabel->AutoSize = true;
+			   this->dllStatusLabel->FlatStyle = FlatStyle::Flat;
+			   this->dllStatusLabel->Font = gcnew Drawing::Font(L"Arial", 11.25F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->dllStatusLabel->ForeColor = Color::FromArgb(245, 8, 83);
+			   this->dllStatusLabel->Location = Point(6, 16);
+			   this->dllStatusLabel->Name = L"dllStatusLabel";
+			   this->dllStatusLabel->Size = Drawing::Size(94, 18);
+			   this->dllStatusLabel->TabIndex = 2;
+			   this->dllStatusLabel->Text = L"Not Injected";
 			   // 
-			   // label3
+			   // gameStatusLabel
 			   // 
-			   this->label3->AutoSize = true;
-			   this->label3->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label3->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->label3->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label3->Location = System::Drawing::Point(6, 16);
-			   this->label3->Name = L"label3";
-			   this->label3->Size = System::Drawing::Size(82, 18);
-			   this->label3->TabIndex = 3;
-			   this->label3->Text = L"Not Found";
+			   this->gameStatusLabel->AutoSize = true;
+			   this->gameStatusLabel->FlatStyle = FlatStyle::Flat;
+			   this->gameStatusLabel->Font = gcnew Drawing::Font(L"Arial", 11.25F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->gameStatusLabel->ForeColor = Color::FromArgb(245, 8, 83);
+			   this->gameStatusLabel->Location = Point(6, 16);
+			   this->gameStatusLabel->Name = L"gameStatusLabel";
+			   this->gameStatusLabel->Size = Drawing::Size(82, 18);
+			   this->gameStatusLabel->TabIndex = 3;
+			   this->gameStatusLabel->Text = L"Not Found";
 			   // 
-			   // groupBox1
+			   // gameStatusLabel
 			   // 
-			   this->groupBox1->Controls->Add(this->label1);
-			   this->groupBox1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox1->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->groupBox1->ForeColor = System::Drawing::Color::White;
-			   this->groupBox1->Location = System::Drawing::Point(12, 79);
-			   this->groupBox1->Name = L"groupBox1";
-			   this->groupBox1->Size = System::Drawing::Size(250, 45);
-			   this->groupBox1->TabIndex = 5;
-			   this->groupBox1->TabStop = false;
-			   this->groupBox1->Text = L"Injector Status";
+			   this->injectorStatusGroupBox->Controls->Add(this->injectorStatusLabel);
+			   this->injectorStatusGroupBox->FlatStyle = FlatStyle::Flat;
+			   this->injectorStatusGroupBox->Font = gcnew Drawing::Font(L"Arial", 6.75F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->injectorStatusGroupBox->ForeColor = Color::White;
+			   this->injectorStatusGroupBox->Location = Point(12, 79);
+			   this->injectorStatusGroupBox->Name = L"gameStatusLabel";
+			   this->injectorStatusGroupBox->Size = Drawing::Size(250, 45);
+			   this->injectorStatusGroupBox->TabIndex = 5;
+			   this->injectorStatusGroupBox->TabStop = false;
+			   this->injectorStatusGroupBox->Text = L"Injector Status";
 			   // 
-			   // groupBox2
+			   // leagueClientStatusGroupBox
 			   // 
-			   this->groupBox2->Controls->Add(this->label4);
-			   this->groupBox2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox2->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->groupBox2->ForeColor = System::Drawing::Color::White;
-			   this->groupBox2->Location = System::Drawing::Point(12, 130);
-			   this->groupBox2->Name = L"groupBox2";
-			   this->groupBox2->Size = System::Drawing::Size(250, 45);
-			   this->groupBox2->TabIndex = 7;
-			   this->groupBox2->TabStop = false;
-			   this->groupBox2->Text = L"LeagueClient Status";
+			   this->leagueClientStatusGroupBox->Controls->Add(this->clientStatusLabel);
+			   this->leagueClientStatusGroupBox->FlatStyle = FlatStyle::Flat;
+			   this->leagueClientStatusGroupBox->Font = gcnew Drawing::Font(L"Arial", 6.75F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->leagueClientStatusGroupBox->ForeColor = Color::White;
+			   this->leagueClientStatusGroupBox->Location = Point(12, 130);
+			   this->leagueClientStatusGroupBox->Name = L"leagueClientStatusGroupBox";
+			   this->leagueClientStatusGroupBox->Size = Drawing::Size(250, 45);
+			   this->leagueClientStatusGroupBox->TabIndex = 7;
+			   this->leagueClientStatusGroupBox->TabStop = false;
+			   this->leagueClientStatusGroupBox->Text = L"LeagueClient Status";
 			   // 
-			   // label4
+		   	   // leagueGameStatusGroupBox
+		   	   // 
+			   this->leagueGameStatusGroupBox->Controls->Add(this->gameStatusLabel);
+			   this->leagueGameStatusGroupBox->FlatStyle = FlatStyle::Flat;
+			   this->leagueGameStatusGroupBox->Font = gcnew Drawing::Font(L"Arial", 6.75F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->leagueGameStatusGroupBox->ForeColor = Color::White;
+			   this->leagueGameStatusGroupBox->Location = Point(12, 181);
+			   this->leagueGameStatusGroupBox->Name = L"leagueGameStatusGroupBox";
+			   this->leagueGameStatusGroupBox->Size = Drawing::Size(250, 45);
+			   this->leagueGameStatusGroupBox->TabIndex = 8;
+			   this->leagueGameStatusGroupBox->TabStop = false;
+			   this->leagueGameStatusGroupBox->Text = L"LeagueGame Status";
 			   // 
-			   this->label4->AutoSize = true;
-			   this->label4->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->label4->Font = (gcnew System::Drawing::Font(L"Arial", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->label4->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(245)), static_cast<System::Int32>(static_cast<System::Byte>(8)), static_cast<System::Int32>(static_cast<System::Byte>(83)));
-			   this->label4->Location = System::Drawing::Point(6, 16);
-			   this->label4->Name = L"label4";
-			   this->label4->Size = System::Drawing::Size(82, 18);
-			   this->label4->TabIndex = 0;
-			   this->label4->Text = L"Not Found";
+		   	   // dllStatusGroupBox
+		   	   // 
+			   this->dllStatusGroupBox->Controls->Add(this->dllStatusLabel);
+			   this->dllStatusGroupBox->FlatStyle = FlatStyle::Flat;
+			   this->dllStatusGroupBox->Font = gcnew Drawing::Font(L"Arial", 6.75F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->dllStatusGroupBox->ForeColor = Color::White;
+			   this->dllStatusGroupBox->Location = Point(12, 232);
+			   this->dllStatusGroupBox->Name = L"dllStatusGroupBox";
+			   this->dllStatusGroupBox->Size = Drawing::Size(250, 45);
+			   this->dllStatusGroupBox->TabIndex = 9;
+			   this->dllStatusGroupBox->TabStop = false;
+			   this->dllStatusGroupBox->Text = L"R3nzSkin Status";
 			   // 
-			   // groupBox3
+			   // clientStatusLabel
 			   // 
-			   this->groupBox3->Controls->Add(this->label3);
-			   this->groupBox3->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox3->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->groupBox3->ForeColor = System::Drawing::Color::White;
-			   this->groupBox3->Location = System::Drawing::Point(12, 181);
-			   this->groupBox3->Name = L"groupBox3";
-			   this->groupBox3->Size = System::Drawing::Size(250, 45);
-			   this->groupBox3->TabIndex = 8;
-			   this->groupBox3->TabStop = false;
-			   this->groupBox3->Text = L"LeagueGame Status";
+			   this->clientStatusLabel->AutoSize = true;
+			   this->clientStatusLabel->FlatStyle = FlatStyle::Flat;
+			   this->clientStatusLabel->Font = gcnew Drawing::Font(L"Arial", 11.25F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->clientStatusLabel->ForeColor = Color::FromArgb(245, 8, 83);
+			   this->clientStatusLabel->Location = Point(6, 16);
+			   this->clientStatusLabel->Name = L"clientStatusLabel";
+			   this->clientStatusLabel->Size = Drawing::Size(82, 18);
+			   this->clientStatusLabel->TabIndex = 0;
+			   this->clientStatusLabel->Text = L"Not Found";
 			   // 
-			   // groupBox4
+			   // copyrightLabel
 			   // 
-			   this->groupBox4->Controls->Add(this->label2);
-			   this->groupBox4->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			   this->groupBox4->Font = (gcnew System::Drawing::Font(L"Arial", 6.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->groupBox4->ForeColor = System::Drawing::Color::White;
-			   this->groupBox4->Location = System::Drawing::Point(12, 232);
-			   this->groupBox4->Name = L"groupBox4";
-			   this->groupBox4->Size = System::Drawing::Size(250, 45);
-			   this->groupBox4->TabIndex = 9;
-			   this->groupBox4->TabStop = false;
-			   this->groupBox4->Text = L"R3nzSkin Status";
-			   // 
-			   // linkLabel1
-			   // 
-			   this->linkLabel1->AutoSize = true;
-			   this->linkLabel1->Cursor = System::Windows::Forms::Cursors::Hand;
-			   this->linkLabel1->LinkBehavior = System::Windows::Forms::LinkBehavior::NeverUnderline;
-			   this->linkLabel1->LinkColor = System::Drawing::Color::Silver;
-			   this->linkLabel1->Location = System::Drawing::Point(20, 284);
-			   this->linkLabel1->Name = L"linkLabel1";
-			   this->linkLabel1->Size = System::Drawing::Size(207, 14);
-			   this->linkLabel1->TabIndex = 11;
-			   this->linkLabel1->TabStop = true;
-			   this->linkLabel1->Text = L"Copyright (c) 2021-2023 R3nzTheCodeGOD";
-			   this->linkLabel1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
-			   this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &R3nzUI::linkLabel1_LinkClicked);
+			   this->copyrightLabel->AutoSize = true;
+			   this->copyrightLabel->Cursor = Cursors::Hand;
+			   this->copyrightLabel->LinkBehavior = LinkBehavior::NeverUnderline;
+			   this->copyrightLabel->LinkColor = Color::Silver;
+			   this->copyrightLabel->Location = Point(20, 284);
+			   this->copyrightLabel->Name = L"copyrightLabel";
+			   this->copyrightLabel->Size = Drawing::Size(207, 14);
+			   this->copyrightLabel->TabIndex = 11;
+			   this->copyrightLabel->TabStop = true;
+			   this->copyrightLabel->Text = L"Copyright (c) 2021-2023 R3nzTheCodeGOD";
+			   this->copyrightLabel->TextAlign = ContentAlignment::MiddleCenter;
+			   this->copyrightLabel->LinkClicked += gcnew LinkLabelLinkClickedEventHandler(this, &R3nzUI::copyrightLabel_LinkClicked);
 			   //
 			   // contextMenu
 			   //
@@ -300,58 +313,58 @@ namespace R3nzSkinInjector {
 			   //
 			   this->menuItem2->Index = 0;
 			   this->menuItem2->Text = L"Start";
-			   this->menuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem2_OnClick);
+			   this->menuItem2->Click += gcnew EventHandler(this, &R3nzUI::menuItem2_OnClick);
 			   this->menuItem->Index = 1;
 			   this->menuItem->Text = L"Exit";
-			   this->menuItem->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem_OnClick);
+			   this->menuItem->Click += gcnew EventHandler(this, &R3nzUI::menuItem_OnClick);
 			   //
 			   // notifyIcon
 			   //
 			   this->notifyIcon->Text = L"R3nzSkin";
-			   this->notifyIcon->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+			   this->notifyIcon->Icon = cli::safe_cast<Drawing::Icon^>(resources->GetObject(L"$this.Icon"));
 			   this->notifyIcon->Visible = false;
 			   this->notifyIcon->ContextMenu = this->contextMenu;
-			   this->notifyIcon->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &R3nzUI::notifyIcon_MouseDoubleClick);
+			   this->notifyIcon->MouseDoubleClick += gcnew MouseEventHandler(this, &R3nzUI::notifyIcon_MouseDoubleClick);
 			   //
 			   // menuStrip
 			   //
 			   this->toolstripmenuItem->Text = L"Preferences";
 			   this->toolstripmenuItem2->Text = L"Hide to tray";
-			   this->toolstripmenuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::toolstripmenuItem2_OnClick);
+			   this->toolstripmenuItem2->Click += gcnew EventHandler(this, &R3nzUI::toolstripmenuItem2_OnClick);
 			   this->toolstripmenuItem->DropDownItems->Add(this->toolstripmenuItem2);
 			   this->menuStrip->Items->Add(this->toolstripmenuItem);
 			   // 
 			   // R3nzUI
 			   // 
-			   this->AutoScaleDimensions = System::Drawing::SizeF(7, 14);
-			   this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			   this->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(32)), static_cast<System::Int32>(static_cast<System::Byte>(30)), static_cast<System::Int32>(static_cast<System::Byte>(30)));
-			   this->ClientSize = System::Drawing::Size(273, 307);
+			   this->AutoScaleDimensions = SizeF(7, 14);
+			   this->AutoScaleMode = Windows::Forms::AutoScaleMode::Font;
+			   this->BackColor = Color::FromArgb(32, 30, 30);
+			   this->ClientSize = Drawing::Size(273, 307);
 			   this->Controls->Add(this->menuStrip);
-		   	   this->Controls->Add(this->linkLabel1);
-			   this->Controls->Add(this->groupBox4);
-			   this->Controls->Add(this->groupBox3);
-			   this->Controls->Add(this->groupBox2);
-			   this->Controls->Add(this->groupBox1);
-			   this->Controls->Add(this->button1);
-			   this->Cursor = System::Windows::Forms::Cursors::Arrow;
-			   this->Font = (gcnew System::Drawing::Font(L"Arial", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(162)));
-			   this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
-			   this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+		   	   this->Controls->Add(this->copyrightLabel);
+			   this->Controls->Add(this->dllStatusGroupBox);
+			   this->Controls->Add(this->leagueGameStatusGroupBox);
+			   this->Controls->Add(this->leagueClientStatusGroupBox);
+			   this->Controls->Add(this->injectorStatusGroupBox);
+			   this->Controls->Add(this->startButton);
+			   this->Cursor = Cursors::Arrow;
+			   this->Font = gcnew Drawing::Font(L"Arial", 8.25F, FontStyle::Bold, GraphicsUnit::Point, static_cast<Byte>(162));
+			   this->FormBorderStyle = Windows::Forms::FormBorderStyle::Fixed3D;
+			   this->Icon = cli::safe_cast<Drawing::Icon^>(resources->GetObject(L"$this.Icon"));
 			   this->MaximizeBox = false;
 			   this->Name = L"R3nzUI";
-			   this->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			   this->RightToLeft = Windows::Forms::RightToLeft::No;
 			   this->Text = L"";
-			   this->Load += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Load);
-			   this->Resize += gcnew System::EventHandler(this, &R3nzUI::R3nzUI_Resize);
-			   this->groupBox1->ResumeLayout(false);
-			   this->groupBox1->PerformLayout();
-			   this->groupBox2->ResumeLayout(false);
-			   this->groupBox2->PerformLayout();
-			   this->groupBox3->ResumeLayout(false);
-			   this->groupBox3->PerformLayout();
-			   this->groupBox4->ResumeLayout(false);
-			   this->groupBox4->PerformLayout();
+			   this->Load += gcnew EventHandler(this, &R3nzUI::R3nzUI_Load);
+			   this->Resize += gcnew EventHandler(this, &R3nzUI::R3nzUI_Resize);
+			   this->injectorStatusGroupBox->ResumeLayout(false);
+			   this->injectorStatusGroupBox->PerformLayout();
+			   this->leagueClientStatusGroupBox->ResumeLayout(false);
+			   this->leagueClientStatusGroupBox->PerformLayout();
+			   this->leagueGameStatusGroupBox->ResumeLayout(false);
+			   this->leagueGameStatusGroupBox->PerformLayout();
+			   this->dllStatusGroupBox->ResumeLayout(false);
+			   this->dllStatusGroupBox->PerformLayout();
 			   this->menuStrip->ResumeLayout(false);
 			   this->menuStrip->PerformLayout();
 			   this->ResumeLayout(false);
@@ -359,41 +372,44 @@ namespace R3nzSkinInjector {
 		   }
 #pragma endregion
 	private:
-		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) 
+		Void R3nzUI_Load(Object^ sender, EventArgs^ e) 
 		{
-			System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &R3nzUI::R3nzUI_ExceptionHandler);
+			AppDomain::CurrentDomain->UnhandledException += gcnew UnhandledExceptionEventHandler(this, &R3nzUI::R3nzUI_ExceptionHandler);
 		}
 	private:
-		System::Void R3nzUI_ExceptionHandler(System::Object^ sender, System::UnhandledExceptionEventArgs^ e)
+		Void R3nzUI_ExceptionHandler(Object^ sender, UnhandledExceptionEventArgs^ e)
 		{
-			const auto exception = dynamic_cast<System::Exception^>(e->ExceptionObject)->Message;
+			const auto exception = dynamic_cast<Exception^>(e->ExceptionObject)->Message;
 			MessageBox::Show(exception);
 		}
 	private:
-		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
+		Void startButton_Click(Object^ sender, EventArgs^ e)
 		{
 			btnState = !btnState;
-			if (btnState) {
-				this->button1->BackColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
-				this->label1->ForeColor = System::Drawing::Color::FromArgb(255, 252, 220, 107);
-				this->button1->Text = L"Stop";
-				this->label1->Text = L"Working";
+			if (btnState) 
+			{
+				this->startButton->BackColor = Color::FromArgb(255, 252, 220, 107);
+				this->injectorStatusLabel->ForeColor = Color::FromArgb(255, 252, 220, 107);
+				this->startButton->Text = L"Stop";
+				this->injectorStatusLabel->Text = L"Working";
 				this->menuItem2->Text = L"Stop";
-			} else {
-				this->button1->BackColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
-				this->label1->ForeColor = System::Drawing::Color::FromArgb(255, 245, 8, 83);
-				this->button1->Text = L"Start";
-				this->label1->Text = L"Stopped";
+			}
+			else 
+			{
+				this->startButton->BackColor = Color::FromArgb(255, 245, 8, 83);
+				this->injectorStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
+				this->startButton->Text = L"Start";
+				this->injectorStatusLabel->Text = L"Stopped";
 				this->menuItem2->Text = L"Start";
 			}
 		}
 	private:
-		System::Void linkLabel1_LinkClicked(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e)
+		Void copyrightLabel_LinkClicked(Object^ sender, LinkLabelLinkClickedEventArgs^ e)
 		{
-			System::Diagnostics::Process::Start(L"https://github.com/R3nzTheCodeGOD/R3nzSkin");
+			Diagnostics::Process::Start(L"https://github.com/R3nzTheCodeGOD/R3nzSkin");
 		}
 	private:
-		System::Void R3nzUI_Resize(System::Object^ sender, System::EventArgs^ e)
+		Void R3nzUI_Resize(Object^ sender, EventArgs^ e)
 		{
 			if (this->WindowState == FormWindowState::Minimized) 
 			{
@@ -405,7 +421,7 @@ namespace R3nzSkinInjector {
 			}
 		}
 	private:
-		System::Void notifyIcon_MouseDoubleClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+		Void notifyIcon_MouseDoubleClick(Object^ sender, MouseEventArgs^ e)
 		{
 			if (this->toolstripmenuItem2->Checked)
 			{
@@ -415,17 +431,17 @@ namespace R3nzSkinInjector {
 			}
 		}
 	private:
-		System::Void menuItem_OnClick(System::Object^ sender, System::EventArgs^ e)
+		Void menuItem_OnClick(Object^ sender, EventArgs^ e)
 		{
 			this->Close();
 		}
 	private:
-		System::Void menuItem2_OnClick(System::Object^ sender, System::EventArgs^ e)
+		Void menuItem2_OnClick(Object^ sender, EventArgs^ e)
 		{
-			this->button1_Click(nullptr, nullptr);
+			this->startButton_Click(nullptr, nullptr);
 		}
 	private:
-		System::Void toolstripmenuItem2_OnClick(System::Object^ sender, System::EventArgs^ e)
+		Void toolstripmenuItem2_OnClick(Object^ sender, EventArgs^ e)
 		{
 			this->toolstripmenuItem2->Checked = !this->toolstripmenuItem2->Checked;
 			this->saveSettings();

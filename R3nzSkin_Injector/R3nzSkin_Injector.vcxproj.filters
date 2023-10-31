@@ -35,6 +35,9 @@
     <ClInclude Include="lazy_importer.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="xorstr.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">
