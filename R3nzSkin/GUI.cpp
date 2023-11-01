@@ -46,6 +46,11 @@ static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team)
 
 void GUI::render() noexcept
 {
+	std::call_once(set_font_scale, [&]
+	{
+		ImGui::GetIO().FontGlobalScale = cheatManager.config->fontScale;
+	});
+
 	const auto player{ cheatManager.memory->localPlayer };
 	const auto heroes{ cheatManager.memory->heroList };
 	static const auto my_team{ player ? player->get_team() : 100 };
