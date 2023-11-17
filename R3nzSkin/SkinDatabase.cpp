@@ -9,6 +9,10 @@
 #include "SkinDatabase.hpp"
 #include "fnv_hash.hpp"
 
+bool compareCharPtr(const std::pair<uint32_t, const char*>& a, const std::pair<uint32_t, const char*>& b) {
+	return strcmp(a.second, b.second) < 0;
+}
+
 void SkinDatabase::load() noexcept
 {
 	for (const auto& champion : cheatManager.memory->championManager->champions) {
@@ -63,4 +67,6 @@ void SkinDatabase::load() noexcept
 
 		this->wards_skins.emplace_back(ward_skin_id, ward_display_name_translated);
 	}
+
+	std::sort(this->wards_skins.begin(), this->wards_skins.end(), compareCharPtr);
 }
