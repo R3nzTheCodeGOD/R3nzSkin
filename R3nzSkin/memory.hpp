@@ -38,7 +38,7 @@ public:
 	ManagerTemplate<AIMinionClient>* minionList;
 	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
-	
+
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
@@ -53,7 +53,7 @@ private:
 	{
 		{
 			{
-				"48 8B 05 ? ? ? ? 8B 58 0C"
+				"48 8B 05 ? ? ? ? 4C 8B FA 83 78 0C 02"
 			}, true, false, true, 0, &offsets::global::GameClient
 		}
 	};
@@ -77,7 +77,7 @@ private:
 		},
 		{
 			{
-				"48 89 0D ? ? ? ? 48 8D 05 ? ? ? ? 33 D2"
+					"48 89 0D ? ? ? ? 48 8D 05 ? ? ? ? 33 D2"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AIMinionClient_
 		},
 		{
