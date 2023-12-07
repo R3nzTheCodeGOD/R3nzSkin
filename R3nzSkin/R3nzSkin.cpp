@@ -1,16 +1,13 @@
 #pragma warning(disable : 6387 4715)
 
 #include <Windows.h>
-#include <array>
 #include <clocale>
 #include <chrono>
-#include <cstdint>
 #include <thread>
 
 #include "CheatManager.hpp"
 
 #include "Config.hpp"
-#include "GUI.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
 
@@ -30,6 +27,7 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 	} __except (TRUE) {
 		return false;
 	}
+	return false;
 }
 
 __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept

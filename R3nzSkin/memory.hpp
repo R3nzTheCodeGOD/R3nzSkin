@@ -53,7 +53,7 @@ private:
 	{
 		{
 			{
-				"48 8B 05 ? ? ? ? 8B 58 0C"
+				"48 8B 05 ? ? ? ? 4C 8B FA 83 78 0C 02"
 			}, true, false, true, 0, &offsets::global::GameClient
 		}
 	};
