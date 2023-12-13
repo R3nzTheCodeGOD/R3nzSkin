@@ -147,6 +147,24 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 
 void Injector::autoUpdate()
 {
+	/* do not even bother if we are from Chinese regions */
+	auto whitelisted_regions = gcnew array<String^> {
+		xor_clrstr_w(L"zh-CN"),
+		xor_clrstr_w(L"zh-TW"),
+		xor_clrstr_w(L"zh-HK"),
+		xor_clrstr_w(L"zh-MO"),
+		xor_clrstr_w(L"zh-SG")
+	};
+	auto current_culture = CultureInfo::CurrentCulture;
+	auto region = current_culture->Name;
+	for each (auto whitelisted_region in whitelisted_regions)
+	{
+		if (region->Equals(whitelisted_region, StringComparison::OrdinalIgnoreCase))
+		{
+			return;
+		}
+	}
+	
 	auto client = gcnew WebClient();
 	ServicePointManager::Expect100Continue = true;
 	ServicePointManager::SecurityProtocol = SecurityProtocolType::Tls12;
