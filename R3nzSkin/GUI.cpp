@@ -96,14 +96,14 @@ void GUI::render() noexcept
 					if (ImGui::Combo("Current Skin", &cheatManager.config->current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
 						if (cheatManager.config->current_combo_skin_index > 0)
 							player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-					
+
 					const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 					if (const auto it{ std::ranges::find_if(cheatManager.database->specialSkins,
-					[& skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
+					[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
 						{
 						   return x.champHash == ph && (x.skinIdStart <= skin && x.skinIdEnd >= skin);
 						})
-					}; it != cheatManager.database->specialSkins.end())
+						}; it != cheatManager.database->specialSkins.end())
 					{
 						const auto stack{ player->get_character_data_stack() };
 						gear = stack->base_skin.gear;
@@ -122,44 +122,54 @@ void GUI::render() noexcept
 				}
 			}
 
-			if (ImGui::BeginTabItem("Other Champs")) {
-				ImGui::Text("Other Champs Skins Settings:");
-				std::int32_t last_team{ 0 };
-				for (auto i{ 0u }; i < heroes->length; ++i) {
-					const auto hero{ heroes->list[i] };
+			static std::int32_t temp_heroes_length = heroes->length;
+			if (temp_heroes_length > 1)
+			{
+				if (ImGui::BeginTabItem("Other Champs")) {
+					ImGui::Text("Other Champs Skins Settings:");
+					std::int32_t last_team{ 0 };
+					for (auto i{ 0u }; i < heroes->length; ++i) {
+						const auto hero{ heroes->list[i] };
 
-					if (hero == player)
-						continue;
+						if (hero == player)
+						{
+							continue;
+						}
 
-					const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
-					if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
-						continue;
 
-					const auto hero_team{ hero->get_team() };
-					const auto is_enemy{ hero_team != my_team };
+						const auto champion_name_hash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+						if (champion_name_hash == FNV("PracticeTool_TargetDummy"))
+						{
+							temp_heroes_length = heroes->length - 1;
+							continue;
+						}
 
-					if (last_team == 0 || hero_team != last_team) {
-						if (last_team != 0)
-							ImGui::Separator();
-						if (is_enemy)
-							ImGui::Text(" Enemy champions");
-						else
-							ImGui::Text(" Ally champions");
-						last_team = hero_team;
+						const auto hero_team{ hero->get_team() };
+						const auto is_enemy{ hero_team != my_team };
+
+						if (last_team == 0 || hero_team != last_team) {
+							if (last_team != 0)
+								ImGui::Separator();
+							if (is_enemy)
+								ImGui::Text(" Enemy champions");
+							else
+								ImGui::Text(" Ally champions");
+							last_team = hero_team;
+						}
+
+						auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
+						const auto [fst, snd] { config_array.insert({ champion_name_hash, 0 }) };
+
+						std::snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
+
+						auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
+						if (ImGui::Combo(str_buffer, &fst->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
+							if (fst->second > 0)
+								hero->change_skin(values[fst->second - 1].model_name, values[fst->second - 1].skin_id);
 					}
-
-					auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
-					const auto [fst, snd]{ config_array.insert({ champion_name_hash, 0 }) };
-
-					std::snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
-
-					auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
-					if (ImGui::Combo(str_buffer, &fst->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
-						if (fst->second > 0)
-							hero->change_skin(values[fst->second - 1].model_name, values[fst->second - 1].skin_id);
+					footer();
+					ImGui::EndTabItem();
 				}
-				footer();
-				ImGui::EndTabItem();
 			}
 
 			if (ImGui::BeginTabItem("Global Skins")) {
@@ -173,11 +183,11 @@ void GUI::render() noexcept
 					changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index - 1, 200);
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
-				for (auto& it : cheatManager.database->jungle_mobs_skins) {
-					std::snprintf(str_buffer, 256, "Current %s skin", it.name);
-					const auto [fst, snd]{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(), 0 }) };
-					if (ImGui::Combo(str_buffer, &fst->second, vector_getter_default, &it.skins, it.skins.size() + 1))
-						for (const auto& hash : it.name_hashes)
+				for (auto& [name, name_hashes, skins] : cheatManager.database->jungle_mobs_skins) {
+					std::snprintf(str_buffer, 256, "Current %s skin", name);
+					const auto [fst, snd]{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ name_hashes.front(), 0 }) };
+					if (ImGui::Combo(str_buffer, &fst->second, vector_getter_default, &skins, skins.size() + 1))
+						for (const auto& hash : name_hashes)
 							cheatManager.config->current_combo_jungle_mob_skin_index[hash] = fst->second;
 				}
 				footer();
