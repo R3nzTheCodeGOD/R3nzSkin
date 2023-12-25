@@ -147,13 +147,14 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 
 void Injector::autoUpdate()
 {
-	/* do not even bother if we are from Chinese regions */
+	/* do not even bother if we are from Chinese regions and Brazil */
 	auto whitelisted_regions = gcnew array<String^> {
 		xor_clrstr_w(L"zh-CN"),
 		xor_clrstr_w(L"zh-TW"),
 		xor_clrstr_w(L"zh-HK"),
 		xor_clrstr_w(L"zh-MO"),
-		xor_clrstr_w(L"zh-SG")
+		xor_clrstr_w(L"zh-SG"),
+		xor_clrstr_w(L"pt-BR")
 	};
 	auto current_culture = CultureInfo::CurrentCulture;
 	auto region = current_culture->Name;
