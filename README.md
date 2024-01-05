@@ -11,7 +11,7 @@
    # **R3nzSkin**
 
    ## Announcement
-   I am currently continuing my military service, and as the place where I am serving is a border region, updates may be delayed or may not arrive.
+   R3nzSkin will no longer be supported by 2024 due to Riot Games implementing <a href="https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends-">Valorant's Vanguard anti-cheat to League of Legends</a>
 
    <img src="https://user-images.githubusercontent.com/58574988/134170370-c827d712-fcc7-432f-b9f8-96678b0c9bf6.gif">
 
