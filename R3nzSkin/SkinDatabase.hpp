@@ -4,7 +4,6 @@
 #include <map>
 #include <utility>
 #include <vector>
-#include <compare>
 
 #include "fnv_hash.hpp"
  
