@@ -3,10 +3,11 @@
 #include <cstdint>
 
 #include "AString.hpp"
+#include "Pad.hpp"
 
 class Skin {
 public:
 	std::int32_t skin_id;
-	std::int32_t unknown; // always 0x1f4
+	PAD(0x4)
 	AString skin_name;
 };
