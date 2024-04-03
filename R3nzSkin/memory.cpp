@@ -94,7 +94,6 @@ void Memory::update(bool gameClient) noexcept
 		this->turretList = *reinterpret_cast<ManagerTemplate<AITurret>**>(this->base + offsets::global::ManagerTemplate_AITurret_);
 		this->championManager = *reinterpret_cast<ChampionManager**>(this->base + offsets::global::ChampionManager);
 		this->materialRegistry = reinterpret_cast<std::uintptr_t(__fastcall*)()>(this->base + offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr)();
-		this->d3dDevice = *reinterpret_cast<IDirect3DDevice9**>(this->materialRegistry + offsets::MaterialRegistry::D3DDevice);
 		this->swapChain = *reinterpret_cast<IDXGISwapChain**>(this->materialRegistry + offsets::MaterialRegistry::SwapChain);
 		this->window = *reinterpret_cast<HWND*>(this->base + offsets::global::Riot__g_window);
 		this->translateString = reinterpret_cast<translateString_t>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE);

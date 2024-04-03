@@ -2,7 +2,6 @@
 
 #include <Windows.h>
 #include <cstdint>
-#include <d3d9.h>
 #include <d3d11.h>
 
 #include "Offsets.hpp"
@@ -40,7 +39,6 @@ public:
 	ChampionManager* championManager;
 	
 	std::uintptr_t materialRegistry;
-	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
 
 	using translateString_t = const char* (__fastcall*)(const char*);
@@ -99,11 +97,6 @@ private:
 			{
 				"40 38 BB ? ? 00 00 0F 85 ? ? 00 00 66 C7 83 ? ? ? ? ? ? 0F 31 48 C1 E2 20 4C 8D 83 ? ? 00 00 48 0B C2 44 8B CF 48 89 44 24 38 8B D7"
 			}, false, true, false, 0, &offsets::AIBaseCommon::SkinId
-		},
-		{
-			{
-				"48 8B 8F ? ? 00 00 45 33 C0 8B D3 48 8B 01 FF 90 ? ? 00 00"
-			}, false, true, false, 0, &offsets::MaterialRegistry::D3DDevice
 		},
 		{
 			{

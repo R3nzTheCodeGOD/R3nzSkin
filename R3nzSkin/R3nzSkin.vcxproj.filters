@@ -59,9 +59,6 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_dx9.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
@@ -117,9 +114,6 @@
       <Filter>Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_dx9.h">
       <Filter>Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_dx11.h">

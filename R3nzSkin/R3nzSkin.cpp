@@ -53,7 +53,7 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 	cheatManager.memory->Search(false);
 	cheatManager.logger->addLog("All offsets found!\n");
 	std::this_thread::sleep_for(500ms);
-	
+
 	cheatManager.config->init();
 	cheatManager.config->load();
 	cheatManager.logger->addLog("CFG loaded!\n");
