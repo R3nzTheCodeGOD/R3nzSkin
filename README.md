@@ -8,22 +8,30 @@
    [![Issues](https://img.shields.io/github/issues/R3nzTheCodeGOD/R3nzSkin.svg?style=plastic)](https://github.com/R3nzTheCodeGOD/R3nzSkin/issues)
    ![Windows](https://github.com/R3nzTheCodeGOD/R3nzSkin/workflows/Windows/badge.svg?branch=main&event=push)
 
-   # **R3nzSkin**
+   # **R3nzSkin国服特供版**
 
    ## Announcement
    R3nzSkin is **no longer supported** due to Riot Games implementing <a href="https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends-">Valorant's Vanguard anti-cheat to League of Legends</a>
+   由于Riot直营服引入了Valorant的反作弊机制Vanguard，R3nzskin将不再支持在Riot直营服使用
 
    <img src="https://user-images.githubusercontent.com/58574988/134170370-c827d712-fcc7-432f-b9f8-96678b0c9bf6.gif">
 
    `R3nzSkin` is an internal skin changer for League of Legends.
+   “R3nzSkin”是一个LOL内置的换肤器
+
 
 </div>
 
 - Change the skin of your champion, your ward, other champions, towers, minions, and jungle monsters in the game.
+- 给你的英雄，眼，其他英雄，防御塔，小兵和野怪换肤
 - Automatic skin database update.
+- 自动皮肤数据库更新
 - Support for spectator mode.
+- 支持观战模式
 - Change skins anytime and unlimited times in a single game.
+- 一次游戏中可以任何时候任意次换肤
 - Supports all popular languages ​​in the world.
+- 支持世界上所有热门语言（除了中文）
 - In-game configuration with <a href="https://github.com/ocornut/imgui">ImGui</a>.
 - <a href="https://github.com/nlohmann/json">JSON</a> based configuration saving & loading
 
