@@ -7,11 +7,12 @@
    [![License](https://img.shields.io/github/license/R3nzTheCodeGOD/R3nzSkin.svg?style=plastic)](LICENSE)
    [![Issues](https://img.shields.io/github/issues/R3nzTheCodeGOD/R3nzSkin.svg?style=plastic)](https://github.com/R3nzTheCodeGOD/R3nzSkin/issues)
    ![Windows](https://github.com/R3nzTheCodeGOD/R3nzSkin/workflows/Windows/badge.svg?branch=main&event=push)
-
+   # **R3nzSkin(only support in China Server)**
    # **R3nzSkin国服特供版**
 
    ## Announcement
-   R3nzSkin is **no longer supported** due to Riot Games implementing <a href="https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends-">Valorant's Vanguard anti-cheat to League of Legends</a>
+   R3nzSkin is **no longer supported** in Riot Server due to Riot Games implementing <a href="https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends-">Valorant's Vanguard anti-cheat to League of Legends</a>
+   
    由于Riot直营服引入了Valorant的反作弊机制Vanguard，R3nzskin将不再支持在Riot直营服使用
 
    <img src="https://user-images.githubusercontent.com/58574988/134170370-c827d712-fcc7-432f-b9f8-96678b0c9bf6.gif">
