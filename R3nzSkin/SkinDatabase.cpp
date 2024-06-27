@@ -11,7 +11,8 @@
 
 void SkinDatabase::load() noexcept
 {
-	for (const auto& champion : cheatManager.memory->championManager->champions) {
+	for (auto j{ 0 }; j < cheatManager.memory->championManager->champions.size;++j) {
+		const auto& champion = cheatManager.memory->championManager->champions.list[j];
 		std::vector<std::int32_t> skins_ids;
 		
 		for (auto i{ 0 }; i < champion->skins.size; ++i)
