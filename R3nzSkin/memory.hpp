@@ -51,7 +51,7 @@ private:
 	{
 		{
 			{
-				"48 8B 05 ? ? ? ? 48 8B F2 8B 48 10 81 C1 ? ? ? ? C1 C9 ? 81 F1 ? ? ? ? 83 F9 02"
+				"48 8B 05 ? ? ? ? 8B 48 10 C1 C9 ? 81 F1 ? ? ? ? 81 C1 ? ? ? ? 83 F9 02 77 04 32 C9 EB 02 B1 01"
 			}, true, false, true, 0, &offsets::global::GameClient
 		}
 	};
@@ -100,7 +100,7 @@ private:
 		},
 		{
 			{
-				"C1 CE ? 48 8D 55 ? 81 F6 ? ? ? ? 48 C7 45 ? 00 00 00 00 C1 CE ? 48 8D 8F ? ? ? ? 89 B7 ? ? ? ?"
+				"C1 CE ? 48 8D 55 ? 81 F6 ? ? ? ? 4C 89 6D ? D1 CE 48 8D 8F ? ? ? ? C7 45 ? 00 00 80 3F 8D 86 ? ? ? ? C1 C8 ? 89 87 ? ? ? ?"
 			}, false, false, false, 0, &offsets::AIBaseCommon::SkinId
 		},
 		{
@@ -125,7 +125,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 45 33 C0 48 8B D0 48 8B CB E8 ? ? ? ? 48"
+				"E8 ? ? ? ? 41 B8 05 00 00 00 48 8D 55 40 48 8B CE 48 8B D8 E8"
 			}, true, false, false, 0, &offsets::functions::translateString_UNSAFE_DONOTUSE
 		},
 		{
