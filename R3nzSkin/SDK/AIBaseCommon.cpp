@@ -1,9 +1,9 @@
 #include <cstdint>
+#include <intrin.h>
 #include <string>
 
 #include "AIBaseCommon.hpp"
 
-#include "../encryption.hpp"
 #include "../fnv_hash.hpp"
 #include "../offsets.hpp"
 
@@ -18,7 +18,7 @@ bool AIBaseCommon::checkSpecialSkins(const char* model, const std::int32_t skin)
 		stack->base_skin.gear = static_cast<std::int8_t>(0);
 	} else if (champ_name == FNV("Renekton") && (skin >= 26 && skin <= 32)) {
 		stack->base_skin.gear = static_cast<std::int8_t>(0);
-	} else if (champ_name == FNV("MissFortune") && skin == 16) {
+	} else if (champ_name == FNV("MissFortune") && (skin == 16 || (skin >= 69 && skin <= 75))) {
 		stack->base_skin.gear = static_cast<std::int8_t>(0);
 	} else if (champ_name == FNV("Lux") || champ_name == FNV("Sona")) {
 		if ((skin == 7 && champ_name == FNV("Lux")) || (skin == 6 && champ_name == FNV("Sona"))) {
@@ -36,7 +36,10 @@ bool AIBaseCommon::checkSpecialSkins(const char* model, const std::int32_t skin)
 void AIBaseCommon::change_skin(const char* model, const std::int32_t skin) noexcept
 {
 	const auto stack{ this->get_character_data_stack() };
-	reinterpret_cast<xor_value<std::int32_t>*>(std::uintptr_t(this) + offsets::AIBaseCommon::SkinId)->encrypt(skin);
+	*reinterpret_cast<std::uint32_t*>(std::uintptr_t(this) + offsets::AIBaseCommon::SkinId) =
+		_rotr(_rotr(_rotr(static_cast<std::uint32_t>(skin), offsets::encoding::SkinIdRotate1) ^
+			offsets::encoding::SkinIdXor, offsets::encoding::SkinIdRotate2) + offsets::encoding::SkinIdAdd,
+			offsets::encoding::SkinIdRotate3);
 	stack->base_skin.skin = skin;
 
 	if (!this->checkSpecialSkins(model, skin))

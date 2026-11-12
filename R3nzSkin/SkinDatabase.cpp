@@ -11,7 +11,8 @@
 
 void SkinDatabase::load() noexcept
 {
-	for (const auto& champion : cheatManager.memory->championManager->champions) {
+	for (auto j{ 0 }; j < cheatManager.memory->championManager->champions.size;++j) {
+		const auto& champion = cheatManager.memory->championManager->champions.list[j];
 		std::vector<std::int32_t> skins_ids;
 		
 		for (auto i{ 0 }; i < champion->skins.size; ++i)
@@ -58,7 +59,7 @@ void SkinDatabase::load() noexcept
 		const auto ward_display_name{ "game_character_skin_displayname_SightWard_" + std::to_string(ward_skin_id) };
 		const auto ward_display_name_translated{ cheatManager.memory->translateString(ward_display_name.c_str()) };
 		
-		if (ward_display_name == ward_display_name_translated)
+		if (ward_display_name_translated == nullptr || ward_display_name_translated[0] == '\0')
 			break;
 
 		this->wards_skins.emplace_back(ward_skin_id, ward_display_name_translated);

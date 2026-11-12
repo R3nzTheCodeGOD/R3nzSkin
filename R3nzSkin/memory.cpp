@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <chrono>
+#include <cstring>
 #include <cstdint>
 #include <string>
 #include <thread>
@@ -125,6 +126,25 @@ void Memory::Search(bool gameClient)
 						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
 						// cheatManager.logger->addLog("Not found: %s\n", pattern.c_str());
 						continue;
+					}
+					if (sig.offset == &offsets::global::GameClient) {
+						if (address[12] >= 32)
+							continue;
+						offsets::encoding::GameClientRotate = address[12];
+						std::memcpy(&offsets::encoding::GameClientXor, address + 15, sizeof(std::uint32_t));
+						std::memcpy(&offsets::encoding::GameClientAdd, address + 21, sizeof(std::uint32_t));
+					} else if (sig.offset == &offsets::AIBaseCommon::SkinId) {
+						std::uint32_t field_offset{};
+						std::memcpy(&field_offset, address + 44, sizeof(field_offset));
+						if (!field_offset || address[2] >= 32 || address[41] >= 32)
+							continue;
+						offsets::encoding::SkinIdRotate1 = address[2];
+						std::memcpy(&offsets::encoding::SkinIdXor, address + 9, sizeof(std::uint32_t));
+						offsets::encoding::SkinIdRotate2 = 1;
+						std::memcpy(&offsets::encoding::SkinIdAdd, address + 35, sizeof(std::uint32_t));
+						offsets::encoding::SkinIdRotate3 = address[41];
+						*sig.offset = field_offset;
+						break;
 					}
 
 					if (sig.read)

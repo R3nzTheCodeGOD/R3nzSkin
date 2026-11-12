@@ -53,7 +53,9 @@ public:
 		"Temple of Lily and Lotus Turret",
 		"Arcane Order Turret", "Arcane Chaos Turret",
 		"Butcher's Bridge Order Turret", "Butcher's Bridge Chaos Turret",
-		"Howling Abyss Order Turret", "Howling Abyss Chaos Turret"
+		"Howling Abyss Order Turret", "Howling Abyss Chaos Turret",
+		"Zaun Order Turret","Piltover Chaos Turret",
+		"Black Rose Turret"
 	};
 
 	std::vector<jungle_mob_skin_info> jungle_mobs_skins{
@@ -93,6 +95,13 @@ public:
 		{ FNV("Katarina"), 29, 36, { "Dagger 1", "Dagger 2", "Dagger 3", "Dagger 4", "Dagger 5", "Dagger 6" }},
 		{ FNV("Renekton"), 26, 32, { "Head off", "Head on", "Fins", "Ultimate" } },
 		{ FNV("MissFortune"), 16, 16, { "Scarlet fair", "Zero hour", "Royal arms", "Starswarm" } },
-		{ FNV("Ezreal"), 5, 5, { "Level 1", "Level 2", "Level 3" } }
+		{ FNV("Ezreal"), 5, 5, { "Level 1", "Level 2", "Level 3" } },
+		{ FNV("Ahri"), 86, 86, { "Hall of Legends", "Risen Legend", "Immortalized Legend" } },
+		{ FNV("Jinx"), 60, 60, { "With hood", "Parallel world", "Without hood" } },
+		{ FNV("Sett"), 66, 66, { "Blue", "Gold", "Red" } },
+		{ FNV("Mordekaiser"), 54, 54, { "Sahn-Uzal", "Unconquered King", "Iron Revenant" } },
+		{ FNV("Kaisa"), 71, 71, { "Hall of Legends", "Risen Legend", "Immortalized Legend" } },
+		{ FNV("Morgana"), 80, 80, { "Mask1", "Mask2", "Mask3", "Mask4", "Mask5", "Mask6"}},
+		{ FNV("Viego"), 43, 43, { "Sword1", "Sword2", "Sword3", "Sword4", "Sword5", "Sword6", "Sword7"}}
 	};
 };

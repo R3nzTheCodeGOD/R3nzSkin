@@ -23,25 +23,40 @@ inline static void footer() noexcept
 	ImGui::textUnformattedCentered("Copyright (C) 2021-2024 R3nzTheCodeGOD");
 }
 
-static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team) noexcept
+static std::int32_t changeTurretSkin(const std::int32_t skinId, const std::int32_t team) noexcept
 {
 	if (skinId == -1)
-		return;
+		return 0;
 
 	const auto turrets{ cheatManager.memory->turretList };
-	const auto playerTeam{ cheatManager.memory->localPlayer->get_team() };
+	if (!turrets)
+		return 0;
+	const auto length{ turrets->length };
+	if (length <= 0 || length > 10000)
+		return 0;
+	const auto player{ cheatManager.memory->localPlayer };
+	if (!player)
+		return 0;
+	const auto playerTeam{ player->get_team() };
 
-	for (auto i{ 0u }; i < turrets->length; ++i) {
-		if (const auto turret{ turrets->list[i] }; turret->get_team() == team) {
-			if (playerTeam == team) {
-				turret->get_character_data_stack()->base_skin.skin = skinId * 2;
-				turret->get_character_data_stack()->update(true);
-			} else {
-				turret->get_character_data_stack()->base_skin.skin = skinId * 2 + 1;
-				turret->get_character_data_stack()->update(true);
+	std::int32_t done{ 0 };
+	for (auto i{ 0 }; i < length; ++i) {
+		__try {
+			if (const auto turret{ turrets->list[i] }; turret && turret->get_team() == team) {
+				if (playerTeam == team) {
+					turret->get_character_data_stack()->base_skin.skin = skinId * 2;
+					turret->get_character_data_stack()->update(true);
+				} else {
+					turret->get_character_data_stack()->base_skin.skin = skinId * 2 + 1;
+					turret->get_character_data_stack()->update(true);
+				}
+				++done;
 			}
+		} __except (EXCEPTION_EXECUTE_HANDLER) {
+			continue;
 		}
 	}
+	return done;
 }
 
 void GUI::render() noexcept
@@ -53,7 +68,7 @@ void GUI::render() noexcept
 
 	const auto player{ cheatManager.memory->localPlayer };
 	const auto heroes{ cheatManager.memory->heroList };
-	static const auto my_team{ player ? player->get_team() : 100 };
+	static const auto my_team{ player ? player->get_team() : 1 };
 	static int gear{ player ? player->get_character_data_stack()->base_skin.gear : 0 };
 
 	static const auto vector_getter_skin = [](void* vec, const std::int32_t idx, const char** out_text) noexcept {
@@ -94,9 +109,10 @@ void GUI::render() noexcept
 					ImGui::Text("Player Skins Settings:");
 
 					if (ImGui::Combo("Current Skin", &cheatManager.config->current_combo_skin_index, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
-						if (cheatManager.config->current_combo_skin_index > 0)
+						if (cheatManager.config->current_combo_skin_index > 0) {
 							player->change_skin(values[cheatManager.config->current_combo_skin_index - 1].model_name, values[cheatManager.config->current_combo_skin_index - 1].skin_id);
-
+							cheatManager.config->save();
+						}
 					const auto playerHash{ fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) };
 					if (const auto it{ std::ranges::find_if(cheatManager.database->specialSkins,
 					[&skin = player->get_character_data_stack()->base_skin.skin, &ph = playerHash](const SkinDatabase::specialSkin& x) noexcept -> bool
@@ -164,8 +180,10 @@ void GUI::render() noexcept
 
 						auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 						if (ImGui::Combo(str_buffer, &fst->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
-							if (fst->second > 0)
+							if (fst->second > 0) {
 								hero->change_skin(values[fst->second - 1].model_name, values[fst->second - 1].skin_id);
+								cheatManager.config->save();
+							}
 					}
 					footer();
 					ImGui::EndTabItem();
@@ -175,20 +193,50 @@ void GUI::render() noexcept
 			if (ImGui::BeginTabItem("Global Skins")) {
 				ImGui::Text("Global Skins Settings:");
 				if (ImGui::Combo("Minion Skins:", &cheatManager.config->current_combo_minion_index, vector_getter_default, static_cast<void*>(&cheatManager.database->minions_skins), cheatManager.database->minions_skins.size() + 1))
+				{
 					cheatManager.config->current_minion_skin_index = cheatManager.config->current_combo_minion_index - 1;
+					cheatManager.config->save();
+					cheatManager.logger->addLog("[OK] Minion skin saved (combo %d).\n", cheatManager.config->current_combo_minion_index);
+				}
 				ImGui::Separator();
-				if (ImGui::Combo("Order Turret Skins:", &cheatManager.config->current_combo_order_turret_index, vector_getter_default, static_cast<void*>(&cheatManager.database->turret_skins), cheatManager.database->turret_skins.size() + 1))
-					changeTurretSkin(cheatManager.config->current_combo_order_turret_index - 1, 100);
-				if (ImGui::Combo("Chaos Turret Skins:", &cheatManager.config->current_combo_chaos_turret_index, vector_getter_default, static_cast<void*>(&cheatManager.database->turret_skins), cheatManager.database->turret_skins.size() + 1))
-					changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index - 1, 200);
+				if (ImGui::Combo("Order Turret Skins:", &cheatManager.config->current_combo_order_turret_index, vector_getter_default, static_cast<void*>(&cheatManager.database->turret_skins), cheatManager.database->turret_skins.size() + 1)) 
+				{
+					std::int32_t done{ 0 };
+					if (cheatManager.config->current_combo_order_turret_index >= 17)
+						done = changeTurretSkin(cheatManager.config->current_combo_order_turret_index + 1, 1);
+					else 
+						done = changeTurretSkin(cheatManager.config->current_combo_order_turret_index - 1, 1);
+					cheatManager.config->save();
+					if (done > 0)
+						cheatManager.logger->addLog("[OK] Order turret skin changed (%d turrets).\n", done);
+					else
+						cheatManager.logger->addLog("[..] Order turret apply found no turrets.\n");
+				}
+				if (ImGui::Combo("Chaos Turret Skins:", &cheatManager.config->current_combo_chaos_turret_index, vector_getter_default, static_cast<void*>(&cheatManager.database->turret_skins), cheatManager.database->turret_skins.size() + 1)) 
+				{
+					std::int32_t done{ 0 };
+					if (cheatManager.config->current_combo_chaos_turret_index >= 17)
+						done = changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index + 1, 2);
+					else
+						done = changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index - 1, 2);
+					cheatManager.config->save();
+					if (done > 0)
+						cheatManager.logger->addLog("[OK] Chaos turret skin changed (%d turrets).\n", done);
+					else
+						cheatManager.logger->addLog("[..] Chaos turret apply found no turrets.\n");
+				}
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
 				for (auto& [name, name_hashes, skins] : cheatManager.database->jungle_mobs_skins) {
 					std::snprintf(str_buffer, 256, "Current %s skin", name);
 					const auto [fst, snd]{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ name_hashes.front(), 0 }) };
 					if (ImGui::Combo(str_buffer, &fst->second, vector_getter_default, &skins, skins.size() + 1))
+					{
 						for (const auto& hash : name_hashes)
 							cheatManager.config->current_combo_jungle_mob_skin_index[hash] = fst->second;
+						cheatManager.config->save();
+						cheatManager.logger->addLog("[OK] %s skin saved.\n", name);
+					}
 				}
 				footer();
 				ImGui::EndTabItem();
@@ -201,6 +249,8 @@ void GUI::render() noexcept
 
 			if (ImGui::BeginTabItem("Extras")) {
 				ImGui::hotkey("Menu Key", cheatManager.config->menuKey);
+				ImGui::Checkbox("Auto Show Menu", &cheatManager.config->isOpen);
+				ImGui::hoverInfo("Automatically open the menu after entering the game.");
 				ImGui::Checkbox(cheatManager.config->heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->heroName);
 				ImGui::Checkbox("Rainbow Text", &cheatManager.config->rainbowText);
 				ImGui::Checkbox("Quick Skin Change", &cheatManager.config->quickSkinChange);
@@ -213,8 +263,10 @@ void GUI::render() noexcept
 					ImGui::Separator();
 				}
 
-				if (player)
-					ImGui::InputText("Change Nick", player->get_name());
+				if (player) {
+					std::string nickname{ player->get_name()->c_str() };
+					ImGui::InputText("Change Nick", &nickname);
+				}
 
 				if (ImGui::Button("No skins except local player")) {
 					for (auto& val : cheatManager.config->current_combo_enemy_skin_index | std::views::values)
@@ -227,6 +279,7 @@ void GUI::render() noexcept
 						if (const auto hero{ heroes->list[i] }; hero != player)
 							hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
 					}
+					cheatManager.config->save();
 				} ImGui::hoverInfo("Sets the skins of all champions except the local player to the default skin.");
 
 				if (ImGui::Button("Random Skins")) {
@@ -249,6 +302,7 @@ void GUI::render() noexcept
 							data = random(1ull, skinCount);
 							hero->change_skin(skinDatabase[data - 1].model_name, skinDatabase[data - 1].skin_id);
 						}
+						cheatManager.config->save();
 					}
 				} ImGui::hoverInfo("Randomly changes the skin of all champions.");
 

@@ -6,12 +6,12 @@
 #pragma pack(push, 4)
 template <typename T>
 class xor_value {
+	T xor_key;
+	T values_table[4];
 	bool xor_key_was_init{ 0 };
 	std::uint8_t bytes_xor_count;
 	std::uint8_t bytes_xor_count_8;
-	T xor_key;
 	std::uint8_t value_index{ 0 };
-	T values_table[4];
 public:
 	T decrypt() noexcept
 	{

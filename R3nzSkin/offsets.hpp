@@ -6,7 +6,7 @@ namespace offsets {
 	namespace GameObject {
 		namespace VTable {
 			enum {
-				IsLaneMinion = 0xEB, // E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 39 1F
+				IsLaneMinion = 0xF1, // E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 39 1F
 				IsEliteMinion = IsLaneMinion + 0x1,
 				IsEpicMinion = IsEliteMinion + 0x1,
 				IsMinion = IsEpicMinion + 0x4,
@@ -14,8 +14,8 @@ namespace offsets {
 			};
 		};
 		enum {
-			Team = 0x3C,
-			Name = 0x60
+			Team = 0x164,
+			Name = 0x40
 		};
 	};
 
@@ -34,11 +34,23 @@ namespace offsets {
 		inline std::uint64_t SkinId{ 0 };
 	};
 
+	namespace encoding {
+		inline std::uint32_t GameClientAdd{ 0 };
+		inline std::uint32_t GameClientXor{ 0 };
+		inline std::uint32_t SkinIdXor{ 0 };
+		inline std::uint32_t SkinIdAdd{ 0 };
+		inline std::uint8_t GameClientRotate{ 0 };
+		inline std::uint8_t SkinIdRotate1{ 0 };
+		inline std::uint8_t SkinIdRotate2{ 0 };
+		inline std::uint8_t SkinIdRotate3{ 0 };
+	};
+
 	namespace MaterialRegistry {
 		inline std::uint64_t SwapChain{ 0 };
 	};
 
 	namespace functions {
+		inline std::uint64_t AString__Assign{ 0 };
 		inline std::uint64_t Riot__Renderer__MaterialRegistry__GetSingletonPtr{ 0 };
 		inline std::uint64_t translateString_UNSAFE_DONOTUSE{ 0 };
 		inline std::uint64_t CharacterDataStack__Push{ 0 };

@@ -244,7 +244,7 @@ namespace d3d_vtable {
 	static void render() noexcept
 	{
 		const auto client{ cheatManager.memory->client };
-		if (client && client->game_state == GGameState_s::Running) {
+		if (client && client->get_game_state() == GGameState_s::Running) {
 			cheatManager.hooks->init();
 			if (cheatManager.gui->is_open) {
 				::ImGui_ImplDX11_NewFrame();
@@ -258,6 +258,7 @@ namespace d3d_vtable {
 			}
 		}
 	}
+
 
 	struct dxgi_present {
 		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
@@ -295,6 +296,47 @@ static void changeModelForObject(const AIBaseCommon* obj, const char* model, con
 	}
 }
 
+static std::int32_t applyTurretCombo(const std::int32_t combo, const std::int32_t team)
+{
+	if (combo <= 0)
+		return 0;
+	const auto turrets{ cheatManager.memory->turretList };
+	const auto player{ cheatManager.memory->localPlayer };
+	if (!turrets || !player || turrets->length <= 0 || turrets->length > 10000)
+		return 0;
+	const auto skinId{ combo >= 17 ? combo + 1 : combo -1 };
+	const auto playerTeam{ player->get_team() };
+	std::int32_t done{ 0 };
+	for (auto i{ 0u }; i < turrets->length; ++i) {
+		__try {
+			const auto turret{ turrets->list[i] };
+			if (!turret || turret->get_team() != team)
+				continue;
+			turret->get_character_data_stack()->base_skin.skin = (playerTeam == team) ? skinId * 2 : skinId * 2 + 1;
+			turret->get_character_data_stack()->update(true);
+			++done;
+		} __except (EXCEPTION_EXECUTE_HANDLER) {
+			continue;
+		}
+	}
+	return done;
+}
+
+static void applySavedTurretSkins() noexcept
+{
+	const auto order{ cheatManager.config->current_combo_order_turret_index };
+	const auto chaos{ cheatManager.config->current_combo_chaos_turret_index };
+	if (order <= 0 && chaos <= 0)
+		return;
+	__try {
+		const auto orderDone{ applyTurretCombo(order, 1) };
+		const auto chaosDone{ applyTurretCombo(chaos, 2) };
+		cheatManager.logger->addLog("[OK] Turret skins applied (order %d turrets, chaos %d turrets).\n", orderDone, chaosDone);
+	} __except (EXCEPTION_EXECUTE_HANDLER) {
+		cheatManager.logger->addLog("[!!] Turret apply failed (offsets moved), skins unchanged.\n");
+	}
+}
+
 static void changeSkinForObject(const AIBaseCommon* obj, const std::int32_t skin) noexcept
 {
 	if (skin == -1)
@@ -313,6 +355,19 @@ void Hooks::init() noexcept
 	const auto minions{ cheatManager.memory->minionList };
 	static const auto playerHash{ player ? fnv::hash_runtime(player->get_character_data_stack()->base_skin.model.str) : 0u };
 
+	static bool turretsApplied{ false };
+	static bool turretWaitLogged{ false };
+	if (!turretsApplied) {
+		if (const auto turrets{ cheatManager.memory->turretList };
+			turrets && turrets->length > 0 && turrets->length < 10000 && cheatManager.memory->localPlayer) {
+			applySavedTurretSkins();
+			turretsApplied = true;
+		} else if (!turretWaitLogged) {
+			turretWaitLogged = true;
+			cheatManager.logger->addLog("[..] Turret list not ready, will retry.\n");
+		}
+	}
+
 	std::call_once(change_skins, [&]() noexcept -> void {
 		if (player) {
 			if (cheatManager.config->current_combo_skin_index > 0) {
@@ -321,7 +376,7 @@ void Hooks::init() noexcept
 			}
 		}
 
-		const auto my_team{ player ? player->get_team() : 100 };
+		const auto my_team{ player ? player->get_team() : 1 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
 			if (hero == player)
@@ -360,8 +415,8 @@ void Hooks::init() noexcept
 	for (auto i{ 0u }; i < minions->length; ++i) {
 		const auto minion{ minions->list[i] };
 
-		if (minion->isLaneMinion()) {
-			if (player && player->get_team() == 200)
+		if (minion->isLaneMinion() && cheatManager.config->current_minion_skin_index != -1) {
+			if (player && player->get_team() == 2)
 				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 			else
 				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2);
@@ -374,7 +429,7 @@ void Hooks::init() noexcept
 			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("BlueTrinket") || hash == FNV("TestCubeRender10Vision")) {
 				if (!player || owner == player) {
 					if (hash == FNV("TestCubeRender10Vision") && playerHash == FNV("Yone"))
-						changeModelForObject(minion, "Yone", owner->get_character_data_stack()->base_skin.skin);
+						changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
 					else if (hash == FNV("TestCubeRender10Vision"))
 						changeSkinForObject(minion, 0);
 					else
@@ -411,6 +466,8 @@ void Hooks::install() noexcept
 
 void Hooks::uninstall() noexcept
 {
+	cheatManager.config->save();
+
 	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWndProc));
 	swap_chain_vmt->unhook();
 	cheatManager.cheatState = false;
